@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCU_CAN_AV.Desktop", "MCU_CAN_AV.Desktop\MCU_CAN_AV.Desktop.csproj", "{B1BBB75E-C519-44D0-95CE-DF5486D762A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCU_CAN_AV", "MCU_CAN_AV\MCU_CAN_AV.csproj", "{1800E2B7-6DAF-478F-90D0-D73F678B9CED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1BBB75E-C519-44D0-95CE-DF5486D762A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1BBB75E-C519-44D0-95CE-DF5486D762A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1BBB75E-C519-44D0-95CE-DF5486D762A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1BBB75E-C519-44D0-95CE-DF5486D762A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A983FC2E-5BF1-4011-9489-DEB3C86835E0}
+	EndGlobalSection
+EndGlobal
