@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MCU_CAN_AV.CustomControls.CustomSlider"
+			 xmlns:vm="using:MCU_CAN_AV.CustomControls"
+			 >
+	<UserControl.DataContext>
+		<vm:CustomSliderViewModel/>
+	</UserControl.DataContext>
+	
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*"></ColumnDefinition>
+			<ColumnDefinition Width="70"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+		
+			
+	    <Slider
+			Grid.Column="0"
+			Name="slider"
+			VerticalAlignment="Bottom"
+			Margin="20, 0, 20, 0"
+			/>
+		<TextBox 
+			Grid.Column="1"
+			Name="textbox"
+			Text="{Binding #slider.Value, Mode=OneWay}"
+			Margin="5,10,20,5"
+			TextAlignment="Center"
+			VerticalContentAlignment="Center"
+			VerticalAlignment="Center"
+			Width="80"
+			/>
+		<!-- Text="{TemplateBinding LabelText}"   -->
+		<!-- Text="{Binding LabelText, RelativeSource={RelativeSource TemplatedParent}}" -->
+		<TextBlock
+			Grid.Column="0"
+			Name="label"
+			VerticalAlignment="Top"
+			HorizontalAlignment="Left"
+			Margin="20,10,0,0"
+			TextAlignment="Left"
+			FontSize="16"
+			/>
+	</Grid>
+
+</UserControl>

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
+			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MCU_CAN_AV.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -12,5 +13,25 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-</UserControl>
+  <Grid>
+	  <Grid.ColumnDefinitions>
+		  <ColumnDefinition Width="0.5*"></ColumnDefinition>
+		  <ColumnDefinition Width="0.5*"></ColumnDefinition>
+	  </Grid.ColumnDefinitions>
+	  <Grid.RowDefinitions>
+		  <RowDefinition Height="1*"/>
+	  </Grid.RowDefinitions>
+
+	  <Grid Grid.Column="0">
+		  <Grid.ColumnDefinitions>
+			  <ColumnDefinition Width="1*"></ColumnDefinition>
+		  </Grid.ColumnDefinitions>
+		  <Grid.RowDefinitions>
+			  <RowDefinition Height="40*"/>
+			  <RowDefinition Height="60*"/>
+		  </Grid.RowDefinitions>
+		  <TextBlock Name="xxxx" Grid.Row="0" Text="{Binding $self.DataContext.Id, Mode=OneWay}"/>
+		  <cc:CustomSlider Grid.Row="1" LabelText="{Binding $parent.DataContext.Id}" />
+	  </Grid>
+  </Grid>
+	</UserControl>

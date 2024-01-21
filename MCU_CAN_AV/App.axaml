@@ -6,5 +6,39 @@
 
     <Application.Styles>
         <FluentTheme />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+		<Style Selector="TextBlock.h1">
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="VerticalAlignment" Value="Bottom"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="Foreground" Value="Black"/>
+		</Style>
+
+		<Style Selector="TextBlock.h2">
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="TextAlignment" Value="Right"/>
+			<Setter Property="Padding" Value="20"/>
+			<Setter Property="Foreground" Value="Black"/>
+		</Style>
+
+		<Style Selector="TextBlock.h3">
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="TextAlignment" Value="Right"/>
+			<Setter Property="Foreground" Value="Gray"/>
+		</Style>
+
+		<Style Selector="Border.h1">
+			<Setter Property="BorderThickness" Value="3"/>
+			<Setter Property="BorderBrush" Value="DimGray"/>
+			<Setter Property="Margin" Value="3"/>
+		</Style>
+		
     </Application.Styles>
 </Application>

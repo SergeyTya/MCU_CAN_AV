@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:lv="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
+        xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+		xmlns:vm="using:MCU_CAN_AV.ViewModels"
+		xmlns:cc="using:MCU_CAN_AV.CustomControls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MCU_CAN_AV.CustomControls.MetersControl"
+		x:DataType="vm:MetersViewModel"
+		x:CompileBindings="True"
+		Height="400"
+		Width="600"
+		>
+	<UserControl.DataContext>
+		<vm:MetersViewModel/>
+	</UserControl.DataContext>
+	<Grid ShowGridLines="True">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="160"></ColumnDefinition>
+			<ColumnDefinition Width="0.85*"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="0.8*"/>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="60"/>
+		</Grid.RowDefinitions>
+
+		<DataGrid
+			Name="DataGrid_Faults"
+			Grid.Column="0" Grid.Row="0"
+			Margin="10"
+			ItemsSource="{Binding Faults}"
+			AutoGenerateColumns="False" IsReadOnly="True"
+			GridLinesVisibility="All"
+			BorderThickness="1" BorderBrush="Gray">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Faults list"
+							   Binding="{Binding Name}"
+							   Width="2*" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<Grid Grid.Column="1" ShowGridLines="False" Background="Gray" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.5*"></ColumnDefinition>
+				<ColumnDefinition Width="0.5*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="0.01*"/>
+				<RowDefinition Height="50"/>
+				<RowDefinition Height="0.8*"/>
+			</Grid.RowDefinitions>
+			<!-- ROW 0-->
+			<Panel Grid.Column="0" Grid.Row="0" Name="Control1" Background="Red"/>
+			<Panel Grid.Column="1" Grid.Row="0" Name="Control2" Background="Red"/>
+			<!-- ROW 1-->
+			<TextBlock
+			Name="Label_Current"
+			Grid.Column="0"
+			Grid.Row="1"
+			Classes="h2" />
+
+			<TextBlock
+			Name="Label_Voltage"
+			Grid.Column="1"
+			Grid.Row="1"
+			Classes="h2" />
+			<!-- ROW 2-->
+			<lvc:PieChart
+				 VisualElements="{Binding VisualElements_trq}"
+				Name="PieChartTorque"
+				Grid.Column="0"
+				Grid.Row="2"
+				InitialRotation="-225"
+				MaxAngle="270"
+				MinValue="0"
+				MaxValue="200">
+			</lvc:PieChart>
+			<TextBlock
+				Name="Label_Torque"
+				Grid.Column="0"
+                Grid.Row="2"
+				Classes="h1"
+				/>
+			<Border Grid.Column="0" Grid.Row="2" Classes="h1"/>
+
+			<lvc:PieChart
+				VisualElements="{Binding VisualElements_spd}"
+				Name="PieChartSpeed"
+				Grid.Column="1"
+				Grid.Row="2"
+				InitialRotation="-225"
+				MaxAngle="270"
+				MinValue="0"
+				MaxValue="12">
+			</lvc:PieChart>
+			<TextBlock
+				Name="Label_Speed"
+				Grid.Column="1"
+				Grid.Row="2"
+				Classes="h1"
+			/>
+			<Border Grid.Column="1" Grid.Row="2" Classes="h1"/>
+		</Grid>
+
+		<cc:CustomSlider
+			Grid.Column="1"
+			Grid.Row="1"
+			Name="Slider_torque"
+			Min="-200"
+			Max="200"
+			LabelText="sdff"
+		/>
+		<cc:CustomSlider
+			Grid.Column="1"
+			Grid.Row="2"
+			Name="Slider_speed"
+			Min="-9000"
+			Max="9000"
+			LabelText="sdff"
+		/>
+	</Grid>
+
+</UserControl>
+
+

@@ -11,27 +11,6 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-
-        try {
-
-            var CAN = ICAN.Create(
-                    new ICAN.CANInitStruct(
-                 DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 100
-            ));
-
-
-            IDisposable listener = CAN.Start().Subscribe(
-            (_) => {
-                Debug.WriteLine(_.id);
-            });
-
-
-        } catch (ICAN.ICANException e) {
-            Debug.WriteLine(e);
-            //System.Environment.Exit(1);
-        }
-
-
-
+        this.DataContext = new MCU_CAN_AV.ViewModels.MainViewModel();
     }
 }

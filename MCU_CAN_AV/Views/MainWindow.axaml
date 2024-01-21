@@ -9,4 +9,5 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="MCU_CAN_AV">
         <views:MainView />
+	
 </Window>
