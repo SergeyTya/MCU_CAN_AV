@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using static MCU_CAN_AV.ViewModels.MetersViewModel;
 
 namespace MCU_CAN_AV.ViewModels;
 

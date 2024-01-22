@@ -9,7 +9,6 @@ using SkiaSharp;
 using Avalonia;
 using System.Reflection.Emit;
 using MCU_CAN_AV.ViewModels;
-using static MCU_CAN_AV.ViewModels.MetersViewModel;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System;

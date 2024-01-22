@@ -4,18 +4,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:lv="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-		xmlns:vm="using:MCU_CAN_AV.ViewModels"
 		xmlns:cc="using:MCU_CAN_AV.CustomControls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MCU_CAN_AV.CustomControls.MetersControl"
-		x:DataType="vm:MetersViewModel"
+	    x:DataType="cc:MetersControl"
 		x:CompileBindings="True"
 		Height="400"
 		Width="600"
 		>
-	<UserControl.DataContext>
-		<vm:MetersViewModel/>
-	</UserControl.DataContext>
+	
 	<Grid ShowGridLines="True">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="160"></ColumnDefinition>
@@ -37,7 +34,7 @@
 			BorderThickness="1" BorderBrush="Gray">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Faults list"
-							    Binding="{Binding }"
+							    Binding="{Binding .}"
 							   Width="2*" />
 			</DataGrid.Columns>
 		</DataGrid>
