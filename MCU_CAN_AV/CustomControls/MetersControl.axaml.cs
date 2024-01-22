@@ -6,45 +6,71 @@ using SkiaSharp;
 using Avalonia;
 using System.Reflection.Emit;
 using MCU_CAN_AV.ViewModels;
+using static MCU_CAN_AV.ViewModels.MetersViewModel;
+using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using System;
+using MCU_CAN_AV.Models;
+using System.Diagnostics;
+using System.Collections.Specialized;
+using System.Collections.Generic;
+using ReactiveUI;
 
 namespace MCU_CAN_AV.CustomControls
 {
     public partial class MetersControl : UserControl
     {
-
+   
         public static readonly StyledProperty<double> Angular1ValueProperty =
-            AvaloniaProperty.Register<MetersControl, double>("Angular1Value");
-        public static readonly StyledProperty<double> Angular2ValueProperty =
-            AvaloniaProperty.Register<MetersControl, double>("Angular2Value");
-        public static readonly StyledProperty<string> LabelMeter1ValueProperty =
-            AvaloniaProperty.Register<MetersControl, string>("LabelMeter1Value");
-        public static readonly StyledProperty<string> LabelMeter2ValueProperty =
-       AvaloniaProperty.Register<MetersControl, string>("LabelMeter2Value");
-
+           AvaloniaProperty.Register<MetersControl, double>("Angular1Value");
         public double Angular1Value
         {
             set => SetValue(Angular1ValueProperty, value);
             get => GetValue(Angular1ValueProperty);
         }
+
+        public static readonly StyledProperty<double> Angular2ValueProperty =
+            AvaloniaProperty.Register<MetersControl, double>("Angular2Value");
         public double Angular2Value
         {
             set => SetValue(Angular2ValueProperty, value);
             get => GetValue(Angular2ValueProperty);
         }
+
+        public static readonly StyledProperty<string> LabelMeter1ValueProperty =
+            AvaloniaProperty.Register<MetersControl, string>("LabelMeter1Value");
         public string LabelMeter1Value
         {
             set => SetValue(LabelMeter1ValueProperty, value);
             get => GetValue(LabelMeter1ValueProperty);
         }
+        public static readonly StyledProperty<string> LabelMeter2ValueProperty =
+            AvaloniaProperty.Register<MetersControl, string>("LabelMeter2Value");
         public string LabelMeter2Value
         {
             set => SetValue(LabelMeter2ValueProperty, value);
             get => GetValue(LabelMeter2ValueProperty);
         }
 
+
+        public static readonly StyledProperty<ObservableCollection<string>> FaultTableProperty =
+            AvaloniaProperty.Register<MetersControl, ObservableCollection<string>>("FaultTable");
+        public ObservableCollection<string> FaultTable
+        {
+            set => SetValue(FaultTableProperty, value);
+            get => GetValue(FaultTableProperty);
+        }
+
+        //ItemsSource="{Binding $parent[1].Faults}"
+        //   Binding="{Binding Name}"
+
         public MetersControl()
         {
             InitializeComponent();
+           
+           
+
+          //  Faults = new ObservableCollection<Fault>(new List<Fault>());
 
             this.PieChartTorque.Series = GaugeGenerator.BuildAngularGaugeSections(
                     new GaugeItem(100, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
@@ -81,8 +107,14 @@ namespace MCU_CAN_AV.CustomControls
             {
                 this.LabelMeter2.Text = LabelMeter2Value;
             }
-
-
+            if (change.Property.Name == "FaultTable")
+            {
+                // Bind data to dataGrid from property
+                if (DataGrid_Faults.ItemsSource != FaultTable)
+                {
+                    DataGrid_Faults.ItemsSource = FaultTable;
+                }
+            }
             base.OnPropertyChanged(change);
         }
     }

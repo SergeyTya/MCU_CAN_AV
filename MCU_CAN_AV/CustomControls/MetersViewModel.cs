@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace MCU_CAN_AV.ViewModels
 {
 
-    internal class MetersViewModel : ViewModelBase
+    public class MetersViewModel : ViewModelBase
     {
 
         public class Fault
@@ -23,7 +23,8 @@ namespace MCU_CAN_AV.ViewModels
                 this.Name = name;
             }
         }
-        public ObservableCollection<Fault> Faults { get; }
+       // public ObservableCollection<Fault> Faults { get; }
+
         public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_trq { get; set; }
         public NeedleVisual Needle_trq { get; set; }
 
@@ -34,14 +35,7 @@ namespace MCU_CAN_AV.ViewModels
         public MetersViewModel()
         {
             init_angular();
-            Faults = new ObservableCollection<Fault>(new List<Fault>());
-
-            //Label_Torque.Text = string.Format("Torque {0} %", 10.2);
-            //Label_Speed.Text = string.Format("Speed {0} krpm", 1.2);
-
-            //Label_Current.Text = string.Format("Current {0} A", 10.2);
-            //Label_Voltage.Text = string.Format("Voltage {0} %", 1.2);
-
+           // Faults = new ObservableCollection<Fault>(new List<Fault>());
         }
 
         void init_angular() {

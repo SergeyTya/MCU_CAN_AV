@@ -29,13 +29,13 @@
 			Name="DataGrid_Faults"
 			Grid.Column="0" Grid.Row="0"
 			Margin="10"
-			ItemsSource="{Binding Faults}"
-			AutoGenerateColumns="False" IsReadOnly="True"
+		
+			AutoGenerateColumns="True" IsReadOnly="True"
 			GridLinesVisibility="All"
 			BorderThickness="1" BorderBrush="Gray">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Faults list"
-							   Binding="{Binding Name}"
+						
 							   Width="2*" />
 			</DataGrid.Columns>
 		</DataGrid>

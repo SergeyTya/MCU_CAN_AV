@@ -38,7 +38,8 @@
 							Angular2Value="{Binding $parent.DataContext.Id}"
 							LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
 							LabelMeter2Value="{Binding $parent.DataContext.Id, StringFormat='Voltage {0} %'}"
-		   />
+							FaultTable="{Binding $parent.DataContext.Faults}"
+		   />			
 	  </Grid>
   </Grid>
 	</UserControl>
