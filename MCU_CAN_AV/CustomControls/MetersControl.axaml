@@ -57,13 +57,13 @@
 			<Panel Grid.Column="1" Grid.Row="0" Name="Control2" Background="Red"/>
 			<!-- ROW 1-->
 			<TextBlock
-			Name="Label_Current"
+			Name="LabelMeter1"
 			Grid.Column="0"
 			Grid.Row="1"
 			Classes="h2" />
 
 			<TextBlock
-			Name="Label_Voltage"
+			Name="LabelMeter2"
 			Grid.Column="1"
 			Grid.Row="1"
 			Classes="h2" />

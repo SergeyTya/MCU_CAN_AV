@@ -27,11 +27,18 @@
 			  <ColumnDefinition Width="1*"></ColumnDefinition>
 		  </Grid.ColumnDefinitions>
 		  <Grid.RowDefinitions>
-			  <RowDefinition Height="40*"/>
+			  <RowDefinition Height="10*"/>
+			  <RowDefinition Height="30*"/>
 			  <RowDefinition Height="60*"/>
 		  </Grid.RowDefinitions>
 		  <TextBlock Name="xxxx" Grid.Row="0" Text="{Binding $self.DataContext.Id, Mode=OneWay}"/>
 		  <cc:CustomSlider Grid.Row="1" LabelText="{Binding $parent.DataContext.Id}" />
+		  <cc:MetersControl Grid.Row="2"
+							Angular1Value="{Binding $parent.DataContext.Id}"
+							Angular2Value="{Binding $parent.DataContext.Id}"
+							LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
+							LabelMeter2Value="{Binding $parent.DataContext.Id, StringFormat='Voltage {0} %'}"
+		   />
 	  </Grid>
   </Grid>
 	</UserControl>
