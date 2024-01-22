@@ -2,6 +2,9 @@ using Avalonia.Controls;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Extensions;
+using LiveChartsCore.SkiaSharpView.Drawing;
+using LiveChartsCore.SkiaSharpView.VisualElements;
+using LiveChartsCore.VisualElements;
 using SkiaSharp;
 using Avalonia;
 using System.Reflection.Emit;
@@ -20,7 +23,12 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class MetersControl : UserControl
     {
-   
+        public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_trq { get; set; }
+        public NeedleVisual Needle_trq { get; set; }
+
+        public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_spd { get; set; }
+        public NeedleVisual Needle_spd { get; set; }
+
         public static readonly StyledProperty<double> Angular1ValueProperty =
            AvaloniaProperty.Register<MetersControl, double>("Angular1Value");
         public double Angular1Value
@@ -52,7 +60,6 @@ namespace MCU_CAN_AV.CustomControls
             get => GetValue(LabelMeter2ValueProperty);
         }
 
-
         public static readonly StyledProperty<ObservableCollection<string>> FaultTableProperty =
             AvaloniaProperty.Register<MetersControl, ObservableCollection<string>>("FaultTable");
         public ObservableCollection<string> FaultTable
@@ -61,14 +68,83 @@ namespace MCU_CAN_AV.CustomControls
             get => GetValue(FaultTableProperty);
         }
 
-        //ItemsSource="{Binding $parent[1].Faults}"
-        //   Binding="{Binding Name}"
+        public static readonly StyledProperty<string> Slider1LabelProperty =
+            AvaloniaProperty.Register<MetersControl, string>("Slider1Label");
+        public string Slider1Label
+        {
+            set  {
+                Slider1.LabelText = value;
+                SetValue(Slider1LabelProperty, value); 
+            }
+            get => GetValue(Slider1LabelProperty);
+        }
+
+        public static readonly StyledProperty<double> Slider1MaxlProperty =
+            AvaloniaProperty.Register<MetersControl, double>("Slider1Max");
+        public double Slider1Max
+        {
+            set
+            {
+                Slider1.Max = value;
+                SetValue(Slider1MaxlProperty, value);
+            }
+            get => GetValue(Slider1MaxlProperty);
+        }
+
+        public static readonly StyledProperty<double> Slider1MinlProperty =
+            AvaloniaProperty.Register<MetersControl, double>("Slider1Max");
+        public double Slider1Min
+        {
+            set
+            {
+                Slider1.Max = value;
+                SetValue(Slider1MinlProperty, value);
+            }
+            get => GetValue(Slider1MinlProperty);
+        }
+
+
+        public static readonly StyledProperty<string> Slider2LabelProperty =
+            AvaloniaProperty.Register<MetersControl, string>("Slider2Label");
+        public string Slider2Label
+        {
+            set
+            {
+                Slider2.LabelText = value;
+                SetValue(Slider2LabelProperty, value);
+            }
+            get => GetValue(Slider2LabelProperty);
+        }
+
+        public static readonly StyledProperty<double> Slider2MaxlProperty =
+        AvaloniaProperty.Register<MetersControl, double>("Slider1Max");
+        public double Slider2Max
+        {
+            set
+            {
+                Slider2.Max = value;
+                SetValue(Slider2MaxlProperty, value);
+            }
+            get => GetValue(Slider2MaxlProperty);
+        }
+
+        public static readonly StyledProperty<double> Slider2MinlProperty =
+            AvaloniaProperty.Register<MetersControl, double>("Slider1Max");
+        public double Slider2Min
+        {
+            set
+            {
+                Slider1.Max = value;
+                SetValue(Slider2MinlProperty, value);
+            }
+            get => GetValue(Slider2MinlProperty);
+        }
 
         public MetersControl()
         {
             InitializeComponent();
-           
-           
+
+            Init_angular();
 
           //  Faults = new ObservableCollection<Fault>(new List<Fault>());
 
@@ -91,12 +167,14 @@ namespace MCU_CAN_AV.CustomControls
 
             if (change.Property.Name == "Angular1Value")
             {
-                ((MetersViewModel)DataContext).Needle_trq.Value = Angular1Value;
+                // ((MetersViewModel)DataContext).Needle_trq.Value = Angular1Value;
+                Needle_trq.Value = Angular1Value;
                 this.Label_Torque.Text = string.Format("Torque {0} %", Angular1Value);
             }
             if (change.Property.Name == "Angular2Value")
             {
-                ((MetersViewModel)DataContext).Needle_spd.Value = Angular2Value;
+                // ((MetersViewModel)DataContext).Needle_spd.Value = Angular2Value;
+                Needle_spd.Value = Angular2Value;
                 this.Label_Speed.Text = string.Format("Speed {0} krpm", Angular2Value);
             }
             if (change.Property.Name == "LabelMeter1Value")
@@ -116,6 +194,49 @@ namespace MCU_CAN_AV.CustomControls
                 }
             }
             base.OnPropertyChanged(change);
+        }
+
+        void Init_angular()
+        {
+            this.PieChartTorque.Series = GaugeGenerator.BuildAngularGaugeSections(
+                 new GaugeItem(100, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
+                new GaugeItem(100, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
+            );
+
+            this.PieChartSpeed.Series = GaugeGenerator.BuildAngularGaugeSections(
+                    new GaugeItem(2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Blue); }),
+                    new GaugeItem(3, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
+                    new GaugeItem(4, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Yellow); }),
+                    new GaugeItem(3, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
+            );
+
+            Needle_trq = new NeedleVisual { Value = 45 };
+            Needle_spd = new NeedleVisual { Value = 3 };
+
+            VisualElements_trq = new VisualElement<SkiaSharpDrawingContext>[]
+            {
+                        new AngularTicksVisual{
+                            LabelsSize = 16,
+                            LabelsOuterOffset = 15,
+                            OuterOffset = 65,
+                            TicksLength = 20
+                        },
+                        Needle_trq
+            };
+
+            VisualElements_spd = new VisualElement<SkiaSharpDrawingContext>[]
+{
+                        new AngularTicksVisual{
+                            LabelsSize = 16,
+                            LabelsOuterOffset = 15,
+                            OuterOffset = 65,
+                            TicksLength = 20
+                        },
+                        Needle_spd
+            };
+
+            this.PieChartTorque.VisualElements = VisualElements_trq;
+            this.PieChartSpeed.VisualElements = VisualElements_spd;
         }
     }
 }

@@ -15,55 +15,55 @@ namespace MCU_CAN_AV.ViewModels
     public class MetersViewModel : ViewModelBase
     {
 
-        public class Fault
-        {
-            public string Name { get; set; }
-            public Fault(string name)
-            {
-                this.Name = name;
-            }
-        }
+        //public class Fault
+        //{
+        //    public string Name { get; set; }
+        //    public Fault(string name)
+        //    {
+        //        this.Name = name;
+        //    }
+        //}
        // public ObservableCollection<Fault> Faults { get; }
 
-        public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_trq { get; set; }
-        public NeedleVisual Needle_trq { get; set; }
+//        public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_trq { get; set; }
+//        public NeedleVisual Needle_trq { get; set; }
 
-        public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_spd { get; set; }
-        public NeedleVisual Needle_spd { get; set; }
+//        public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_spd { get; set; }
+//        public NeedleVisual Needle_spd { get; set; }
 
 
-        public MetersViewModel()
-        {
-            init_angular();
-           // Faults = new ObservableCollection<Fault>(new List<Fault>());
-        }
+//        public MetersViewModel()
+//        {
+//            init_angular();
+//           // Faults = new ObservableCollection<Fault>(new List<Fault>());
+//        }
 
-        void init_angular() {
+//        void init_angular() {
 
-            Needle_trq = new NeedleVisual { Value = 45 };
-            Needle_spd = new NeedleVisual { Value = 3 };
+//            Needle_trq = new NeedleVisual { Value = 45 };
+//            Needle_spd = new NeedleVisual { Value = 3 };
 
-            VisualElements_trq = new VisualElement<SkiaSharpDrawingContext>[]
-            {
-                new AngularTicksVisual{
-                    LabelsSize = 16,
-                    LabelsOuterOffset = 15,
-                    OuterOffset = 65,
-                    TicksLength = 20
-                },
-                Needle_trq
-            };
+//            VisualElements_trq = new VisualElement<SkiaSharpDrawingContext>[]
+//            {
+//                new AngularTicksVisual{
+//                    LabelsSize = 16,
+//                    LabelsOuterOffset = 15,
+//                    OuterOffset = 65,
+//                    TicksLength = 20
+//                },
+//                Needle_trq
+//            };
 
-            VisualElements_spd = new VisualElement<SkiaSharpDrawingContext>[]
-{
-                new AngularTicksVisual{
-                    LabelsSize = 16,
-                    LabelsOuterOffset = 15,
-                    OuterOffset = 65,
-                    TicksLength = 20
-                },
-                Needle_spd
-            };
-        }
+//            VisualElements_spd = new VisualElement<SkiaSharpDrawingContext>[]
+//{
+//                new AngularTicksVisual{
+//                    LabelsSize = 16,
+//                    LabelsOuterOffset = 15,
+//                    OuterOffset = 65,
+//                    TicksLength = 20
+//                },
+//                Needle_spd
+//            };
+//        }
     }
 }

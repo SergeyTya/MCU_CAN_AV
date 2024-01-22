@@ -32,13 +32,18 @@
 			  <RowDefinition Height="60*"/>
 		  </Grid.RowDefinitions>
 		  <TextBlock Name="xxxx" Grid.Row="0" Text="{Binding $self.DataContext.Id, Mode=OneWay}"/>
-		  <cc:CustomSlider Grid.Row="1" LabelText="{Binding $parent.DataContext.Id}" />
 		  <cc:MetersControl Grid.Row="2"
 							Angular1Value="{Binding $parent.DataContext.Id}"
 							Angular2Value="{Binding $parent.DataContext.Id}"
 							LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
 							LabelMeter2Value="{Binding $parent.DataContext.Id, StringFormat='Voltage {0} %'}"
 							FaultTable="{Binding $parent.DataContext.Faults}"
+							Slider1Label ="Speed, rpm"
+							Slider1Max="9000.0"
+							Slider1Min="-9000.0"
+							Slider2Label ="Torque, %"
+							Slider2Max="200.0"
+							Slider2Min="-200.0"
 		   />			
 	  </Grid>
   </Grid>
