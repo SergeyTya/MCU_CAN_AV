@@ -3,7 +3,12 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 
@@ -11,46 +16,63 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class CustomSlider : Panel
     {
+        BehaviorSubject<int> ValueSubject = new BehaviorSubject<int>(0);
 
+        public static readonly StyledProperty<IObservable<int>> ValueProperty =
+            AvaloniaProperty.Register<CustomSlider, IObservable<int>>("Value");
+        public IObservable<int> Value
+        {
+            set => SetValue(ValueProperty, value); 
+            get => GetValue(ValueProperty);
+        }
 
-        public static readonly StyledProperty<string> LabelTextProperty  =
-            AvaloniaProperty.Register<CustomSlider, string>("LabelText");
-
-
+        public static readonly StyledProperty<double> MinProperty =
+           AvaloniaProperty.Register<CustomSlider, double>("Min");
         public double Min
         {
             set
             {
                 slider.Minimum = value;
+                SetValue(MinProperty, value);
             }
+            get => GetValue(MinProperty);
         }
+
+        public static readonly StyledProperty<double> MaxProperty =
+            AvaloniaProperty.Register<CustomSlider, double>("Max");
         public double Max
         {
             set
             {
                 slider.Maximum = value;
+                SetValue(MaxProperty, value);
             }
+            get => GetValue(MaxProperty);
         }
 
+        public static readonly StyledProperty<string> LabelTextProperty =
+           AvaloniaProperty.Register<CustomSlider, string>("LabelText");
         public string LabelText
         {
-            set
-            {
-                SetValue(LabelTextProperty, value);
-            }
-
-            get
-            {
-                return GetValue(LabelTextProperty);
-            }
+            set =>SetValue(LabelTextProperty, value);
+            get => GetValue(LabelTextProperty);
         }
 
 
         public CustomSlider()
         {
+            
             InitializeComponent();
+
             textbox.TextChanged += Textbox_TextChanged;
             textbox.KeyUp += Textbox_KeyUp;
+
+            this.Value = ValueSubject; 
+            slider.ValueChanged += (_,__) => {
+                /* Value.Add(slider.Value);*/
+                ValueSubject.OnNext((int) slider.Value); 
+               
+            };
         }
 
         private void Textbox_KeyUp(object? sender, Avalonia.Input.KeyEventArgs e)

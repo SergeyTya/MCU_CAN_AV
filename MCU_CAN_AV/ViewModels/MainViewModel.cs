@@ -1,5 +1,7 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia;
+using Avalonia.Threading;
 using MCU_CAN_AV.Can;
+using MCU_CAN_AV.CustomControls;
 using MCU_CAN_AV.Models;
 using Microsoft.VisualBasic;
 using ReactiveUI;
@@ -12,7 +14,11 @@ namespace MCU_CAN_AV.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    public delegate void MyDelegate();
+    public IObservable<int> slider_speed_observer;
+    int slider_speed;
+
+    
+
     public string Greeting => "Welcome to Avalonia!";
 
     public string _id;
@@ -33,6 +39,7 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+
         Faults = new ObservableCollection<string>(new List<string>());
         var tester = new tester();
 
@@ -48,6 +55,17 @@ public class MainViewModel : ViewModelBase
                 if (this.Faults.Count > 10) this.Faults.Clear();
             });
         });
+
+        if (slider_speed_observer != null) {
+            slider_speed_observer.Subscribe(
+        //x => slider_speed = x
+            (_) => {
+            Debug.WriteLine("get slider" + _);
+        }
+        );
+
+        }
+
     }
 
     void Update(ICAN.RxTxCanData data) {

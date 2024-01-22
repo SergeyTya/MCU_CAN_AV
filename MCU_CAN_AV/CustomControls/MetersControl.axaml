@@ -104,12 +104,29 @@
 			Grid.Column="1"
 			Grid.Row="1"
 			Name="Slider1"
+			
 		/>
 		<cc:CustomSlider
 			Grid.Column="1"
 			Grid.Row="2"
 			Name="Slider2"
+			
 		/>
+
+		<TextBlock
+
+			Grid.Column="0"
+			Grid.Row="1"
+			Text="{Binding #Slider1.Value^, Mode=OneWay}"
+			
+		/>
+		<TextBlock
+			Grid.Column="0"
+			Grid.Row="2"
+			Text="{Binding #Slider2.Value^, Mode=OneWay}"
+			
+		/>
+		
 	</Grid>
 
 </UserControl>

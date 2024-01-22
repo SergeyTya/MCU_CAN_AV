@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using MCU_CAN_AV.Can;
+using MCU_CAN_AV.ViewModels;
 using System;
 using System.Diagnostics;
 
@@ -11,6 +12,5 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        this.DataContext = new MCU_CAN_AV.ViewModels.MainViewModel();
     }
 }

@@ -22,6 +22,15 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class MetersControl : UserControl
     {
+
+        public static readonly StyledProperty<IObservable<int>> Slider1ValueProperty =
+            AvaloniaProperty.Register<CustomSlider, IObservable<int>>("Slider1Value");
+        public IObservable<int> Slider1Value
+        {
+            set => SetValue(Slider1ValueProperty, value);
+            get => GetValue(Slider1ValueProperty);
+        }
+
         public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_trq { get; set; }
         public NeedleVisual Needle_trq { get; set; }
 
@@ -96,7 +105,7 @@ namespace MCU_CAN_AV.CustomControls
         {
             set
             {
-                Slider1.Max = value;
+                Slider1.Min = value;
                 SetValue(Slider1MinlProperty, value);
             }
             get => GetValue(Slider1MinlProperty);
@@ -133,7 +142,7 @@ namespace MCU_CAN_AV.CustomControls
         {
             set
             {
-                Slider1.Max = value;
+                Slider2.Min = value;
                 SetValue(Slider2MinlProperty, value);
             }
             get => GetValue(Slider2MinlProperty);
@@ -142,6 +151,8 @@ namespace MCU_CAN_AV.CustomControls
         public MetersControl()
         {
             InitializeComponent();
+
+            Slider1Value = Slider1.Value;
 
             Init_angular();
 

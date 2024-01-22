@@ -6,12 +6,18 @@
 			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MCU_CAN_AV.Views.MainView"
-             x:DataType="vm:MainViewModel">
+             x:DataType="vm:MainViewModel"
+			 >
   <Design.DataContext>
     <!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
+	
+	<UserControl.DataContext>
+		<vm:MainViewModel/>
+	</UserControl.DataContext>
+
 
   <Grid>
 	  <Grid.ColumnDefinitions>
@@ -31,8 +37,9 @@
 			  <RowDefinition Height="30*"/>
 			  <RowDefinition Height="60*"/>
 		  </Grid.RowDefinitions>
-		  <TextBlock Name="xxxx" Grid.Row="0" Text="{Binding $self.DataContext.Id, Mode=OneWay}"/>
+		  <TextBlock Name="xxxx" Grid.Row="0" Text="{Binding #Meters.Slider1Value^, Mode=OneWay}"/>
 		  <cc:MetersControl Grid.Row="2"
+							Name="Meters"
 							Angular1Value="{Binding $parent.DataContext.Id}"
 							Angular2Value="{Binding $parent.DataContext.Id}"
 							LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
@@ -44,6 +51,7 @@
 							Slider2Label ="Torque, %"
 							Slider2Max="200.0"
 							Slider2Min="-200.0"
+							
 		   />			
 	  </Grid>
   </Grid>
