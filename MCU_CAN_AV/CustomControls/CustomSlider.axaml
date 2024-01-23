@@ -6,10 +6,6 @@
              x:Class="MCU_CAN_AV.CustomControls.CustomSlider"
 			 xmlns:vm="using:MCU_CAN_AV.CustomControls"
 			 >
-	<UserControl.DataContext>
-		<vm:CustomSliderViewModel/>
-	</UserControl.DataContext>
-	
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="1*"></ColumnDefinition>
@@ -36,8 +32,6 @@
 			VerticalAlignment="Center"
 			Width="80"
 			/>
-		<!-- Text="{TemplateBinding LabelText}"   -->
-		<!-- Text="{Binding LabelText, RelativeSource={RelativeSource TemplatedParent}}" -->
 		<TextBlock
 			Grid.Column="0"
 			Name="label"

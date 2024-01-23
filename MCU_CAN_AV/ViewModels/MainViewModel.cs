@@ -9,17 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace MCU_CAN_AV.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
     public IObservable<int> slider_speed_observer;
-    int slider_speed;
 
-    
+    public int slider_speed;
+    public int slider_torque;
 
-    public string Greeting => "Welcome to Avalonia!";
 
     public string _id;
     public string? Id
@@ -55,6 +55,8 @@ public class MainViewModel : ViewModelBase
                 if (this.Faults.Count > 10) this.Faults.Clear();
             });
         });
+
+        
 
         if (slider_speed_observer != null) {
             slider_speed_observer.Subscribe(

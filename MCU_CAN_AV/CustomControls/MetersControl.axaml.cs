@@ -31,6 +31,15 @@ namespace MCU_CAN_AV.CustomControls
             get => GetValue(Slider1ValueProperty);
         }
 
+
+        public static readonly StyledProperty<IObservable<int>> Slider2ValueProperty =
+            AvaloniaProperty.Register<CustomSlider, IObservable<int>>("Slider2Value");
+        public IObservable<int> Slider2Value
+        {
+            set => SetValue(Slider2ValueProperty, value);
+            get => GetValue(Slider2ValueProperty);
+        }
+
         public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements_trq { get; set; }
         public NeedleVisual Needle_trq { get; set; }
 
@@ -153,6 +162,7 @@ namespace MCU_CAN_AV.CustomControls
             InitializeComponent();
 
             Slider1Value = Slider1.Value;
+            Slider2Value = Slider2.Value;
 
             Init_angular();
 

@@ -51,7 +51,6 @@
 							Slider2Label ="Torque, %"
 							Slider2Max="200.0"
 							Slider2Min="-200.0"
-							
 		   />			
 	  </Grid>
   </Grid>
