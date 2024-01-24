@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.CustomControls;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Reflection.Metadata;
 
 namespace MCU_CAN_AV.ViewModels;
 
@@ -36,12 +38,20 @@ public class MainViewModel : ViewModelBase
 
 
     public ObservableCollection<string> Faults { get; }
+    public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; }
 
     public MainViewModel()
     {
 
         Faults = new ObservableCollection<string>(new List<string>());
+        TableOfControls = new ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter>(new List<MCU_CAN_AV.CustomControls.ControlTable.Parameter>());
+
+
         var tester = new tester();
+        MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type[] types = {
+            MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type.BUTTON,
+            MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type.LIST,
+            MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type.TEXT };
 
         IDisposable listener = tester.updater.Subscribe(
         (_) =>
@@ -53,6 +63,15 @@ public class MainViewModel : ViewModelBase
             Dispatcher.UIThread.Invoke(() => {
                 this.Faults.Add("fault"+_.id);
                 if (this.Faults.Count > 10) this.Faults.Clear();
+
+                if (this.TableOfControls.Count < 3) {
+
+                    TableOfControls.Add(new MCU_CAN_AV.CustomControls.ControlTable.Parameter(
+                        TableOfControls.Count,
+                        "hhh" + TableOfControls.Count,
+                        types[TableOfControls.Count]
+                        ));
+                }
             });
         });
 

@@ -9,7 +9,7 @@
         x:Class="MCU_CAN_AV.CustomControls.MetersControl"
 	    x:DataType="cc:MetersControl"
 		x:CompileBindings="True"
-		Height="350"
+		Height="410"
 		Width="600">
 	<Grid>
 		<Border Classes="h2"></Border>
@@ -41,6 +41,7 @@
 			<Grid Grid.Column="1" Grid.Row="0">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="0.8*"/>
+					<RowDefinition Height="60"/>
 					<RowDefinition Height="60"/>
 					<RowDefinition Height="60"/>
 				</Grid.RowDefinitions>
@@ -112,6 +113,7 @@
 					Grid.Column="0"
 					Grid.Row="2"
 					Name="Slider2"/>
+				<cc:ControlPanel Grid.Row="3" />
 			</Grid>
 		</Grid>
 	</Grid>

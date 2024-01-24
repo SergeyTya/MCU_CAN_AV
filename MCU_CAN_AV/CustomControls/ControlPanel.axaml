@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MCU_CAN_AV.CustomControls.ControlPanel"
+			 >
+	<Grid ShowGridLines="True">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="0.25*"/>
+			<RowDefinition Height="0.75*"/>
+		</Grid.RowDefinitions>
+		
+		<TextBlock Grid.Row="0" Name="label" Text="STATE FAULT" TextAlignment="Center" VerticalAlignment="Center"/>
+		
+ 		<Grid Grid.Row="1" Name="Grid_btn" ShowGridLines="True">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="70"></ColumnDefinition>
+				<ColumnDefinition Width="10"></ColumnDefinition>
+				<ColumnDefinition Width="70"></ColumnDefinition>
+				<ColumnDefinition Width="1*"></ColumnDefinition>
+				<ColumnDefinition Width="80"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+			<Button Grid.Column="4" Name="Start" Content="Start"  Margin="2" Width="70" />
+			<Button Grid.Column="2" Name="Stop" Content="Stop" Background="Red" Width="70" Margin="2"/>
+			<Button Grid.Column="0" Name="Reset" Content="Reset" Width="70" Margin="2"/>
+		</Grid>
+   </Grid>
+</UserControl>
