@@ -20,7 +20,7 @@
 	</UserControl.DataContext>
 
 
-  <Grid Name="Main_grid"  ShowGridLines="True">
+  <Grid Name="Main_grid"  ShowGridLines="False">
 	  <Grid.ColumnDefinitions>
 		  <ColumnDefinition Width="600"></ColumnDefinition>
 		  <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -29,16 +29,17 @@
 		  <RowDefinition Height="1*"/>
 	  </Grid.RowDefinitions>
 
-	  <Panel Grid.Column="1" Background="Green" IsVisible="True" Width="300"  >
-		  <cc:ControlTable TableSource="{Binding $parent.DataContext.TableOfControls}"/>
+	  <Panel Grid.Column="1" Background="Black" IsVisible="True" Width="500"  >
+		  <cc:ControlTable 
+			  TableSource="{Binding $parent.DataContext.TableOfControls}"
+			  Margin="1"
+			  />
 	  </Panel>
 	  
 
 
-	  <Grid Name="Grid_left" Grid.Column="0" ShowGridLines="True">
-		  <Panel Grid.Row="0" Background="Yellow" ></Panel>
-		  <Panel Grid.Row="1" Background="Blue" ></Panel>
-		  <Grid.ColumnDefinitions>
+	  <Grid Name="Grid_left" Grid.Column="0" ShowGridLines="False">
+				  <Grid.ColumnDefinitions>
 			  <ColumnDefinition Width="1*"></ColumnDefinition>
 		  </Grid.ColumnDefinitions>
 		  <Grid.RowDefinitions>

@@ -1,0 +1,117 @@
+[
+    {
+        "pos": 1,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 15000,
+        "sname": "Motor torque limit value",
+        "options": []
+    },
+    {
+        "pos": 1,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 15000,
+        "sname": "Motor torque",
+        "options": []
+    },
+    {
+        "pos": 1,
+        "len": 16,
+        "offset": 32,
+        "valoffset": 15000,
+        "sname": "Motor speed",
+        "options": []
+    },
+    {
+        "pos": 1,
+        "len": 2,
+        "offset": 48,
+        "valoffset": 0,
+        "sname": "Motor rotation direction",
+        "options": [ "stop", "ccw", "cw", "-" ]
+    },
+    {
+        "pos": 1,
+        "len": 2,
+        "offset": 50,
+        "valoffset": 0,
+        "sname": "Motor operation mode",
+        "options": [ "stop", "tourqe", "speed", "slip" ]
+    },
+    {
+        "pos": 1,
+        "len": 2,
+        "offset": 52,
+        "valoffset": 0,
+        "sname": "Total motor fault status",
+        "options": [ "-", "warning", "power limit", "fault" ]
+    },
+    {
+        "pos": 1,
+        "len": 1,
+        "offset": 54,
+        "valoffset": 0,
+        "sname": "MCU enable state",
+        "options": [ "disable", "enable" ]
+    },
+    {
+        "pos": 1,
+        "len": 1,
+        "offset": 56,
+        "valoffset": 0,
+        "sname": "Motor drive license",
+        "options": [ "not permit", "permit" ]
+    },
+    {
+        "pos": 1,
+        "len": 1,
+        "offset": 57,
+        "valoffset": 0,
+        "sname": "MCU power-off license",
+        "options": [ "not permit", "permit" ]
+    },
+    {
+        "pos": 2,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 0,
+        "scale": 0.1,
+        "sname": "Motor current",
+        "options": []
+    },
+    {
+        "pos": 2,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 0,
+        "scale": 0.1,
+        "sname": "Motor voltage",
+        "options": []
+    },
+    {
+        "pos": 2,
+        "len": 16,
+        "offset": 32,
+        "valoffset": 40,
+        "scale": 0.1,
+        "sname": "Dc voltage",
+        "options": []
+    },
+    {
+        "pos": 2,
+        "len": 8,
+        "offset": 48,
+        "valoffset": 40,
+        "sname": "Motor temp",
+        "options": []
+    },
+    {
+        "pos": 2,
+        "len": 8,
+        "offset": 56,
+        "valoffset": 40,
+        "sname": "MCU temp",
+        "options": []
+    }
+]

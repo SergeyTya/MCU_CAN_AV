@@ -1,8 +1,16 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Data.Core;
+using Avalonia.DesignerSupport.Remote;
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
+using MCU_CAN_AV.ViewModels;
+using MCU_CAN_AV.Views;
+using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -12,46 +20,60 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class ControlTable : UserControl
     {
-
-        public class Parameter
-        {
-            public enum Type{ 
-                BUTTON = 0,
-                LIST,
-                TEXT
-            };
-            public Parameter(int id, string descript, Type type)
-            {
-                Id = id;
-                Description = descript;
-                this.type = type;
-            }
-
-            public int Id { get; set; }
-            public string Description { get; set; }
-
-           public Type type { get; set; }
-
-        }
-
         public static readonly StyledProperty<ObservableCollection<Parameter>> TableSourceProperty =
              AvaloniaProperty.Register<ControlTable, ObservableCollection<Parameter>>("TableSource");
+
         public ObservableCollection<Parameter> TableSource
         {
             set => SetValue(TableSourceProperty, value);
             get => GetValue(TableSourceProperty);
         }
 
+        public partial class Parameter : ObservableObject
+        {
+            public enum Type{ 
+                BOOL = 0,
+                LIST,
+                TEXT
+            };
+            public Parameter(string id, string descript, Type type= Type.TEXT, List<string>? items = null)
+            {
+                Id = id;
+                Description = descript;
+                this.type = type;
+                this.items = items;
+            }
+
+            public int row;
+
+            public string Id { get; set; }
+            public string Description { get; set; }
+
+            public Type type { get; set; }
+
+            internal List<string> items;
+
+            [ObservableProperty]
+            private double _value;
+
+            internal  EventHandler onValueChanged;
+            public event EventHandler onValueChangedByUser
+            {
+                add
+                {
+                    lock (this) { onValueChanged = onValueChanged + value; }
+                }
+                remove
+                {
+                    lock (this) { onValueChanged = onValueChanged - value; }
+                }
+            }
+        }
+
         public ControlTable()
         {
             InitializeComponent();
             Init_table();
-
-
-          //  TableSource.CollectionChanged += TableSource_CollectionChanged;
-
-
-
         }
         int row_cnt = 1;
         private void TableSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -84,80 +106,173 @@ namespace MCU_CAN_AV.CustomControls
             }
         }
 
+        void Add_border(int row, int col, Panel Parent)
+        {
+            int th_top = 1;
+            int th_left = 1;
+            if (row != 0) th_top = 0;
+            if (col != 0) th_left = 0;
+            Border bdr = new Border();
+            bdr.BorderThickness = new Thickness(th_left, th_top, 1,1);
+           // bdr.BorderThickness = new Thickness(0, 0, 0, 0);
+            bdr.BorderBrush = new SolidColorBrush(Colors.Gray);
+            bdr.SetValue(Avalonia.Controls.Grid.ColumnProperty, col);
+            bdr.SetValue(Avalonia.Controls.Grid.RowProperty, row);
+            Parent.Children.Add(bdr);
+
+        }
+
+        Panel newTextblokCell(string Text, Control Parent , int row, int col) {
+
+            ((Grid)Parent).RowDefinitions.Add(new RowDefinition(new GridLength(0.13, GridUnitType.Auto)));
+
+            TextBlock header = new TextBlock
+            {
+                Text = Text,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+            };
+            var panel = new Panel
+            {
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch
+            };
+            panel.Children.Add(header);
+            panel.SetValue(Avalonia.Controls.Grid.ColumnProperty, col);
+            panel.SetValue(Avalonia.Controls.Grid.RowProperty, row);
+            ((Grid) Parent).Children.Add(panel);
+            Add_border(row, col, panel);
+
+            return panel;
+        }
+
         string[] headers = { "Id", "Description", "Value" };
-        int[] headers_width = { 30, 140, 70 };
+
 
         void Init_table() {
             Grid_main.ColumnDefinitions.Clear();
             Grid_main.RowDefinitions.Clear();
             Grid_main.Children.Clear(); 
 
-            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(0.13, GridUnitType.Star)));
-            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(0.53, GridUnitType.Star)));
-            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(0.33, GridUnitType.Star)));
-            Grid_main.RowDefinitions.Add(new RowDefinition(new GridLength(0.13, GridUnitType.Auto)));
-
+            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(0.20, GridUnitType.Star)));
+            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(0.60, GridUnitType.Star)));
+            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(0.20, GridUnitType.Star)));
+           
 
             for (int i = 0; i < 3; i++)
             {
-                TextBlock header = new TextBlock();
-                header.Text = headers[i];
-                header.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                header.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right;
-                header.Width = headers_width[i];
-                header.SetValue(Avalonia.Controls.Grid.ColumnProperty, i);
-                header.SetValue(Avalonia.Controls.Grid.RowProperty, 0);
-                Grid_main.Children.Add(header);
-                Add_border(0, i);
+               Add_column_header(headers[i], Grid_main, 0, i);
+               
             }
         }
 
-        void Add_border(int row, int collumn) {
-            Border bdr = new Border();
-            bdr.BorderThickness = new Thickness(1);
-            bdr.BorderBrush = new SolidColorBrush(Colors.White);
-            bdr.SetValue(Avalonia.Controls.Grid.ColumnProperty, collumn);
-            bdr.SetValue(Avalonia.Controls.Grid.RowProperty, row);
-            Grid_main.Children.Add(bdr);
+        void Add_column_header(string Text,  Grid Parent, int row, int col) {
+            Grid_main.RowDefinitions.Add(new RowDefinition(new GridLength(30, GridUnitType.Pixel)));
+            var panel =  newTextblokCell(Text, Parent, row, col);
+
+            panel.Background = new SolidColorBrush(Colors.Black);   
+
+            TextBlock tb = (TextBlock)panel.Children[0];
+            Border bdr = (Border)panel.Children[1];
+
+            tb.Foreground = new SolidColorBrush(Colors.Gray);
+            bdr.BorderBrush = new SolidColorBrush(Colors.Gray);
+
+            int th_left = 1;
+            if (col != 0) th_left = 0;
+            bdr.BorderThickness = new Thickness(th_left, 0, 1, 0);
 
         }
 
-        void Add_row(Parameter param,int row) {
-            Grid_main.RowDefinitions.Add(new RowDefinition(new GridLength(0.13, GridUnitType.Auto)));
-            TextBlock id = new TextBlock();
-            id.Text = param.Id.ToString();
-            id.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-            id.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right;
-            id.Width = headers_width[0];
-            id.SetValue(Avalonia.Controls.Grid.ColumnProperty, 0);
-            id.SetValue(Avalonia.Controls.Grid.RowProperty, row);
-            Grid_main.Children.Add(id);
-            Add_border(row, 0);
-            TextBlock desc = new TextBlock();
-            desc.Text = param.Description.ToString();
-            desc.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-            desc.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right;
-            desc.Width = headers_width[1];
-            desc.SetValue(Avalonia.Controls.Grid.ColumnProperty, 1);
-            desc.SetValue(Avalonia.Controls.Grid.RowProperty, row);
-            Grid_main.Children.Add(desc);
-            Add_border(row, 1);
+        void Add_row(Parameter param, int row) {
+            param.row = row;
 
+            newTextblokCell(param.Id,                     Grid_main, row, 0);
+            newTextblokCell(param.Description.ToString(),  Grid_main, row, 1);
+
+            var panel = new DockPanel();
             Control temp = new Control();
 
+            Binding binding = new Binding
+            {
+                Path = "Value",
+                Source = param,
+                Mode = BindingMode.OneWay
+            };
+
             switch (param.type) {
-                case Parameter.Type.BUTTON:
-                    temp = new Button();
-                    ((Button)temp).Content = "set";
+                case Parameter.Type.BOOL:
+                    
+                    panel = new DockPanel
+                    {
+                      
+                    };
+
+                    var item0 = new CheckBox {
+                        [!CheckBox.IsCheckedProperty] = binding,
+                        Margin = new Thickness(10,0,0,0),
+                        
+                    };
+
+                    item0.IsCheckedChanged += (_, __) =>
+                    {
+                        param.onValueChanged.Invoke(item0.IsChecked, EventArgs.Empty);
+                    };
+
+                    panel.Children.Add(item0);
+
+                    temp = panel;
 
                     break;
+
                 case Parameter.Type.TEXT:
-                    temp = new TextBox();
+
+                    temp = new TextBox {
+                        [!TextBox.TextProperty] = binding,
+                        Margin = new Thickness (1,1,1,1),
+                    };
+                    temp.KeyUp += (_,__) => { // set new value
+
+                        Action undo = () => {
+                            ((TextBox)_).Undo();
+                           while(true)
+                           {
+                                if (((TextBox)_).Text != null) { ((TextBox)_).Undo(); }
+                                else {
+                                ((TextBox)_).Redo();
+                                break;
+                             }
+                           }
+                        };
+
+                        if (__.Key == Avalonia.Input.Key.Escape)
+                        {
+                            undo();
+                        }
+                        if (__.Key != Avalonia.Input.Key.Enter) return;
+
+                        double value = 0;
+                        bool res = double.TryParse(((TextBox)_).Text, out value );
+                        if(!res) undo();
+                        if (param.onValueChanged != null)
+                            param.onValueChanged.Invoke(value, EventArgs.Empty);
+                    };
                     break;
+
                 case Parameter.Type.LIST:
-                    temp = new ComboBox();
-                    ((ComboBox)temp).Items.Add("1");
-                    ((ComboBox)temp).Items.Add("2");
+                    var item1 = new ComboBox {
+                        [!ComboBox.SelectedIndexProperty] = binding,
+                    };
+
+                    foreach (var item in param.items) {
+                        item1.Items.Add(item);
+                    }
+
+                    item1.DropDownClosed += (_, __) =>
+                    {
+                        if (item1.SelectedIndex < 0) return;
+                        param.onValueChanged.Invoke(item1.SelectedIndex, EventArgs.Empty);
+                    };
+                    temp = item1;
                     break;
                 default:
                     break;
@@ -165,26 +280,23 @@ namespace MCU_CAN_AV.CustomControls
 
             temp.SetValue(Avalonia.Controls.Grid.ColumnProperty, 2);
             temp.SetValue(Avalonia.Controls.Grid.RowProperty, row);
-            temp.Width = headers_width[2];
+          
             Grid_main.Children.Add(temp);
-            Add_border(row, 2);
+            Add_border(row, 2, (Panel)Grid_main);
         }
 
+        bool TableSource_init = false;
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             var new_value = change.NewValue;
 
             if (change.Property.Name == "TableSource")
             {
-                // Bind data to dataGrid from property
-                if (Table.ItemsSource != TableSource)
-                {
-                   Table.ItemsSource = TableSource;
-                   TableSource.CollectionChanged += TableSource_CollectionChanged;
-                }
+                if (!TableSource_init) {
+                    TableSource.CollectionChanged += TableSource_CollectionChanged;
+                    TableSource_init = true;
+                } 
             }
-
-
 
             base.OnPropertyChanged(change);
         }

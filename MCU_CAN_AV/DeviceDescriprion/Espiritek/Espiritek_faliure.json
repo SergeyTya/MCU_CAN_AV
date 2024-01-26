@@ -1,0 +1,23 @@
+[
+    {"adr":0  , "name":"Hardware driver"},
+    {"adr":1  , "name":"Hardware overcurrent fault"},
+    {"adr":2  , "name":"Zero offset fault"},
+    {"adr":3  , "name":"Fan failure"},
+    {"adr":4  , "name":"Temperature difference failure"},
+    {"adr":5  , "name":"AC Hall failure"},
+    {"adr":6  , "name":"Stall failure"},
+    {"adr":7  , "name":"Low voltage undervoltage fault"},
+    {"adr":8  , "name": "Software overcurrent fault"},
+    {"adr":9  , "name":"Hardware overvoltage fault"},
+    {"adr":10 , "name":"Total hardware failure"},
+    {"adr":11 , "name":"Bus overvoltage fault"},
+    {"adr":12 , "name":"Busbar undervoltage fault"},
+    {"adr":13 , "name":"Module over temperature fault"},
+    {"adr":14 , "name":"Module over temperature warning"},
+    {"adr":15 , "name":"Overspeed fault"},
+    {"adr":16 , "name":"Reserved"},
+    {"adr":17 , "name":"Motor over temperature warning"},
+    {"adr":18 , "name":"Motor over temperature fault"},
+    {"adr":19 , "name":"CAN offline failure"},
+    {"adr":20 , "name":"Encoder failure"}
+]

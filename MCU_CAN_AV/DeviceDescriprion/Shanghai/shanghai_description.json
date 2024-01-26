@@ -1,0 +1,103 @@
+[
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 3000,
+        "sname": "target torque",
+        "scale": 0.1
+    },
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 20000,
+        "sname": "Speed, rpm",
+        "scale": 1
+    },
+    {
+        "CANID": "0x18F120D1",
+        "len": 16,
+        "RW": 0,
+        "offset": 32,
+        "valoffset": 3000,
+        "sname": "Actual torque, Nm",
+        "scale": 0.1
+    },
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 8,
+        "offset": 48,
+        "valoffset": 40,
+        "sname": "Motor temperature",
+        "scale": 1.0
+    },
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 8,
+        "offset": 56,
+        "valoffset": 40,
+        "sname": "MCU temperature",
+        "scale": 1.0
+    },
+
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 0,
+        "sname": "Bus voltage",
+        "scale": 0.1
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 1000,
+        "sname": "Bus Current",
+        "scale": 0.1
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 5,
+        "offset": 34,
+        "sname": "Feedback Mode",
+        "options": [ "closed tube", "torque", "speed", "zerro torque" ]
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 3,
+        "offset": 40,
+        "sname": "Fault level"
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 4,
+        "offset": 44,
+        "sname": "Cycle count"
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 1,
+        "offset": 56,
+        "sname": "Slope statu",
+        "options": [ "not on slope", "on slope" ]
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 4,
+        "offset": 56,
+        "sname": "Countdown to slope release"
+    }
+]

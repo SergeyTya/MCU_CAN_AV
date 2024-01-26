@@ -1,0 +1,146 @@
+[
+    {
+        "code": 1,
+        "name": "Bus overvoltage fault"
+    },
+    {
+        "code": 2,
+        "name": "Bus undervoltage fault"
+    },
+    {
+        "code": 3,
+        "name": "Output short circuit fault to ground"
+    },
+    {
+        "code": 4,
+        "name": "U-phase overcurrent fault"
+    },
+    {
+        "code": 5,
+        "name": "U phase current too small fault"
+    },
+    {
+        "code": 6,
+        "name": "U phase current zero drift fault"
+    },
+    {
+        "code": 7,
+        "name": "phase current is too large fault"
+    },
+    {
+        "code": 8,
+        "name": "V phase current too small fault"
+    },
+    {
+        "code": 9,
+        "name": "V phase current zero drift fault"
+    },
+    {
+        "code": 10,
+        "name": "W phase current is too large fault"
+    },
+    {
+        "code": 11,
+        "name": "W phase current too small fault"
+    },
+    {
+        "code": 12,
+        "name": "W phase current zero drift fault"
+    },
+    {
+        "code": 13,
+        "name": "Three-phase current unbalance fault"
+    },
+    {
+        "code": 14,
+        "name": "IGBT overheating"
+    },
+    {
+        "code": 15,
+        "name": "IGBT driver protection"
+    },
+    {
+        "code": 16,
+        "name": "Motor overspeed"
+    },
+    {
+        "code": 17,
+        "name": "motor overheating"
+    },
+    {
+        "code": 18,
+        "name": "motor stall"
+    },
+    {
+        "code": 19,
+        "name": "Resolver signal failure"
+    },
+    {
+        "code": 20,
+        "name": "Current Sensor Error Fault"
+    },
+    {
+        "code": 21,
+        "name": "Motor temperature sensor failure"
+    },
+    {
+        "code": 22,
+        "name": "Motor parameter identification failure fault"
+    },
+    {
+        "code": 23,
+        "name": "Motor Control Overshoot Fault"
+    },
+    {
+        "code": 24,
+        "name": "Motor speed sensor failure"
+    },
+    {
+        "code": 25,
+        "name": "CAN communication failure"
+    },
+    {
+        "code": 26,
+        "name": "current zero drift"
+    },
+    {
+        "code": 27,
+        "name": "Inconsistent zero position fault"
+    },
+    {
+        "code": 28,
+        "name": "Motor controller output phase failure"
+    },
+    {
+        "code": 29,
+        "name": "Controller overload fault"
+    },
+    {
+        "code": 30,
+        "name": "Controller over temperature fault"
+    },
+    {
+        "code": 31,
+        "name": "The temperature detection channel of the controller is disconnected"
+    },
+    {
+        "code": 32,
+        "name": "Controller parameter reading and writing failure"
+    },
+    {
+        "code": 33,
+        "name": "Low voltage power supply undervoltage fault"
+    },
+    {
+        "code": 34,
+        "name": "Low voltage power supply overvoltage fault"
+    },
+    {
+        "code": 35,
+        "name": "STGAP1AS driver chip failure"
+    },
+    {
+        "code": 36,
+        "name": "EEPROM storage exception"
+    }
+]

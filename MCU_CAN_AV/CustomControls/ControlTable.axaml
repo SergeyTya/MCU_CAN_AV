@@ -8,19 +8,10 @@
 			 x:DataType="cc:ControlTable"
 			 x:CompileBindings="True"
 			 >
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*"></ColumnDefinition>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="0.5*"/>
-			<RowDefinition Height="0.5*"/>
-		</Grid.RowDefinitions>
-		
-		<DataGrid Grid.Row="0" Name="Table" AutoGenerateColumns="True"></DataGrid>
-		<Grid Grid.Row="1" Name="Grid_main" ShowGridLines="False"> </Grid>
-		
-	</Grid>
+	<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible" Width="{Binding .}" Background="Black">
+		<Panel Margin="0,0,16,0" Background="DimGray" Width=" ">
+			<Grid  Name="Grid_main" ShowGridLines="False" VerticalAlignment="Stretch"> </Grid>
+		</Panel>
+	</ScrollViewer>
 
-	
 </UserControl>

@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using DynamicData;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.CustomControls;
+using MCU_CAN_AV.DeviceDescriprion;
 using MCU_CAN_AV.Models;
 using Microsoft.VisualBasic;
 using ReactiveUI;
@@ -36,22 +38,19 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    bool table_init = false;
 
     public ObservableCollection<string> Faults { get; }
     public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; }
 
     public MainViewModel()
     {
-
         Faults = new ObservableCollection<string>(new List<string>());
         TableOfControls = new ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter>(new List<MCU_CAN_AV.CustomControls.ControlTable.Parameter>());
 
+        DeviceDescriprion.DeviceDescriptionReader.Read();
 
         var tester = new tester();
-        MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type[] types = {
-            MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type.BUTTON,
-            MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type.LIST,
-            MCU_CAN_AV.CustomControls.ControlTable.Parameter.Type.TEXT };
 
         IDisposable listener = tester.updater.Subscribe(
         (_) =>
@@ -64,13 +63,38 @@ public class MainViewModel : ViewModelBase
                 this.Faults.Add("fault"+_.id);
                 if (this.Faults.Count > 10) this.Faults.Clear();
 
-                if (this.TableOfControls.Count < 3) {
+                if (!table_init)
+                {
+                    foreach (var el in DeviceDescriptionReader.ShanghaiDevice)
+                    {
+                        ControlTable.Parameter.Type type = ControlTable.Parameter.Type.TEXT;
+                        if (el.options != null)
+                        {
+                            type = ControlTable.Parameter.Type.LIST;
+                        }
 
-                    TableOfControls.Add(new MCU_CAN_AV.CustomControls.ControlTable.Parameter(
-                        TableOfControls.Count,
-                        "hhh" + TableOfControls.Count,
-                        types[TableOfControls.Count]
-                        ));
+                        var param = new MCU_CAN_AV.CustomControls.ControlTable.Parameter(
+                                     el.CANID,
+                                     el.sname,
+                                     items: el.options,
+                                     type: type
+                                     );
+                        param.Value = 0;
+                        param.onValueChangedByUser += (_, __) =>
+                        {
+
+                            Debug.WriteLine("Value " + Convert.ToDouble(_));
+                        };
+
+                        TableOfControls.Add(param);
+                    }
+
+                    table_init = true;
+                }
+                else {
+
+                    TableOfControls[3].Value = _.id;
+                    TableOfControls[10].Value = _.id;
                 }
             });
         });
