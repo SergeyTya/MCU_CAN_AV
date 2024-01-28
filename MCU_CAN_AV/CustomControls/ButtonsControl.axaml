@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="200"
+             x:Class="MCU_CAN_AV.CustomControls.ButtonsControl">
+  <Grid Grid.Column="0" Grid.Row="0" Margin="5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="30"/>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="60"/>
+					<RowDefinition Height="60"/>
+				</Grid.RowDefinitions>
+				<Panel Grid.Row="0"   Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+				<TextBlock 
+						   Name="label" 
+						   Text="Controls" 
+						   TextAlignment="Left" 
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Stretch"
+						   Margin="10,0,0,0"
+						   Foreground="Gray"
+						   FontSize="11"
+						   FontWeight="SemiBold"
+						   />
+				</Panel>
+
+				<Grid Grid.Column="0" Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.5*"></ColumnDefinition>
+						<ColumnDefinition Width="0.5*"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<Button Grid.Column="0" Name="Start" Content="Start" Margin="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+					<Button Grid.Column="1" Name="Reset" Content="Reset" Margin="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+				</Grid>
+				<Button Grid.Row="3" 
+						Name="Stop" 
+						Content="Stop" 
+						Background="Red" 
+						Margin="2" 
+						HorizontalAlignment="Stretch" 
+						VerticalAlignment="Stretch"
+						/>
+				
+				
+			</Grid>
+
+</UserControl>

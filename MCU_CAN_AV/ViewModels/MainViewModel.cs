@@ -77,7 +77,8 @@ public class MainViewModel : ViewModelBase
                                      el.CANID,
                                      el.sname,
                                      items: el.options,
-                                     type: type
+                                     type: type,
+                                     writeEnable: el.RW
                                      );
                         param.Value = 0;
                         param.onValueChangedByUser += (_, __) =>

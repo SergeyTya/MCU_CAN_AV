@@ -49,6 +49,38 @@
 			<Setter Property="BorderBrush" Value="Red"/>
 			<Setter Property="Margin" Value="0"/>
 		</Style>
+
+		<Style Selector="Border.h4">
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="#303030"/>
+			<Setter Property="Margin" Value="0"/>
+		</Style>
+
+		<Style Selector="Panel.Black1">
+			<Setter Property="Background" Value="#1E1E1E"/>
+			<Setter Property="Margin" Value="0"/>
+		</Style>
+		
+		<Style Selector="Panel.Black11">
+			<Setter Property="Background" Value="#1E1E1E"/>
+			<Setter Property="Margin" Value="3"/>
+		</Style>
+		
+		<Style Selector="Panel.Black2">
+			<Setter Property="Background" Value="#2E2E2E"/>
+			<Setter Property="Margin" Value="0"/>
+		</Style>
+
+		<Style Selector="Panel.Black21">
+			<Setter Property="Background" Value="#2E2E2E"/>
+			<Setter Property="Margin" Value="3"/>
+		</Style>
+
+
+		<Style Selector="Panel.Black3">
+			<Setter Property="Background" Value="#4D4D4D"/>
+			<Setter Property="Margin" Value="0"/>
+		</Style>
 		
     </Application.Styles>
 </Application>

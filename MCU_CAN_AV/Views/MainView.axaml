@@ -4,62 +4,53 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="900"
              x:Class="MCU_CAN_AV.Views.MainView"
              x:DataType="vm:MainViewModel"
-			
 			 >
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
-	
+		<vm:MainViewModel />
+	</Design.DataContext>
+
 	<UserControl.DataContext>
 		<vm:MainViewModel/>
 	</UserControl.DataContext>
 
 
-  <Grid Name="Main_grid"  ShowGridLines="False">
-	  <Grid.ColumnDefinitions>
-		  <ColumnDefinition Width="600"></ColumnDefinition>
-		  <ColumnDefinition Width="Auto"></ColumnDefinition>
-	  </Grid.ColumnDefinitions>
-	  <Grid.RowDefinitions>
-		  <RowDefinition Height="1*"/>
-	  </Grid.RowDefinitions>
-
-	  <Panel Grid.Column="1" Background="Black" IsVisible="True" Width="500"  >
-		  <cc:ControlTable 
-			  TableSource="{Binding $parent.DataContext.TableOfControls}"
-			  Margin="1"
-			  />
-	  </Panel>
-	  
+	<StackPanel >
 
 
-	  <Grid Name="Grid_left" Grid.Column="0" ShowGridLines="False">
-				  <Grid.ColumnDefinitions>
-			  <ColumnDefinition Width="1*"></ColumnDefinition>
-		  </Grid.ColumnDefinitions>
-		  <Grid.RowDefinitions>
-			  <RowDefinition Height="1*"/>
-			  <RowDefinition Height="Auto"/>
-		  </Grid.RowDefinitions>
-		  <cc:MetersControl Grid.Row="1"
-							Name="Meters"
-							Angular1Value="{Binding $parent.DataContext.Id}"
-							Angular2Value="{Binding $parent.DataContext.Id}"
-							LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
-							LabelMeter2Value="{Binding $parent.DataContext.Id, StringFormat='Voltage {0} %'}"
-							FaultTable="{Binding $parent.DataContext.Faults}"
-							Slider1Label ="Speed, rpm"
-							Slider1Max="9000.0"
-							Slider1Min="-9000.0"
-							Slider2Label ="Torque, %"
-							Slider2Max="200.0"
-							Slider2Min="-200.0"
-		   />			
-	  </Grid>
-  </Grid>
-	</UserControl>
+		<Grid Name="Grid_left"
+			
+			  ShowGridLines="True"
+			  HorizontalAlignment="Left"
+			  VerticalAlignment="Top">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<cc:MetersControl Grid.Row="0"
+							  Width="700"
+							  Height="400"
+							  Name="Meters"
+							  Angular1Value="{Binding $parent.DataContext.Id}"
+							  Angular2Value="{Binding $parent.DataContext.Id}"
+							  LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
+							  LabelMeter2Value="{Binding $parent.DataContext.Id, StringFormat='Voltage {0} %'}"
+							  FaultTable="{Binding $parent.DataContext.Faults}"
+							  Slider1Label ="Speed, rpm"
+							  Slider1Max="9000.0"
+							  Slider1Min="-9000.0"
+							  Slider2Label ="Torque, %"
+							  Slider2Max="200.0"
+							  Slider2Min="-200.0"
+		   />
+		</Grid>
+
+	</StackPanel>
+</UserControl>
