@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection.Metadata;
 
 namespace MCU_CAN_AV.ViewModels;
@@ -31,26 +33,67 @@ public class MainViewModel : ViewModelBase
 
     bool table_init = false;
 
-    public ObservableCollection<string> Faults { get; }
-    public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; }
+    public ObservableCollection<string> Faults { get; } = new();
+    public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; } = new();
 
 
-    bool _isVisible1 = false;
-    bool isVisible1 { get { return _isVisible1; } set { this.RaiseAndSetIfChanged(ref _isVisible1, value); } }
 
-    bool _isVisible2 = false;
-    bool isVisible2 { get { return _isVisible2; } set { this.RaiseAndSetIfChanged(ref _isVisible2, value); } }
+
+    public ObservableCollection<SplitPanelListItemTemplate> SplitPanelItems { get; } = new(
+        new List<SplitPanelListItemTemplate> {
+            new SplitPanelListItemTemplate("1"),
+            new SplitPanelListItemTemplate("2")
+        }
+    );
+
+
+    bool _ivis1 = true;
+    public bool ivis1 { get { return _ivis1; } set { this.RaiseAndSetIfChanged(ref _ivis1, value); } } 
+
+    bool _ivis2 = false;
+    public bool ivis2 { get { return _ivis2; } set { this.RaiseAndSetIfChanged(ref _ivis2, value); } }
+
+    SplitPanelListItemTemplate _SplitPaneSelectedListItem;
+    public SplitPanelListItemTemplate SplitPaneSelectedListItem { get => _SplitPaneSelectedListItem;
+        set {
+            this.RaiseAndSetIfChanged(ref _SplitPaneSelectedListItem, value);
+            if (_SplitPaneSelectedListItem.Label == "1")
+            {
+                ivis1 = true;
+                ivis2 = false;
+
+            }
+            else
+            if (_SplitPaneSelectedListItem.Label == "2")
+            {
+                ivis1 = false;
+                ivis2 = true;
+
+            }
+
+            foreach (var item in SplitPanelItems) {
+                if (item == SplitPaneSelectedListItem)
+                {
+                    ((BehaviorSubject<bool>)item.Visible).OnNext(true);
+                }
+                else {
+                    ((BehaviorSubject<bool>)item.Visible).OnNext(false);
+                }
+            }
+
+        } }
 
 
 
     public MainViewModel()
     {
-        Faults = new ObservableCollection<string>(new List<string>());
-        TableOfControls = new ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter>(new List<MCU_CAN_AV.CustomControls.ControlTable.Parameter>());
-
         DeviceDescriprion.DeviceDescriptionReader.Read();
 
         var tester = new tester();
+
+        _SplitPaneSelectedListItem = SplitPanelItems[0];
+        ivis1 = true;
+        ivis2 = false;
 
         IDisposable listener = tester.updater.Subscribe(
         (_) =>
@@ -119,16 +162,14 @@ public class MainViewModel : ViewModelBase
 
     }
 
-    public void set_visible1() { 
-    
-        isVisible1 = true;
-        isVisible2 = false;
+    public void set_visible1() {
+
+      
     }
 
     public void set_visible2()
     {
 
-        isVisible2 = true;
-        isVisible1 = false;
+
     }
 }
