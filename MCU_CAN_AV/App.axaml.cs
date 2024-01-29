@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using MCU_CAN_AV.ViewModels;
 using MCU_CAN_AV.Views;
 
+
 namespace MCU_CAN_AV;
 
 public partial class App : Application
@@ -34,4 +35,5 @@ public partial class App : Application
 
         base.OnFrameworkInitializationCompleted();
     }
+
 }

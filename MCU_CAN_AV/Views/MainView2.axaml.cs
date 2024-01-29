@@ -4,6 +4,18 @@ using Avalonia;
 using MCU_CAN_AV.CustomControls;
 using System.Collections.Generic;
 using SkiaSharp;
+using MCU_CAN_AV.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Newtonsoft.Json.Linq;
+using System;
+
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
 
 namespace MCU_CAN_AV.Views
 {
@@ -50,7 +62,7 @@ namespace MCU_CAN_AV.Views
             setUserView();
         }
 
-        void setProfiView() {
+        public void setProfiView() {
             //Panel_console.IsVisible = true;
             //Panel_cntrl.IsVisible = true;
             //Panel_tbl.IsVisible = true;
@@ -58,7 +70,7 @@ namespace MCU_CAN_AV.Views
 
         }
 
-        void setUserView()
+        public void setUserView()
         {
             //Panel_console.IsVisible = false;
             //Panel_cntrl.IsVisible = true;

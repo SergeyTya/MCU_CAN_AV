@@ -30,8 +30,8 @@
 					<MenuItem Header="Controls" Click="Menuitem_view_Controls_Click"/>
 					<MenuItem Header="Console"  Click="Menuitem_view_Console_Click"/>
 					<Separator/>
-					<MenuItem Header="User view"  Click="Menuitem_view_User_Click"/>
-					<MenuItem Header="Profi view"  Click="Menuitem_view_Profi_Click"/>
+					<MenuItem Header="User view"   Command="{Binding set_visible1}"/>
+					<MenuItem Header="Profi view"  Command="{Binding set_visible2}"/>
 				</MenuItem>
 				<MenuItem Header="_Setup">
 					<MenuItem Header="Load from file"/>
@@ -48,7 +48,8 @@
 			</Menu>
 			<TextBlock/>
 		</DockPanel>
-
+		
+			
 		<Panel Grid.Row="1" Classes="Black1" VerticalAlignment="Stretch">
 			<Grid ShowGridLines="False">
 				<Grid.ColumnDefinitions>
@@ -102,13 +103,10 @@
 						<RowDefinition Height="1*"/>
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
-						
-					<!-- sdd88888888888888888888888 <v:EmptyPageView />  -->
 
-					<Panel>
-
-						
-						
+					<Panel  Grid.Column="1" Grid.Row="0">
+						<v:EmptyPageView IsVisible="{Binding isVisible1}"/>
+						<v:ControlTableView IsVisible="{Binding isVisible2}"/>
 					</Panel>
 					
 	

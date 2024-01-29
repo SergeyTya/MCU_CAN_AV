@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.CustomControls;
@@ -26,22 +27,21 @@ public class MainViewModel : ViewModelBase
 
 
     public string _id;
-    public string? Id
-    {
-        get
-        {
-            return _id;
-        }
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _id, value);
-        }
-    }
+    public string? Id { get{return _id;} set { this.RaiseAndSetIfChanged(ref _id, value);} }
 
     bool table_init = false;
 
     public ObservableCollection<string> Faults { get; }
     public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; }
+
+
+    bool _isVisible1 = false;
+    bool isVisible1 { get { return _isVisible1; } set { this.RaiseAndSetIfChanged(ref _isVisible1, value); } }
+
+    bool _isVisible2 = false;
+    bool isVisible2 { get { return _isVisible2; } set { this.RaiseAndSetIfChanged(ref _isVisible2, value); } }
+
+
 
     public MainViewModel()
     {
@@ -117,5 +117,18 @@ public class MainViewModel : ViewModelBase
     void Update(ICAN.RxTxCanData data) {
        
 
+    }
+
+    public void set_visible1() { 
+    
+        isVisible1 = true;
+        isVisible2 = false;
+    }
+
+    public void set_visible2()
+    {
+
+        isVisible2 = true;
+        isVisible1 = false;
     }
 }
