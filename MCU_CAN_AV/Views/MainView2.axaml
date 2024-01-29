@@ -16,10 +16,6 @@
 		<vm:MainViewModel />
 	</Design.DataContext>
 
-	<UserControl.DataContext>
-		<vm:MainViewModel/>
-	</UserControl.DataContext>
-
 
 	<Grid Grid.Row="0" >
 		<Grid.RowDefinitions>
@@ -107,8 +103,14 @@
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 						
-					<!-- sdd88888888888888888888888 -->
-					<v:EmptyPageView /> 
+					<!-- sdd88888888888888888888888 <v:EmptyPageView />  -->
+
+					<Panel>
+
+						
+						
+					</Panel>
+					
 	
 					<Panel Grid.Column="2" Grid.Row="0"  Classes="Black11">
 						<Border Classes="h4"/>
@@ -122,7 +124,7 @@
 							</Grid.RowDefinitions>
 							<ScrollViewer Grid.Row="0">
 								<Panel   Classes="Black11">
-									<cc:FaultsIndi  FaultTable="{Binding $parent[9].DataContext.Faults}"/>
+									<cc:FaultsIndi  FaultTable="{Binding Faults}"/>
 									<Border Classes="h4"/>
 								</Panel>
 							</ScrollViewer>
