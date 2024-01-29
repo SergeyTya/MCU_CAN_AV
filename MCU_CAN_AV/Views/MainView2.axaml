@@ -10,11 +10,18 @@
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="700"
              x:Class="MCU_CAN_AV.Views.MainView2"
 			 x:DataType="vm:MainViewModel"
+			 x:CompileBindings="False"
 			 >
 
 	<Design.DataContext>
 		<vm:MainViewModel />
 	</Design.DataContext>
+
+	<UserControl.Styles>
+		<Style Selector="ToggleButton.Split:checked /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Gray"/>
+		</Style>
+	</UserControl.Styles>
 
 
 	<Grid Grid.Row="0" >
@@ -78,28 +85,37 @@
 		<Panel Grid.Row="1"  Classes="Black1" VerticalAlignment="Stretch">
 			<SplitView
 				Classes="Black1"
-				CompactPaneLength="46"
+				CompactPaneLength="28"
 				DisplayMode="CompactInline"
-				OpenPaneLength="300" >
+				OpenPaneLength="150"
+				IsPaneOpen="{Binding #SplitViewToggleButton.IsChecked}"
+				>
 				<SplitView.Pane>
-					<StackPanel Orientation="Vertical"
+					<StackPanel 
+							Orientation="Vertical"
                             Spacing="5"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top">
-						<Button Content="-"/>
-						<ListBox Margin="2 0 -100 0" Padding="0" ItemsSource="{Binding SplitPanelItems}" SelectedItem="{Binding SplitPaneSelectedListItem}" >
+						<ToggleButton Name="SplitViewToggleButton" IsChecked="False" Classes="Split" HorizontalAlignment="Right">
+							<Panel>
+								<Border />
+								<TextBlock>x</TextBlock>
+							</Panel>
+						</ToggleButton>
+						<ListBox Margin="2 0 -100 0" Padding="0" SelectedIndex="0">
 							<ListBox.Styles>
 								<Style Selector="ListBoxItem">
 									<Setter Property="Padding" Value="12 8"></Setter>
 								</Style>
 							</ListBox.Styles>
-							<ListBox.ItemTemplate>
-								<DataTemplate DataType="{x:Type vm:SplitPanelListItemTemplate}">
-									<StackPanel Spacing="17" Orientation="Horizontal">
-										<TextBlock Text="{Binding Label}"  />
-									</StackPanel>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
+							<ListBoxItem Name="SplitViewListItem_0">
+								<StackPanel Orientation="Horizontal">
+									<Image /><TextBlock>C - Controls</TextBlock>	
+								</StackPanel>
+							</ListBoxItem>
+							<ListBoxItem Name="SplitViewListItem_1">
+								<TextBlock> S - Setups</TextBlock>
+							</ListBoxItem>
 						</ListBox>
 					</StackPanel>
 				</SplitView.Pane>
@@ -136,24 +152,10 @@
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<Panel Name="xxxxxPanel"  Grid.Column="1" Grid.Row="0">
-
-
-							<ListBox Background="Transparent"
-								 ItemsSource="{Binding SplitPanelItems}" >
-								<ListBoxItem IsVisible="False">
-									<v:ControlTableView Name="_ControlTableView" />
-								</ListBoxItem>
-										
-								<ListBoxItem  IsVisible="{Binding Visible^}">
-									<v:EmptyPageView Name="_EmptyPageView" IsVisible="{Binding Visible^}" />
-								</ListBoxItem>
-							</ListBox>
-							
-							<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-							<!--	<v:ControlTableView Name="_ControlTableView" IsVisible="{Binding ivis1}"/> -->
-						    <!--	<v:EmptyPageView Name="_EmptyPageView" IsVisible="{Binding ivis2}" /> -->
-							
+						<Panel Grid.Column="1" Grid.Row="0">
+							<!-- Split view content -->
+							<v:ControlTableView Name="_ControlTableView" IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/> 
+						    <v:EmptyPageView Name="_EmptyPageView" IsVisible="{Binding #SplitViewListItem_1.IsSelected}" />
 						</Panel>
 
 						<Panel Grid.Column="2" Grid.Row="0"  Classes="Black11">

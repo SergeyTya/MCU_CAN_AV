@@ -37,63 +37,11 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; } = new();
 
 
-
-
-    public ObservableCollection<SplitPanelListItemTemplate> SplitPanelItems { get; } = new(
-        new List<SplitPanelListItemTemplate> {
-            new SplitPanelListItemTemplate("1"),
-            new SplitPanelListItemTemplate("2")
-        }
-    );
-
-
-    bool _ivis1 = true;
-    public bool ivis1 { get { return _ivis1; } set { this.RaiseAndSetIfChanged(ref _ivis1, value); } } 
-
-    bool _ivis2 = false;
-    public bool ivis2 { get { return _ivis2; } set { this.RaiseAndSetIfChanged(ref _ivis2, value); } }
-
-    SplitPanelListItemTemplate _SplitPaneSelectedListItem;
-    public SplitPanelListItemTemplate SplitPaneSelectedListItem { get => _SplitPaneSelectedListItem;
-        set {
-            this.RaiseAndSetIfChanged(ref _SplitPaneSelectedListItem, value);
-            if (_SplitPaneSelectedListItem.Label == "1")
-            {
-                ivis1 = true;
-                ivis2 = false;
-
-            }
-            else
-            if (_SplitPaneSelectedListItem.Label == "2")
-            {
-                ivis1 = false;
-                ivis2 = true;
-
-            }
-
-            foreach (var item in SplitPanelItems) {
-                if (item == SplitPaneSelectedListItem)
-                {
-                    ((BehaviorSubject<bool>)item.Visible).OnNext(true);
-                }
-                else {
-                    ((BehaviorSubject<bool>)item.Visible).OnNext(false);
-                }
-            }
-
-        } }
-
-
-
     public MainViewModel()
     {
         DeviceDescriprion.DeviceDescriptionReader.Read();
 
         var tester = new tester();
-
-        _SplitPaneSelectedListItem = SplitPanelItems[0];
-        ivis1 = true;
-        ivis2 = false;
 
         IDisposable listener = tester.updater.Subscribe(
         (_) =>
