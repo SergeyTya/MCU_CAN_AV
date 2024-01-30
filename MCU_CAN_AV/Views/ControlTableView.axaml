@@ -24,15 +24,14 @@
 			<Border Classes="h4"/>
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="0.5*"/>
-					<ColumnDefinition Width="0.5*"/>
+					<ColumnDefinition Width="1.0*"/>
+					<ColumnDefinition Width="0"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="1*"/>
 				</Grid.RowDefinitions>
-
 				<cc:ControlTable
-					Grid.Column="0"
+					Grid.Column="1"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Top"
 					TableSource="{Binding $parent.DataContext.TableOfControls}"
@@ -40,7 +39,7 @@
 					TypeOfContent ="RW"/>
 
 				<cc:ControlTable
-					Grid.Column="1"
+					Grid.Column="0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Top"
 					TableSource="{Binding $parent.DataContext.TableOfControls}"
@@ -49,12 +48,6 @@
 			</Grid>
 		</Panel>
 
-		<Panel
-			Grid.Row="1"
-			Name="Panel_cntrl"
-			Classes="Black11">
-			<cc:Angular4Indi Grid.Row="0" Foreground="White" Margin="5" Name="Angular"/>
-			<Border Classes="h4"/>
-		</Panel>
+		
 	</Grid>
 </UserControl>

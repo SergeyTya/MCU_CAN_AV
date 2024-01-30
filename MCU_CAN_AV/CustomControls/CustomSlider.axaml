@@ -39,7 +39,7 @@
 			HorizontalAlignment="Left"
 			Margin="20,10,0,0"
 			TextAlignment="Left"
-			FontSize="16"
+			FontSize="12"
 			/>
 	</Grid>
 

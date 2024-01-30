@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives.Converters;
 using Avalonia.Data;
 using Avalonia.Data.Core;
 using Avalonia.DesignerSupport.Remote;
+using Avalonia.Input;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
@@ -187,8 +188,8 @@ namespace MCU_CAN_AV.CustomControls
 
         string[] headers = {  "Description", "Id", "Value" };
 
-        int id_width = 100;
-        int vl_width = 100;
+       
+        int vl_width = 70;
 
 
         void Init_table() {
@@ -200,14 +201,45 @@ namespace MCU_CAN_AV.CustomControls
             Grid_header.RowDefinitions.Clear();
             Grid_header.Children.Clear();
 
+            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1.0, GridUnitType.Auto)));
             Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1.0, GridUnitType.Star)));
-            Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(id_width, GridUnitType.Pixel)));
             Grid_main.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(vl_width, GridUnitType.Pixel)));
 
-            Grid_header.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1.0, GridUnitType.Star)));
-            Grid_header.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(id_width, GridUnitType.Pixel)));
-            Grid_header.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(vl_width, GridUnitType.Pixel)));
+            Grid_header.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(100.0, GridUnitType.Auto)));
+            Grid_header.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(100.0, GridUnitType.Auto)));
+            Grid_header.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(vl_width, GridUnitType.Auto)));
 
+            GridSplitter split1 = new GridSplitter
+            {
+                ResizeBehavior = GridResizeBehavior.PreviousAndCurrent,
+                ResizeDirection = GridResizeDirection.Columns,
+                Background = new SolidColorBrush(Colors.DimGray),
+                Height=5,
+            };
+
+            Action resize = () =>
+            {
+                // TODO Fix init load column width bug
+                for (Int32 i = 0; i < 3; i++)
+                {
+                    Grid_header.ColumnDefinitions[i].Width = Grid_main.ColumnDefinitions[i].Width;
+                }
+            };
+
+            split1.DragCompleted += (s, e) =>
+            {
+                resize();
+            };
+
+            split1.DoubleTapped += (s, e) =>
+            {
+                Grid_main.ColumnDefinitions[1].Width = new GridLength(1.0, GridUnitType.Star);
+                resize();
+            };
+
+            split1.SetValue(Avalonia.Controls.Grid.RowProperty, 0);
+            split1.SetValue(Avalonia.Controls.Grid.ColumnProperty,  1);
+            Grid_main.Children.Add(split1);
 
             Grid_header.RowDefinitions.Add(new RowDefinition(new GridLength(30, GridUnitType.Pixel)));
             Grid_main.RowDefinitions.Add(new RowDefinition(new GridLength(0.13, GridUnitType.Auto)));
@@ -215,13 +247,15 @@ namespace MCU_CAN_AV.CustomControls
             for (int i = 0; i < 3; i++)
             {
                Add_column_header(headers[i], Grid_header, 0, i);
-               
             }
+            resize();
         }
 
         void Add_column_header(string Text,  Grid Parent, int row, int col) {
-          
-            var panel =  newTextblokCell(Text, Parent, row, col);
+
+            var panel = newTextblokCell(Text, Parent, row, col);
+            ((TextBlock)panel.Children[0]).HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+            ((TextBlock)panel.Children[0]).TextAlignment = TextAlignment.Center;
 
             panel.Background = new SolidColorBrush(Colors.Black);   
 
@@ -235,9 +269,11 @@ namespace MCU_CAN_AV.CustomControls
             if (col != 0) th_left = 0;
             bdr.BorderThickness = new Thickness(th_left, 0, 1, 0);
 
+
         }
 
         bool change_color = false;
+        string tbvaluebuf = "0";
         void Add_row(Parameter param, int row) {
 
 
@@ -280,10 +316,11 @@ namespace MCU_CAN_AV.CustomControls
                 var item2 = new TextBlock
                 {
                     [!TextBlock.TextProperty] = binding,
-                    Margin = new Thickness(1, 1, 1, 1),
-                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(10, 1, 1, 1),
+                    TextAlignment = TextAlignment.Left,
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                     Foreground = new SolidColorBrush(Colors.Black),
+                   
                 };
 
                 return item2;
@@ -327,40 +364,87 @@ namespace MCU_CAN_AV.CustomControls
                     {
                         temp = Create_RO_item();
                         break;
-
                     }
 
-                    temp = new TextBox {
+                    var tb = new TextBox {
                         [!TextBox.TextProperty] = binding,
                         Margin = new Thickness (1,1,1,1),
-                        Foreground = new SolidColorBrush(Colors.Black),
+                        Foreground = new SolidColorBrush(Colors.LightGray),
+                        
                     };
-                    temp.KeyUp += (_,__) => { // set new value
+                    tb.TextChanged += (_, __) => {
+                        tb.Background = new SolidColorBrush(Colors.Gray); 
+                    };
+                    Action undo = () =>
+                    {
+                        tb.Text = tbvaluebuf;
+                    };
+                    Action endedit = () =>
+                    {
 
-                        Action undo = () => {
-                            ((TextBox)_).Undo();
-                           while(true)
-                           {
-                                if (((TextBox)_).Text != null) { ((TextBox)_).Undo(); }
-                                else {
-                                ((TextBox)_).Redo();
-                                break;
-                             }
-                           }
-                        };
+                        var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
+                        nextElement.Focus();
+                        
+                    };
+                    tb.KeyDown += (_,__) => {
+                        if (__.Key == Avalonia.Input.Key.Up)
+                        {
+                            var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Previous);
+                            nextElement.Focus();
+                            return;
+                        }
+                        if (__.Key == Avalonia.Input.Key.Down)
+                        {
+                            var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
+                            nextElement.Focus();
+                            return;
+                        }
 
                         if (__.Key == Avalonia.Input.Key.Escape)
                         {
                             undo();
+                            var nextElement = KeyboardNavigationHandler.GetNext(Grid_main, NavigationDirection.Next);
+                            nextElement.Focus();
                         }
-                        if (__.Key != Avalonia.Input.Key.Enter) return;
+                        if (__.Key == Avalonia.Input.Key.Enter)
+                        {
 
-                        double value = 0;
-                        bool res = double.TryParse(((TextBox)_).Text, out value );
-                        if(!res) undo();
-                        if (param.onValueChanged != null)
-                            param.onValueChanged.Invoke(value, EventArgs.Empty);
+                            double value = 0;
+                            bool res = double.TryParse(tb.Text, out value);
+                            if (!res)
+                            {
+                                undo();
+                                endedit();
+                                return;
+                            }
+
+                            if (param.onValueChanged != null)
+                                param.onValueChanged.Invoke(value, EventArgs.Empty);
+
+                            tb.Background = new SolidColorBrush(Colors.Green);
+                            endedit();
+                        }
                     };
+                   
+                    tb.LostFocus += (_, __) => {
+                       double value = 0;
+                       bool res = double.TryParse(tb.Text, out value);
+                       if (res)
+                       {
+                           if (param.onValueChanged != null)
+                               param.onValueChanged.Invoke(value, EventArgs.Empty);
+                       }
+                       else {
+                            undo();
+                       }
+                    };
+
+                    tb.GotFocus += (_, __) =>
+                    {
+                        tbvaluebuf = tb.Text;
+                    };
+
+                    temp = tb;
                     break;
 
                 case Parameter.Type.LIST:

@@ -36,7 +36,7 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<string> Faults { get; } = new();
     public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; } = new();
 
-
+    double temp = 0;
     public MainViewModel()
     {
         DeviceDescriprion.DeviceDescriptionReader.Read();
@@ -74,8 +74,8 @@ public class MainViewModel : ViewModelBase
                         param.Value = 0;
                         param.onValueChangedByUser += (_, __) =>
                         {
-
                             Debug.WriteLine("Value " + Convert.ToDouble(_));
+                            temp = Convert.ToDouble(_);
                         };
 
                         TableOfControls.Add(param);
@@ -86,7 +86,7 @@ public class MainViewModel : ViewModelBase
                 else {
 
                     TableOfControls[3].Value = _.id;
-                    TableOfControls[10].Value = _.id;
+                    TableOfControls[15].Value = temp;
                 }
             });
         });
