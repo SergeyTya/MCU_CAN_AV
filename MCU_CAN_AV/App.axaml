@@ -14,12 +14,12 @@
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 
 		<Style Selector="TextBlock.h1">
-			<Setter Property="FontSize" Value="16"/>
-			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="Medium"/>
 			<Setter Property="VerticalAlignment" Value="Bottom"/>
 			<Setter Property="TextAlignment" Value="Center"/>
 			<Setter Property="Padding" Value="10"/>
-			<Setter Property="Foreground" Value="BlueViolet"/>
+			<Setter Property="Foreground" Value="#8961cc"/>
 		</Style>
 
 		<Style Selector="TextBlock.h2">
@@ -41,12 +41,12 @@
 
 		<Style Selector="Border.h1">
 			<Setter Property="BorderThickness" Value="3"/>
-			<Setter Property="BorderBrush" Value="DimGray"/>
+			<Setter Property="BorderBrush" Value="#262738"/>
 			<Setter Property="Margin" Value="3"/>
 		</Style>
 		<Style Selector="Border.h2">
 			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="BorderBrush" Value="DimGray"/>
+			<Setter Property="BorderBrush" Value="#64576b"/>
 			<Setter Property="Margin" Value="0"/>
 		</Style>
 		<Style Selector="Border.h3">

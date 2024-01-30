@@ -274,8 +274,8 @@ namespace MCU_CAN_AV.CustomControls
             );
 
 
-            Needle2 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColors.BlueViolet) };
-            Needle3 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColors.BlueViolet) };
+            Needle2 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColor.Parse("#64576b")) };
+            Needle3 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColor.Parse("#64576b")) };
 
 
 

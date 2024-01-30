@@ -12,7 +12,7 @@
 		MinHeight="380"
 		>
 
-	<views:MainView2 
+	<views:MainView3 
 		Name="mainView" 
 		HorizontalAlignment="Stretch"
 		VerticalAlignment="Stretch"

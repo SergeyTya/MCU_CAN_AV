@@ -7,7 +7,7 @@
 			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 			 x:DataType="vm:ControlTableViewModel"
 			 >
-	<TabControl Margin="5" TabStripPlacement="Left">
+	<TabControl Margin="5" TabStripPlacement="Top">
 		<TabItem  >
 			<TextBlock Margin="5">This is tab 1 content</TextBlock>
 		</TabItem>
