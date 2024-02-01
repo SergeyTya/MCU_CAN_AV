@@ -12,9 +12,18 @@
 		MinHeight="380"
 		>
 
-	<views:MainView3 
-		Name="mainView" 
+	<StackPanel>
+		
+
+		<views:MainView3
+		Name="mainView"
 		HorizontalAlignment="Stretch"
 		VerticalAlignment="Stretch"
-		/>	
+		IsVisible="True"
+		/>
+		
+		<views:ConnectionView />
+
+	</StackPanel>
+
 </Window>

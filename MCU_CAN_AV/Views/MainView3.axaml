@@ -187,9 +187,12 @@
 						</TabItem>
 						<TabItem Header="Tables">
 							<!-- <v:ControlTableView Name="_ControlTableView" />  -->
+
+							<!--	TableSource="{Binding TableOfControls}" -->
+							
 							<cc:ControlTable Name="controlTable"
 								TypeOfContent="RW"
-								TableSource="{Binding TableOfControls}"
+								TableSource="{x:Static dd:IDeviceReader.DeviceDescription}"
 								/>
 						</TabItem>
 						<TabItem Header="Log">

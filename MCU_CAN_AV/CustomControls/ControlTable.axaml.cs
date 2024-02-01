@@ -13,6 +13,7 @@ using MCU_CAN_AV.ViewModels;
 using MCU_CAN_AV.Views;
 using ReactiveUI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -24,6 +25,9 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class ControlTable : UserControl
     {
+        //static ControlTable() {
+        //     ItemsSourceProperty.Changed.AddClassHandler<ControlTable>((x, e) => x.OnPropertyChanged(e));
+        //}
 
         public enum ContentType
         {
@@ -32,12 +36,16 @@ namespace MCU_CAN_AV.CustomControls
             RW
         };
 
-        public static readonly StyledProperty<ObservableCollection<DeviceParameter>> TableSourceProperty =
-             AvaloniaProperty.Register<ControlTable, ObservableCollection<DeviceParameter>>("TableSource");
+        public static readonly StyledProperty<ObservableCollection<IDeviceParameter>> TableSourceProperty =
+             AvaloniaProperty.Register<ControlTable, ObservableCollection<IDeviceParameter>>("TableSource");
 
-        public ObservableCollection<DeviceParameter> TableSource
+        public ObservableCollection<IDeviceParameter> TableSource
         {
-            set => SetValue(TableSourceProperty, value);
+            set { 
+                TableSource_CollectionChanged(value, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                SetValue(TableSourceProperty, value);
+                if(TableSource != null) TableSource.CollectionChanged += TableSource_CollectionChanged;
+                }
             get => GetValue(TableSourceProperty);
         }
 
@@ -56,14 +64,20 @@ namespace MCU_CAN_AV.CustomControls
             Init_table();
         }
         int row_cnt = 1;
-        private void TableSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        public void TableSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            var tmp = (ObservableCollection<DeviceParameter>)sender;
+            var tmp = (ObservableCollection<IDeviceParameter>)sender;
+
+            if (tmp == null) {
+                return;
+                throw new NotImplementedException();
+            }
+
             switch (e.Action)
             {
 
                 case NotifyCollectionChangedAction.Add:
-                    DeviceParameter item = tmp[tmp.Count - 1];
+                    IDeviceParameter item = tmp[tmp.Count - 1];
                     Add_row(item, row_cnt++);
                     Debug.WriteLine("sdas");
                     break;
@@ -81,8 +95,11 @@ namespace MCU_CAN_AV.CustomControls
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    tmp.Clear();
                     row_cnt = 1;
+                    foreach (var el in tmp)
+                    {
+                        Add_row(el, row_cnt++);
+                    }
                     break;
 
                 default:
@@ -221,30 +238,26 @@ namespace MCU_CAN_AV.CustomControls
 
         bool change_color = false;
         string tbvaluebuf = "0";
-        void Add_row(DeviceParameter param, int row)
+        void Add_row(IDeviceParameter param, int row)
         {
 
 
             change_color = !change_color;
-
-            //var c1 = new Avalonia.Media.Color(100, 100, 100, 100);
-            //var c2 = new Avalonia.Media.Color(80, 80, 80, 80);
 
             var c1 = Avalonia.Media.Colors.Gray;
             var c2 = Avalonia.Media.Colors.DimGray;
 
             var row_color = change_color ? c1 : c2;
 
-            //param.row = row;
-
-            var panel = newTextblokCell(param.CANID, Grid_main, row, 1);
+           
+            var panel = newTextblokCell(param.ID, Grid_main, row, 1);
             ((TextBlock)panel.Children[0]).Margin = new Thickness(1, 1, 1, 1);
             ((TextBlock)panel.Children[0]).HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
             ((TextBlock)panel.Children[0]).TextAlignment = TextAlignment.Center;
             panel.Background = new SolidColorBrush(row_color);
 
 
-            panel = newTextblokCell(param.sname.ToString(), Grid_main, row, 0);
+            panel = newTextblokCell(param.Name.ToString(), Grid_main, row, 0);
             ((TextBlock)panel.Children[0]).HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right;
             ((TextBlock)panel.Children[0]).Margin = new Thickness(0, 0, 10, 0);
             panel.Background = new SolidColorBrush(row_color);
@@ -252,18 +265,31 @@ namespace MCU_CAN_AV.CustomControls
             panel = new DockPanel();
             Control temp = new Control();
 
-            Binding binding = new Binding
-            {
-                Path = "Value",
-                Source = param,
-                Mode = BindingMode.OneWay
-            };
+            //var tmp = .Val;
+
+            //Binding binding = new Binding
+            //{
+            //    Path = "Value",
+            //    Source = param,
+            //    Mode = BindingMode.OneWay
+            //};
+
+            //Binding binding = new Binding
+            //{
+
+            //    Path = "Value",
+            //    Source = param.Val,
+            //    Mode = BindingMode.Default
+
+            //};
+
+            var binding = param.Value;
 
             Func<Control> Create_RO_item = () =>
             {
                 var item2 = new TextBlock
                 {
-                    [!TextBlock.TextProperty] = binding,
+                    [!TextBlock.TextProperty] = binding.Select(x => x.ToString()).ToBinding(),
                     Margin = new Thickness(10, 1, 1, 1),
                     TextAlignment = TextAlignment.Left,
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
@@ -271,20 +297,21 @@ namespace MCU_CAN_AV.CustomControls
 
                 };
 
+
                 return item2;
             };
 
-            if (param.options != null)
+            if (param.Options != null)
             {
 
                 var item1 = new ComboBox
                 {
-                    [!ComboBox.SelectedIndexProperty] = binding,
+                    [!ComboBox.SelectedIndexProperty] = binding.Select(x => (int)x).ToBinding(),
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
                     Foreground = new SolidColorBrush(Colors.Black),
                 };
 
-                foreach (var item in param.options)
+                foreach (var item in param.Options)
                 {
                     item1.Items.Add(item);
                 }
@@ -292,16 +319,16 @@ namespace MCU_CAN_AV.CustomControls
                 item1.DropDownClosed += (_, __) =>
                 {
                     if (item1.SelectedIndex < 0) return;
-                    param.onValueChanged.Invoke(item1.SelectedIndex, EventArgs.Empty);
+                   // param.onValueChanged.Invoke(item1.SelectedIndex, EventArgs.Empty);
                 };
                 temp = item1;
-                temp.IsEnabled = param.RW;
+                temp.IsEnabled = param.IsReadWrite;
 
             }
             else
             {
 
-                if (!param.RW)
+                if (!param.IsReadWrite)
                 {
                     temp = Create_RO_item();
                 }
@@ -310,7 +337,7 @@ namespace MCU_CAN_AV.CustomControls
 
                     var tb = new TextBox
                     {
-                        [!TextBox.TextProperty] = binding,
+                        [!TextBox.TextProperty] = binding.Select(x => x.ToString()).ToBinding(),
                         Margin = new Thickness(1, 1, 1, 1),
                         Foreground = new SolidColorBrush(Colors.LightGray),
 
@@ -363,8 +390,8 @@ namespace MCU_CAN_AV.CustomControls
                                 return;
                             }
 
-                            if (param.onValueChanged != null)
-                                param.onValueChanged.Invoke(value, EventArgs.Empty);
+                            //if (param.onValueChanged != null)
+                            //    param.onValueChanged.Invoke(value, EventArgs.Empty);
 
                             tb.Background = new SolidColorBrush(Colors.Green);
                             endedit();
@@ -377,8 +404,8 @@ namespace MCU_CAN_AV.CustomControls
                         bool res = double.TryParse(tb.Text, out value);
                         if (res)
                         {
-                            if (param.onValueChanged != null)
-                                param.onValueChanged.Invoke(value, EventArgs.Empty);
+                            //if (param.onValueChanged != null)
+                            //    param.onValueChanged.Invoke(value, EventArgs.Empty);
                         }
                         else
                         {
@@ -413,23 +440,6 @@ namespace MCU_CAN_AV.CustomControls
             Add_border(row, 2, (Panel)Grid_main);
         }
 
-        bool TableSource_init = false;
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-        {
-            var new_value = change.NewValue;
-
-            // if (change.Property.Name == "TableSource")
-            if (change.Property == TableSourceProperty)
-            {
-                if (!TableSource_init)
-                {
-                    TableSource.CollectionChanged += TableSource_CollectionChanged;
-                    TableSource_init = true;
-                }
-            }
-
-            base.OnPropertyChanged(change);
-        }
 
 
     }

@@ -5,6 +5,7 @@ using Avalonia.Data;
 using ReactiveUI;
 using System.Reactive.Linq;
 using Avalonia;
+using System.Collections.Specialized;
 
 namespace MCU_CAN_AV.Views
 {
@@ -13,16 +14,6 @@ namespace MCU_CAN_AV.Views
         public MainView3()
         {
             InitializeComponent();
-
-            var binding = new Binding {
-
-                Source = DeviceDescriptionReader.DeviceDescription,
-                Path = nameof(DeviceDescriptionReader.DeviceDescription)
-
-            };
-
-            controlTable.Bind(ControlTable.TableSourceProperty, binding);
-
         }
     }
 }

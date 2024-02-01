@@ -10,7 +10,7 @@ namespace MCU_CAN_AV.Models
     {
         
         public MainModel() {
-            DeviceDescriprion.DeviceDescriptionReader.Read();
+           //DeviceDescriprion.DeviceDescriptionReader.Init();
         }
     }
 }

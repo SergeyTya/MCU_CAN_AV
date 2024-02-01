@@ -28,50 +28,13 @@ public class MainViewModel : ViewModelBase
     public int slider_torque;
 
 
-    public string _id;
-    public string? Id { get{return _id;} set { this.RaiseAndSetIfChanged(ref _id, value);} }
-
-    bool table_init = false;
-
     public ObservableCollection<string> Faults { get; } = new();
-
-    public ObservableCollection<DeviceParameter> TableOfControls { get; } = new();
 
    
     double temp = 0;
     public MainViewModel()
     {
-
-
-        TableOfControls = DeviceDescriptionReader.DeviceDescription;
-
-        var tester = new tester();
-
-
-        IDisposable listener = tester.updater.Subscribe(
-        (_) =>
-        {
-            Debug.WriteLine(_.id);
-            Id = _.id.ToString();
-
-            //Update MetterFaultTable
-            Dispatcher.UIThread.Invoke(() => {
-                this.Faults.Add("fault"+_.id);
-                if (this.Faults.Count > 10) this.Faults.Clear();
-
-                //if(TableOfControls.Count == 0)
-                //{
-                //    foreach (DeviceParameter param in DeviceDescriptionReader.DeviceDescription) {
-                //        TableOfControls.Add(param); 
-                //    }
-
-                //}
-
-            });
-        });
-
-        
-
+      
         if (slider_speed_observer != null) {
             slider_speed_observer.Subscribe(
         //x => slider_speed = x
@@ -84,19 +47,4 @@ public class MainViewModel : ViewModelBase
 
     }
 
-    void Update(ICAN.RxTxCanData data) {
-       
-
-    }
-
-    public void set_visible1() {
-
-      
-    }
-
-    public void set_visible2()
-    {
-
-
-    }
 }

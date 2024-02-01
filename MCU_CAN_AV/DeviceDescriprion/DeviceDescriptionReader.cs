@@ -12,19 +12,22 @@ using MCU_CAN_AV.Properties;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using DynamicData.Binding;
-using ReactiveUI;
+//using ReactiveUI;
+using System.Reactive.Subjects;
 
 namespace MCU_CAN_AV.DeviceDescriprion
 {
 
 
-    public class DeviceDescriptionReader: ViewModels.ViewModelBase
+    public class DeviceDescriptionReader
     {
+        
+
         private static readonly DeviceDescriptionReader instance = new DeviceDescriptionReader();
 
         private DeviceDescriptionReader()
         {
-            Read();
+            Init();
         }
 
         private static string read_jsonres(byte[] res)
@@ -36,48 +39,59 @@ namespace MCU_CAN_AV.DeviceDescriprion
             return fileContents;
         }
 
-        public static ObservableCollection <DeviceParameter> DeviceDescription;
         
-        public static void Read()
+        
+        public static void Init()
         {
-            List < DeviceParameter > deviceParameters = new List < DeviceParameter >();
+            List<DeviceParameter> tmp = new();
             try
             {
                 string fileContents = read_jsonres(Resources.shanghai_description);
-                DeviceDescription = JsonConvert.DeserializeObject<ObservableCollection<DeviceParameter>>(fileContents);
+                tmp =  JsonConvert.DeserializeObject<List<DeviceParameter>>(fileContents);
 
-               // DeviceDescription = new ObservableCollection < DeviceParameter >(deviceParameters); 
+                IDeviceReader.DeviceDescription = new ObservableCollection<IDeviceParameter>(tmp);
             }
             catch (JsonReaderException e)
             {
                 Debug.WriteLine(e);
-            }
-        }
-
-        public static List<DeviceParameter>? ReadList()
-        {
-            List<DeviceParameter> deviceParameters = new List<DeviceParameter>();
-            try
-            {
-                string fileContents = read_jsonres(Resources.shanghai_description);
-                deviceParameters = JsonConvert.DeserializeObject<List<DeviceParameter>>(fileContents);
-
-                //DeviceDescription = new ObservableCollection<DeviceParameter>(deviceParameters);
-                return deviceParameters;
-            }
-            catch (JsonReaderException e)
-            {
-                Debug.WriteLine(e);
-
-                return null;
             }
         }
     }
 
-    public partial class DeviceParameter : ObservableObject
+    internal class DeviceParameter : IDeviceParameter
     {
+       
+
+        public void writeValue(double value)
+        {
+
+            Val.OnNext(value);
+        }
+
+        BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
+        public IObservable<double> Value { get => Val; }
+
+        public string ID { get => CANID; }
+
+        public string Name { get => sname; }
+
+        public List<string> Options { get => options; }
+
+        public bool IsReadWrite { get => RW; }
+
+
+
         [JsonProperty("CANID")]
-        public string CANID;
+        string CANID;
+
+        [JsonProperty("sname")]
+        string sname { get; set; }
+
+        [JsonProperty("options")]
+        List<string> options { get; set; }
+
+        [JsonProperty("RW")]
+        bool RW { get; set; }
 
         [JsonProperty("len")]
         public int len;
@@ -91,12 +105,6 @@ namespace MCU_CAN_AV.DeviceDescriprion
         [JsonProperty("scale")]
         public float scale { get; set; }
 
-        [JsonProperty("sname")]
-        public string sname { get; set; }
-
-        [JsonProperty("options")]
-        public List<string> options { get; set; }
-
         [JsonProperty("type")]
         public string type { get; set; }
 
@@ -109,23 +117,5 @@ namespace MCU_CAN_AV.DeviceDescriprion
         [JsonProperty("max")]
         public int max { get; set; }
 
-        [JsonProperty("RW")]
-        public bool RW { get; set; }
-
-        [ObservableProperty]
-        public double _value;
-
-        internal EventHandler onValueChanged;
-        public event EventHandler onValueChangedByUser
-        {
-            add
-            {
-                lock (this) { onValueChanged = onValueChanged + value; }
-            }
-            remove
-            {
-                lock (this) { onValueChanged = onValueChanged - value; }
-            }
-        }
     }
 }
