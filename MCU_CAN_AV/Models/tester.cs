@@ -16,8 +16,12 @@ namespace MCU_CAN_AV.Models
 
         ICAN.RxTxCanData[] testing_data = { 
             new ICAN.RxTxCanData(1, new byte[] {0,0,0,0 }),
-            new ICAN.RxTxCanData(2, new byte[] {0,0,0,0 }),
-            new ICAN.RxTxCanData(3, new byte[] {0,0,0,0 })
+            new ICAN.RxTxCanData(1, new byte[] {0,0,0,0 }),
+              new ICAN.RxTxCanData(2, new byte[] {0,0,0,0 }),
+                new ICAN.RxTxCanData(2, new byte[] {0,0,0,0 }),
+                  new ICAN.RxTxCanData(3, new byte[] {0,0,0,0 }),
+                    new ICAN.RxTxCanData(3, new byte[] {0,0,0,0 }),
+            new ICAN.RxTxCanData(4, new byte[] {0,0,0,0 })
         };
 
         public tester() {
@@ -41,6 +45,8 @@ namespace MCU_CAN_AV.Models
                });
            });
         }
+
+      
 
         int cnt = 0;
         void Receive(IObserver<ICAN.RxTxCanData> observer) {

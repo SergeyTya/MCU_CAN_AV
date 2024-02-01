@@ -20,6 +20,14 @@ namespace MCU_CAN_AV.DeviceDescriprion
 
         public string Name { get; } // parameter descriprion
 
+        public string Unit { get; }
+
+        public string Min { get; }
+
+        public string Max { get; }
+
+        public string Type { get; }
+
         public List<string> Options { get; } // parameter options
 
         public bool IsReadWrite { get; } 
@@ -29,10 +37,9 @@ namespace MCU_CAN_AV.DeviceDescriprion
     internal interface IDeviceReader
     {
 
-       // void Init();
-
-
         public static ObservableCollection<IDeviceParameter> DeviceDescription = new();
+        public static ObservableCollection<String> DeviceFaults = new();
+
 
         public static string ReadJsonFromResources(byte[] res)
         {

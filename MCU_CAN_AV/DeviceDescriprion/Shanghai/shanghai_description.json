@@ -14,7 +14,8 @@
     "len": 16,
     "offset": 16,
     "valoffset": 20000,
-    "sname": "Speed, rpm",
+    "sname": "Actual Speed",
+    "unit":  "rpm",
     "scale": 1
   },
   {
@@ -162,7 +163,8 @@
     "len": 16,
     "offset": 32,
     "valoffset": 3000,
-    "sname": "Actual torque, Nm",
+    "sname": "Actual torque",
+    "unit": "Nm",
     "scale": 0.1
   },
   {

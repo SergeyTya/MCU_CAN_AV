@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
-             x:Class="MCU_CAN_AV.CustomControls.Angular4Indi"
+             x:Class="MCU_CAN_AV.Views.ControlView"
 			 xmlns:lv="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
 			 xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
 			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"

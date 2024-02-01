@@ -52,16 +52,18 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
                     //this.Faults.Add("fault" + _.id);
                     //if (this.Faults.Count > 10) this.Faults.Clear();
 
-
-                    // DeviceDescriptionReader.DeviceDescription[11].Value = _.id;
-                   // IDeviceReader.DeviceDescription[5].writeValue(_.id);
-
-                    foreach (var item in IDeviceReader.DeviceDescription)
+                    foreach (ShanghaiDeviceParameter item in IDeviceReader.DeviceDescription)
                     {
-                        item.writeValue(_.id);
+
+                        if (item._value != _.id)
+                        {
+                            item.writeValue(_.id); // we weel post only new values
+                        }
+                        else {
+
+                            //Debug.WriteLine("Equals!");
+                        }
                     }
-
-
                 });
             });
         }
@@ -109,6 +111,9 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
         internal class ShanghaiDeviceParameter : IDeviceParameter
         {
 
+            public ShanghaiDeviceParameter() {
+                Val.Subscribe(x => _value = x);
+            }
 
             public void writeValue(double value)
             {
@@ -117,11 +122,15 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
             }
 
             internal BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
+
+            internal double _value = 0;
             public IObservable<double> Value { get => Val; }
 
             public string ID { get => CANID; }
 
             public string Name { get => sname; }
+
+            public string Unit { get => unit; }
 
             public List<string> Options { get => options; }
 
@@ -132,6 +141,9 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
 
             [JsonProperty("sname")]
             string sname { get; set; }
+
+            [JsonProperty("unit")]
+            string unit { get; set; }
 
             [JsonProperty("options")]
             List<string> options { get; set; }

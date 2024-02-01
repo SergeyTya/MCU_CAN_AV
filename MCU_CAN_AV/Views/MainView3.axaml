@@ -161,28 +161,15 @@
 
 					<TabControl Margin="5" TabStripPlacement="Top">
 						<TabItem   Header="Controls">
-							<cc:Angular4Indi
+							<v:ControlView
 								Name="Angular"
+								ControlSource = "{x:Static dd:IDeviceReader.DeviceDescription} "					
 								IsEnabled="{Binding #ControlLocker.IsChecked}"
 								VerticalAlignment="Center"
 								Height="350"
 								MaxWidth="700"
 								Foreground="White"
 								Margin="5"
-								Angular2Label="Torque"
-								Angular2Unit=" %"
-								Angular2Value="{Binding Id}"
-								Angular3Label="Speed"
-								Angular3Unit=" krpm"
-							    Angular3Value="{Binding Id}"
-							    Cartesian1Value="{Binding Id}"
-							    Cartesian4Value="{Binding Id}"
-							    Slider1Label ="Speed, rpm"
-							    Slider1Max="9000.0"
-							    Slider1Min="-9000.0"
-							    Slider2Label ="Torque, %"
-							    Slider2Max="200.0"
-							    Slider2Min="-200.0"
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
 						</TabItem>
 						<TabItem Header="Tables">

@@ -19,9 +19,7 @@ namespace MCU_CAN_AV
 
         public ViewLocator()
         {
-            RegisterViewFactory<MainViewModel, MainView2>();
-            RegisterViewFactory<ControlTableViewModel, ControlTableView>();
-            RegisterViewFactory<EmptyPageViewModel, EmptyPageView>();
+          
 
         }
 

@@ -19,103 +19,44 @@ namespace MCU_CAN_AV.DeviceDescriprion
 {
 
 
-    public class DeviceDescriptionReader
-    {
+    //public class DeviceDescriptionReader
+    //{
         
 
-        private static readonly DeviceDescriptionReader instance = new DeviceDescriptionReader();
+    //    private static readonly DeviceDescriptionReader instance = new DeviceDescriptionReader();
 
-        private DeviceDescriptionReader()
-        {
-            Init();
-        }
+    //    private DeviceDescriptionReader()
+    //    {
+    //        Init();
+    //    }
 
-        private static string read_jsonres(byte[] res)
-        {
-            MemoryStream MS = new MemoryStream(res);
-            StreamReader sr = new StreamReader(MS);
-            string fileContents = sr.ReadToEnd();
-            sr.Close();
-            return fileContents;
-        }
+    //    private static string read_jsonres(byte[] res)
+    //    {
+    //        MemoryStream MS = new MemoryStream(res);
+    //        StreamReader sr = new StreamReader(MS);
+    //        string fileContents = sr.ReadToEnd();
+    //        sr.Close();
+    //        return fileContents;
+    //    }
 
         
         
-        public static void Init()
-        {
-            List<DeviceParameter> tmp = new();
-            try
-            {
-                string fileContents = read_jsonres(Resources.shanghai_description);
-                tmp =  JsonConvert.DeserializeObject<List<DeviceParameter>>(fileContents);
+    //    //public static void Init()
+    //    //{
+    //    //    List<DeviceParameter> tmp = new();
+    //    //    try
+    //    //    {
+    //    //        string fileContents = read_jsonres(Resources.shanghai_description);
+    //    //        tmp =  JsonConvert.DeserializeObject<List<DeviceParameter>>(fileContents);
 
-                IDeviceReader.DeviceDescription = new ObservableCollection<IDeviceParameter>(tmp);
-            }
-            catch (JsonReaderException e)
-            {
-                Debug.WriteLine(e);
-            }
-        }
-    }
+    //    //        IDeviceReader.DeviceDescription = new ObservableCollection<IDeviceParameter>(tmp);
+    //    //    }
+    //    //    catch (JsonReaderException e)
+    //    //    {
+    //    //        Debug.WriteLine(e);
+    //    //    }
+    //    //}
+    //}
 
-    internal class DeviceParameter : IDeviceParameter
-    {
-       
-
-        public void writeValue(double value)
-        {
-
-            Val.OnNext(value);
-        }
-
-        BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
-        public IObservable<double> Value { get => Val; }
-
-        public string ID { get => CANID; }
-
-        public string Name { get => sname; }
-
-        public List<string> Options { get => options; }
-
-        public bool IsReadWrite { get => RW; }
-
-
-
-        [JsonProperty("CANID")]
-        string CANID;
-
-        [JsonProperty("sname")]
-        string sname { get; set; }
-
-        [JsonProperty("options")]
-        List<string> options { get; set; }
-
-        [JsonProperty("RW")]
-        bool RW { get; set; }
-
-        [JsonProperty("len")]
-        public int len;
-
-        [JsonProperty("offset")]
-        public int offset;
-
-        [JsonProperty("valoffset")]
-        public int valoffset;
-
-        [JsonProperty("scale")]
-        public float scale { get; set; }
-
-        [JsonProperty("type")]
-        public string type { get; set; }
-
-        [JsonProperty("def")]
-        public int def { get; set; }
-
-        [JsonProperty("min")]
-        public int min { get; set; }
-
-        [JsonProperty("max")]
-        public int max { get; set; }
-
-    }
+   
 }
