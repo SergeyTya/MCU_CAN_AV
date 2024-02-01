@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:lv="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
 			 xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+			 xmlns:local="using:MCU_CAN_AV"
+			 xmlns:dd ="clr-namespace:MCU_CAN_AV.DeviceDescriprion"
 			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 			 xmlns:v="clr-namespace:MCU_CAN_AV.Views"
 			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
@@ -184,9 +186,11 @@
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
 						</TabItem>
 						<TabItem Header="Tables">
-							<v:ControlTableView
-								Name="_ControlTableView"
-							/>
+							<!-- <v:ControlTableView Name="_ControlTableView" />  -->
+							<cc:ControlTable Name="controlTable"
+								TypeOfContent="RW"
+								TableSource="{Binding TableOfControls}"
+								/>
 						</TabItem>
 						<TabItem Header="Log">
 							<TextBlock Margin="5">This is tab 3 content</TextBlock>

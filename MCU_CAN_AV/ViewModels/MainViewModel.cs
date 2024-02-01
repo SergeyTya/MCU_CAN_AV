@@ -34,14 +34,19 @@ public class MainViewModel : ViewModelBase
     bool table_init = false;
 
     public ObservableCollection<string> Faults { get; } = new();
-    public ObservableCollection<MCU_CAN_AV.CustomControls.ControlTable.Parameter> TableOfControls { get; } = new();
 
+    public ObservableCollection<DeviceParameter> TableOfControls { get; } = new();
+
+   
     double temp = 0;
     public MainViewModel()
     {
-        DeviceDescriprion.DeviceDescriptionReader.Read();
+
+
+        TableOfControls = DeviceDescriptionReader.DeviceDescription;
 
         var tester = new tester();
+
 
         IDisposable listener = tester.updater.Subscribe(
         (_) =>
@@ -54,40 +59,14 @@ public class MainViewModel : ViewModelBase
                 this.Faults.Add("fault"+_.id);
                 if (this.Faults.Count > 10) this.Faults.Clear();
 
-                if (!table_init)
-                {
-                    foreach (var el in DeviceDescriptionReader.ShanghaiDevice)
-                    {
-                        ControlTable.Parameter.Type type = ControlTable.Parameter.Type.TEXT;
-                        if (el.options != null)
-                        {
-                            type = ControlTable.Parameter.Type.LIST;
-                        }
+                //if(TableOfControls.Count == 0)
+                //{
+                //    foreach (DeviceParameter param in DeviceDescriptionReader.DeviceDescription) {
+                //        TableOfControls.Add(param); 
+                //    }
 
-                        var param = new MCU_CAN_AV.CustomControls.ControlTable.Parameter(
-                                     el.CANID,
-                                     el.sname,
-                                     items: el.options,
-                                     type: type,
-                                     writeEnable: el.RW
-                                     );
-                        param.Value = 0;
-                        param.onValueChangedByUser += (_, __) =>
-                        {
-                            Debug.WriteLine("Value " + Convert.ToDouble(_));
-                            temp = Convert.ToDouble(_);
-                        };
+                //}
 
-                        TableOfControls.Add(param);
-                    }
-
-                    table_init = true;
-                }
-                else {
-
-                    TableOfControls[3].Value = _.id;
-                    TableOfControls[15].Value = temp;
-                }
             });
         });
 

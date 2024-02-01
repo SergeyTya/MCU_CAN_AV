@@ -8,6 +8,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
+using MCU_CAN_AV.DeviceDescriprion;
 using MCU_CAN_AV.ViewModels;
 using MCU_CAN_AV.Views;
 using ReactiveUI;
@@ -31,10 +32,10 @@ namespace MCU_CAN_AV.CustomControls
             RW
         };
 
-        public static readonly StyledProperty<ObservableCollection<Parameter>> TableSourceProperty =
-             AvaloniaProperty.Register<ControlTable, ObservableCollection<Parameter>>("TableSource");
+        public static readonly StyledProperty<ObservableCollection<DeviceParameter>> TableSourceProperty =
+             AvaloniaProperty.Register<ControlTable, ObservableCollection<DeviceParameter>>("TableSource");
 
-        public ObservableCollection<Parameter> TableSource
+        public ObservableCollection<DeviceParameter> TableSource
         {
             set => SetValue(TableSourceProperty, value);
             get => GetValue(TableSourceProperty);
@@ -49,53 +50,6 @@ namespace MCU_CAN_AV.CustomControls
             get => GetValue(ContentTypeProperty);
         }
 
-
-        public partial class Parameter : ObservableObject
-        {
-            public enum Type{ 
-                BOOL = 0,
-                LIST,
-                TEXT
-            };
-            public Parameter(string id, string descript, Type type= Type.TEXT, List<string>? items = null, bool writeEnable = false)
-            {
-                Id = id;
-                Description = descript;
-                this.type = type;
-                this.items = items;
-                isWriteEnable = writeEnable;
-            }
-
-            public int row;
-              
-            public string Id { get; set; }
-            public string Description { get; set; }
-
-            public Type type { get; set; }
-
-            public bool isWriteEnable;
-            
-            internal List<string> items;
-
-
-
-            [ObservableProperty]
-            private double _value;
-
-            internal  EventHandler onValueChanged;
-            public event EventHandler onValueChangedByUser
-            {
-                add
-                {
-                    lock (this) { onValueChanged = onValueChanged + value; }
-                }
-                remove
-                {
-                    lock (this) { onValueChanged = onValueChanged - value; }
-                }
-            }
-        }
-
         public ControlTable()
         {
             InitializeComponent();
@@ -104,36 +58,26 @@ namespace MCU_CAN_AV.CustomControls
         int row_cnt = 1;
         private void TableSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            var tmp = (ObservableCollection<Parameter>)sender;
+            var tmp = (ObservableCollection<DeviceParameter>)sender;
             switch (e.Action)
             {
 
                 case NotifyCollectionChangedAction.Add:
-                    Parameter item = tmp[tmp.Count - 1];
-                    switch (this.TypeOfContent)
-                    {
-                        case ContentType.ALL:
-                            break;
-                        case ContentType.RO:
-                            if (item.isWriteEnable) return;
-                            break;
-                        case ContentType.RW:
-                            if (!item.isWriteEnable) return;
-                            break;
-                        default:
-                            break;
-                    }
+                    DeviceParameter item = tmp[tmp.Count - 1];
                     Add_row(item, row_cnt++);
                     Debug.WriteLine("sdas");
                     break;
 
                 case NotifyCollectionChangedAction.Move:
+                    throw new NotImplementedException();
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
+                    throw new NotImplementedException();
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
+                    throw new NotImplementedException();
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
@@ -153,8 +97,8 @@ namespace MCU_CAN_AV.CustomControls
             if (row != 0) th_top = 0;
             if (col != 0) th_left = 0;
             Border bdr = new Border();
-            bdr.BorderThickness = new Thickness(th_left, th_top, 1,1);
-           // bdr.BorderThickness = new Thickness(0, 0, 0, 0);
+            bdr.BorderThickness = new Thickness(th_left, th_top, 1, 1);
+            // bdr.BorderThickness = new Thickness(0, 0, 0, 0);
             bdr.BorderBrush = new SolidColorBrush(Colors.Gray);
             bdr.SetValue(Avalonia.Controls.Grid.ColumnProperty, col);
             bdr.SetValue(Avalonia.Controls.Grid.RowProperty, row);
@@ -162,7 +106,8 @@ namespace MCU_CAN_AV.CustomControls
 
         }
 
-        Panel newTextblokCell(string Text, Control Parent , int row, int col) {
+        Panel newTextblokCell(string Text, Control Parent, int row, int col)
+        {
 
 
             TextBlock header = new TextBlock
@@ -180,19 +125,20 @@ namespace MCU_CAN_AV.CustomControls
             panel.Children.Add(header);
             panel.SetValue(Avalonia.Controls.Grid.ColumnProperty, col);
             panel.SetValue(Avalonia.Controls.Grid.RowProperty, row);
-            ((Grid) Parent).Children.Add(panel);
+            ((Grid)Parent).Children.Add(panel);
             Add_border(row, col, panel);
 
             return panel;
         }
 
-        string[] headers = {  "Description", "Id", "Value" };
+        string[] headers = { "Description", "Id", "Value" };
 
-       
+
         int vl_width = 70;
 
 
-        void Init_table() {
+        void Init_table()
+        {
             Grid_main.ColumnDefinitions.Clear();
             Grid_main.RowDefinitions.Clear();
             Grid_main.Children.Clear();
@@ -214,7 +160,7 @@ namespace MCU_CAN_AV.CustomControls
                 ResizeBehavior = GridResizeBehavior.PreviousAndCurrent,
                 ResizeDirection = GridResizeDirection.Columns,
                 Background = new SolidColorBrush(Colors.DimGray),
-                Height=5,
+                Height = 5,
             };
 
             Action resize = () =>
@@ -238,7 +184,7 @@ namespace MCU_CAN_AV.CustomControls
             };
 
             split1.SetValue(Avalonia.Controls.Grid.RowProperty, 0);
-            split1.SetValue(Avalonia.Controls.Grid.ColumnProperty,  1);
+            split1.SetValue(Avalonia.Controls.Grid.ColumnProperty, 1);
             Grid_main.Children.Add(split1);
 
             Grid_header.RowDefinitions.Add(new RowDefinition(new GridLength(30, GridUnitType.Pixel)));
@@ -246,18 +192,19 @@ namespace MCU_CAN_AV.CustomControls
 
             for (int i = 0; i < 3; i++)
             {
-               Add_column_header(headers[i], Grid_header, 0, i);
+                Add_column_header(headers[i], Grid_header, 0, i);
             }
             resize();
         }
 
-        void Add_column_header(string Text,  Grid Parent, int row, int col) {
+        void Add_column_header(string Text, Grid Parent, int row, int col)
+        {
 
             var panel = newTextblokCell(Text, Parent, row, col);
             ((TextBlock)panel.Children[0]).HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
             ((TextBlock)panel.Children[0]).TextAlignment = TextAlignment.Center;
 
-            panel.Background = new SolidColorBrush(Colors.Black);   
+            panel.Background = new SolidColorBrush(Colors.Black);
 
             TextBlock tb = (TextBlock)panel.Children[0];
             Border bdr = (Border)panel.Children[1];
@@ -274,7 +221,8 @@ namespace MCU_CAN_AV.CustomControls
 
         bool change_color = false;
         string tbvaluebuf = "0";
-        void Add_row(Parameter param, int row) {
+        void Add_row(DeviceParameter param, int row)
+        {
 
 
             change_color = !change_color;
@@ -285,20 +233,20 @@ namespace MCU_CAN_AV.CustomControls
             var c1 = Avalonia.Media.Colors.Gray;
             var c2 = Avalonia.Media.Colors.DimGray;
 
-            var row_color = change_color? c1 : c2;
+            var row_color = change_color ? c1 : c2;
 
-            param.row = row;
+            //param.row = row;
 
-            var panel = newTextblokCell(param.Id, Grid_main, row, 1);
+            var panel = newTextblokCell(param.CANID, Grid_main, row, 1);
             ((TextBlock)panel.Children[0]).Margin = new Thickness(1, 1, 1, 1);
             ((TextBlock)panel.Children[0]).HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
             ((TextBlock)panel.Children[0]).TextAlignment = TextAlignment.Center;
             panel.Background = new SolidColorBrush(row_color);
 
-          
-            panel = newTextblokCell(param.Description.ToString(),  Grid_main, row, 0);
+
+            panel = newTextblokCell(param.sname.ToString(), Grid_main, row, 0);
             ((TextBlock)panel.Children[0]).HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right;
-            ((TextBlock)panel.Children[0]).Margin = new Thickness(0,0,10,0);
+            ((TextBlock)panel.Children[0]).Margin = new Thickness(0, 0, 10, 0);
             panel.Background = new SolidColorBrush(row_color);
 
             panel = new DockPanel();
@@ -320,60 +268,56 @@ namespace MCU_CAN_AV.CustomControls
                     TextAlignment = TextAlignment.Left,
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                     Foreground = new SolidColorBrush(Colors.Black),
-                   
+
                 };
 
                 return item2;
             };
 
-            switch (param.type) {
-                case Parameter.Type.BOOL:
-                    
-                    if(!param.isWriteEnable)
+            if (param.options != null)
+            {
+
+                var item1 = new ComboBox
+                {
+                    [!ComboBox.SelectedIndexProperty] = binding,
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
+                    Foreground = new SolidColorBrush(Colors.Black),
+                };
+
+                foreach (var item in param.options)
+                {
+                    item1.Items.Add(item);
+                }
+
+                item1.DropDownClosed += (_, __) =>
+                {
+                    if (item1.SelectedIndex < 0) return;
+                    param.onValueChanged.Invoke(item1.SelectedIndex, EventArgs.Empty);
+                };
+                temp = item1;
+                temp.IsEnabled = param.RW;
+
+            }
+            else
+            {
+
+                if (!param.RW)
+                {
+                    temp = Create_RO_item();
+                }
+                else
+                {
+
+                    var tb = new TextBox
                     {
-                        temp = Create_RO_item();
-                        break;
-
-                    }
-                    panel = new DockPanel
-                    {
-                      
-                    };
-
-                    var item0 = new CheckBox {
-                        [!CheckBox.IsCheckedProperty] = binding,
-                        Margin = new Thickness(10,0,0,0),
-                        Foreground = new SolidColorBrush(Colors.Black),
-
-                    };
-
-                    item0.IsCheckedChanged += (_, __) =>
-                    {
-                        param.onValueChanged.Invoke(item0.IsChecked, EventArgs.Empty);
-                    };
-
-                    panel.Children.Add(item0);
-
-                    temp = panel;
-
-                    break;
-
-                case Parameter.Type.TEXT:
-
-                    if (!param.isWriteEnable)
-                    {
-                        temp = Create_RO_item();
-                        break;
-                    }
-
-                    var tb = new TextBox {
                         [!TextBox.TextProperty] = binding,
-                        Margin = new Thickness (1,1,1,1),
+                        Margin = new Thickness(1, 1, 1, 1),
                         Foreground = new SolidColorBrush(Colors.LightGray),
-                        
+
                     };
-                    tb.TextChanged += (_, __) => {
-                        tb.Background = new SolidColorBrush(Colors.Gray); 
+                    tb.TextChanged += (_, __) =>
+                    {
+                        tb.Background = new SolidColorBrush(Colors.Gray);
                     };
                     Action undo = () =>
                     {
@@ -384,9 +328,10 @@ namespace MCU_CAN_AV.CustomControls
 
                         var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
                         nextElement.Focus();
-                        
+
                     };
-                    tb.KeyDown += (_,__) => {
+                    tb.KeyDown += (_, __) =>
+                    {
                         if (__.Key == Avalonia.Input.Key.Up)
                         {
                             var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Previous);
@@ -425,18 +370,20 @@ namespace MCU_CAN_AV.CustomControls
                             endedit();
                         }
                     };
-                   
-                    tb.LostFocus += (_, __) => {
-                       double value = 0;
-                       bool res = double.TryParse(tb.Text, out value);
-                       if (res)
-                       {
-                           if (param.onValueChanged != null)
-                               param.onValueChanged.Invoke(value, EventArgs.Empty);
-                       }
-                       else {
+
+                    tb.LostFocus += (_, __) =>
+                    {
+                        double value = 0;
+                        bool res = double.TryParse(tb.Text, out value);
+                        if (res)
+                        {
+                            if (param.onValueChanged != null)
+                                param.onValueChanged.Invoke(value, EventArgs.Empty);
+                        }
+                        else
+                        {
                             undo();
-                       }
+                        }
                     };
 
                     tb.GotFocus += (_, __) =>
@@ -445,32 +392,12 @@ namespace MCU_CAN_AV.CustomControls
                     };
 
                     temp = tb;
-                    break;
 
-                case Parameter.Type.LIST:
-                    var item1 = new ComboBox {
-                        [!ComboBox.SelectedIndexProperty] = binding,
-                        VerticalAlignment= Avalonia.Layout.VerticalAlignment.Stretch,
-                        Foreground = new SolidColorBrush (Colors.Black),
-                    };
+                }
 
-                    foreach (var item in param.items) {
-                        item1.Items.Add(item);
-                    }
-
-                    item1.DropDownClosed += (_, __) =>
-                    {
-                        if (item1.SelectedIndex < 0) return;
-                        param.onValueChanged.Invoke(item1.SelectedIndex, EventArgs.Empty);
-                    };
-                    temp = item1;
-                    temp.IsEnabled = param.isWriteEnable;
-                    break;
-                default:
-                    break;
             }
 
-          
+
             temp.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
             panel = new Panel
             {
@@ -491,12 +418,14 @@ namespace MCU_CAN_AV.CustomControls
         {
             var new_value = change.NewValue;
 
-            if (change.Property.Name == "TableSource")
+            // if (change.Property.Name == "TableSource")
+            if (change.Property == TableSourceProperty)
             {
-                if (!TableSource_init) {
+                if (!TableSource_init)
+                {
                     TableSource.CollectionChanged += TableSource_CollectionChanged;
                     TableSource_init = true;
-                } 
+                }
             }
 
             base.OnPropertyChanged(change);
