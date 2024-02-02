@@ -20,11 +20,10 @@
 		<vm:ConnectionViewModel />
 	</UserControl.DataContext>
 
-	<TabControl>
+	<TabControl TabStripPlacement="Left">
 		
 		<TabItem Header="Can">
 			
-			<Button Content="Connect" Command="{Binding OnClickConnectCommand}"/>
 			
 		</TabItem>
 

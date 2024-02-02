@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
@@ -40,32 +41,48 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
             }
 
 
-            var tester = new MCU_CAN_AV.Models.tester();
+            //var tester = new MCU_CAN_AV.Models.tester();
 
-            IDisposable listener = tester.updater.Subscribe(
+            //IDisposable listener = tester.updater.Subscribe(
+            //(_) =>
+            //{
+
+            //    //Update MetterFaultTable
+            //    Dispatcher.UIThread.Invoke(() =>
+            //    {
+            //        //this.Faults.Add("fault" + _.id);
+            //        //if (this.Faults.Count > 10) this.Faults.Clear();
+
+            //        foreach (ShanghaiDeviceParameter item in IDeviceReader.DeviceDescription)
+            //        {
+
+            //            if (item._value != _.id)
+            //            {
+            //                item.writeValue(_.id); // we weel post only new values
+            //            }
+            //            else {
+
+            //                //Debug.WriteLine("Equals!");
+            //            }
+            //        }
+            //    });
+            //});
+
+            var CAN = ICAN.Create(
+                      new ICAN.CANInitStruct(
+                   DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 100
+              ));
+
+
+            IDisposable listener = CAN.Start().Subscribe(
             (_) =>
             {
-         
-                //Update MetterFaultTable
                 Dispatcher.UIThread.Invoke(() =>
-                {
-                    //this.Faults.Add("fault" + _.id);
-                    //if (this.Faults.Count > 10) this.Faults.Clear();
-
-                    foreach (ShanghaiDeviceParameter item in IDeviceReader.DeviceDescription)
                     {
-
-                        if (item._value != _.id)
-                        {
-                            item.writeValue(_.id); // we weel post only new values
-                        }
-                        else {
-
-                            //Debug.WriteLine("Equals!");
-                        }
-                    }
-                });
+                        EncodeData(_);
+                    });
             });
+
         }
 
         static private void EncodeData(ICAN.RxTxCanData mes) {
@@ -74,8 +91,9 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
 
             foreach (ShanghaiDeviceParameter item in IDeviceReader.DeviceDescription) {
                 uint id = 0;
+                char[] _trim_hex = new char[] { '0', 'x' };
 
-                if (!uint.TryParse(item.ID, out id)) { 
+                if (!uint.TryParse(item.ID.TrimStart(_trim_hex), NumberStyles.HexNumber, null, out id)) { 
                     throw new NotImplementedException();
                 };
 
@@ -136,45 +154,50 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
 
             public bool IsReadWrite { get => RW; }
 
+            public string Min { get => throw new NotImplementedException(); }
+
+            public string Max { get => throw new NotImplementedException(); }
+
+            public string Type { get => throw new NotImplementedException(); }
+
             [JsonProperty("CANID")]
-            string CANID;
+            internal string CANID;
 
             [JsonProperty("sname")]
-            string sname { get; set; }
+            internal string sname { get; set; }
 
             [JsonProperty("unit")]
-            string unit { get; set; }
+            internal string unit { get; set; }
 
             [JsonProperty("options")]
-            List<string> options { get; set; }
+            internal List<string> options { get; set; }
 
             [JsonProperty("RW")]
-            bool RW { get; set; }
+            internal bool RW { get; set; }
 
             [JsonProperty("len")]
-            public int len;
+            internal int len;
 
             [JsonProperty("offset")]
-            public int offset;
+            internal int offset;
 
             [JsonProperty("valoffset")]
-            public int valoffset;
+            internal int valoffset;
 
             [JsonProperty("scale")]
-            public float scale { get; set; }
+            internal float scale { get; set; }
 
             [JsonProperty("type")]
-            public string type { get; set; }
+            internal string type { get; set; }
 
             [JsonProperty("def")]
-            public int def { get; set; }
+            internal int def { get; set; }
 
             [JsonProperty("min")]
-            public int min { get; set; }
+            internal int min { get; set; }
 
             [JsonProperty("max")]
-            public int max { get; set; }
-
+            internal int max { get; set; }
         }
     }
 }

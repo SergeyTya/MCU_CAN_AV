@@ -14,14 +14,5 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
 
-        var LabelMeter1Value = Meters.Slider1Value.Subscribe((_) =>
-        {
-            ((MainViewModel)DataContext).slider_speed = _;
-        });
-
-        var LabelMeter2Value = Meters.Slider2Value.Subscribe((_) =>
-        {
-            ((MainViewModel)DataContext).slider_torque = _;
-        });
     }
 }

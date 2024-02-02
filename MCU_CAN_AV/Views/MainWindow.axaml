@@ -6,24 +6,35 @@
         xmlns:views="clr-namespace:MCU_CAN_AV.Views"
         mc:Ignorable="d" d:DesignWidth="750" d:DesignHeight="700"
         x:Class="MCU_CAN_AV.Views.MainWindow"
+		x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="MCU_CAN_AV"		
+        Title="MCU_CAN_AV"
 		MinWidth="750"
 		MinHeight="380"
 		>
+	
+		<Panel Grid.Row="0">
+			<Panel>
+				<views:MainView3
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"/>
+			</Panel>
 
-	<StackPanel>
+			<Panel Background="Black" IsVisible="{Binding IsConnVisible}">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1.*" />
+						<RowDefinition Height="100"/>
+					</Grid.RowDefinitions>
+				<views:ConnectionView  Grid.Row="0" Background="Black" />
+				<Button 
+					Grid.Row="1" 
+					Content="Connect" 
+					Command="{Binding OnClickConnectCommand}" 
+					IsVisible=""
+					/>
+				</Grid>
+			</Panel>
+		</Panel>
 		
-
-		<views:MainView3
-		Name="mainView"
-		HorizontalAlignment="Stretch"
-		VerticalAlignment="Stretch"
-		IsVisible="True"
-		/>
-		
-		<views:ConnectionView />
-
-	</StackPanel>
-
 </Window>

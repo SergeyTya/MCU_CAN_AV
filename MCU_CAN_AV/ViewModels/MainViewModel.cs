@@ -22,29 +22,23 @@ namespace MCU_CAN_AV.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    public IObservable<int> slider_speed_observer;
 
-    public int slider_speed;
-    public int slider_torque;
-
-
-    public ObservableCollection<string> Faults { get; } = new();
-
-   
-    double temp = 0;
-    public MainViewModel()
+    bool _IsConnVisible = true;
+    public bool IsConnVisible
     {
-      
-        if (slider_speed_observer != null) {
-            slider_speed_observer.Subscribe(
-        //x => slider_speed = x
-            (_) => {
-            Debug.WriteLine("get slider" + _);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _IsConnVisible, value);
         }
-        );
-
-        }
-
+        get { return _IsConnVisible; }
     }
 
+    public void OnClickConnectCommand()
+    {
+        Debug.WriteLine("aass");
+        MCU_CAN_AV.DeviceDescriprion.Shanghai.ShanghaiDeviceReader.Init();
+        IsConnVisible = false;
+    }
+
+  
 }
