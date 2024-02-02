@@ -22,7 +22,6 @@
 			   HorizontalAlignment="Stretch"
 						   />
 		<DataGrid Grid.Column="0" Grid.Row="1"
-			ItemsSource="{Binding $parent[3].FaultTable}"
 			Name="DataGrid_Faults"
 			Margin="0"
 			AutoGenerateColumns="False" IsReadOnly="True"
@@ -31,7 +30,7 @@
 			<DataGrid.Columns>
 				<DataGridTextColumn
 					Header="Faults list"
-					Binding="{Binding .}"
+					Binding="{Binding Name}"
 					Width="1*"
 					Foreground="Red"
 						/>

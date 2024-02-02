@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MCU_CAN_AV.DeviceDescriprion
+namespace MCU_CAN_AV.Devices
 {
 
     public interface IDeviceParameter
@@ -34,12 +34,17 @@ namespace MCU_CAN_AV.DeviceDescriprion
 
     }
 
-    internal interface IDeviceReader
+    public interface IDeviceFault {
+        public string ID { get; }  
+        public string Name { get; }  
+    }
+
+    internal interface IDevice
     {
+        internal static IDevice Device;
 
         public static ObservableCollection<IDeviceParameter> DeviceDescription = new();
-        public static ObservableCollection<String> DeviceFaults = new();
-
+        public static ObservableCollection<IDeviceFault> DeviceFaults = new();
 
         public static string ReadJsonFromResources(byte[] res)
         {
@@ -49,6 +54,13 @@ namespace MCU_CAN_AV.DeviceDescriprion
             sr.Close();
             return fileContents;
         }
+       
+        void Reset();
 
+
+        public void ResetStatic() {
+            Device.Reset();
+        }
+        
     }
 }

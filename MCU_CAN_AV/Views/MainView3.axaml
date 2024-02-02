@@ -5,7 +5,7 @@
 			 xmlns:lv="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
 			 xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
 			 xmlns:local="using:MCU_CAN_AV"
-			 xmlns:dd ="clr-namespace:MCU_CAN_AV.DeviceDescriprion"
+			 xmlns:dd ="clr-namespace:MCU_CAN_AV.Devices"
 			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 			 xmlns:v="clr-namespace:MCU_CAN_AV.Views"
 			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
@@ -163,7 +163,7 @@
 						<TabItem   Header="Controls">
 							<v:ControlView
 								Name="Angular"
-								ControlSource = "{x:Static dd:IDeviceReader.DeviceDescription} "					
+								ControlSource = "{x:Static dd:IDevice.DeviceDescription} "					
 								IsEnabled="{Binding #ControlLocker.IsChecked}"
 								VerticalAlignment="Center"
 								Height="350"
@@ -179,7 +179,7 @@
 							
 							<cc:ControlTable Name="controlTable"
 								TypeOfContent="RW"
-								TableSource="{x:Static dd:IDeviceReader.DeviceDescription}"
+								TableSource="{x:Static dd:IDevice.DeviceDescription}"
 								/>
 						</TabItem>
 						<TabItem Header="Log">
@@ -215,7 +215,7 @@
 					</Grid.RowDefinitions>
 					<ScrollViewer Grid.Row="0">
 						<Panel   Classes="Black11">
-							<cc:FaultsIndi  FaultTable="{Binding Faults}"/>
+							<cc:FaultsIndi  FaultTable="{x:Static dd:IDevice.DeviceFaults}"/>
 							<Border Classes="h4"/>
 						</Panel>
 					</ScrollViewer>

@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.CustomControls;
-using MCU_CAN_AV.DeviceDescriprion;
+using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.Models;
 using Microsoft.VisualBasic;
 using ReactiveUI;
@@ -36,7 +36,7 @@ public class MainViewModel : ViewModelBase
     public void OnClickConnectCommand()
     {
         Debug.WriteLine("aass");
-        MCU_CAN_AV.DeviceDescriprion.Shanghai.ShanghaiDeviceReader.Init();
+        MCU_CAN_AV.Devices.Shanghai.ShanghaiDevice.Init();
         IsConnVisible = false;
     }
 

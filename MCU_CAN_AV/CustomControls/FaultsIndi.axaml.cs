@@ -17,11 +17,14 @@ namespace MCU_CAN_AV.CustomControls
     public partial class FaultsIndi : UserControl
     {
 
-        public static readonly StyledProperty<ObservableCollection<string>> FaultTableProperty =
-          AvaloniaProperty.Register<FaultsIndi, ObservableCollection<string>>("FaultTable");
-        public ObservableCollection<string> FaultTable
+        public static readonly StyledProperty<ObservableCollection<MCU_CAN_AV.Devices.IDeviceFault>> FaultTableProperty =
+          AvaloniaProperty.Register<FaultsIndi, ObservableCollection<MCU_CAN_AV.Devices.IDeviceFault>>("FaultTable");
+        public ObservableCollection<MCU_CAN_AV.Devices.IDeviceFault> FaultTable
         {
-            set => SetValue(FaultTableProperty, value);
+            set {
+                SetValue(FaultTableProperty, value);
+                DataGrid_Faults.ItemsSource = FaultTable;
+            }
             get => GetValue(FaultTableProperty);
         }
 
@@ -30,17 +33,5 @@ namespace MCU_CAN_AV.CustomControls
             InitializeComponent();
         }
 
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-        {
-            if (change.Property.Name == "FaultTable")
-            {
-                // Bind data to dataGrid from property
-                if (DataGrid_Faults.ItemsSource != FaultTable)
-                {
-                    DataGrid_Faults.ItemsSource = FaultTable;
-                }
-            }
-            base.OnPropertyChanged(change);
-        }
     }
 }

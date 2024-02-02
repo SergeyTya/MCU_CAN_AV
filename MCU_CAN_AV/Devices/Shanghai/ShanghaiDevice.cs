@@ -17,22 +17,30 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
+namespace MCU_CAN_AV.Devices.Shanghai
 {
-    internal class ShanghaiDeviceReader : IDeviceReader
+    internal class ShanghaiDevice : IDevice
     {
+        static List<ShanghaiDeviceFault> FaultsList = new();
+
         static public void Init()
         {
+            IDevice.Device = new ShanghaiDevice();
+
             List<ShanghaiDeviceParameter> tmp = new();
+           
             try
             {
-                string fileContents = IDeviceReader.ReadJsonFromResources(Resources.shanghai_description);
+                string fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_faults);
+                FaultsList = JsonConvert.DeserializeObject<List<ShanghaiDeviceFault>>(fileContents);
+
+                fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_description);
                 tmp = JsonConvert.DeserializeObject<List<ShanghaiDeviceParameter>>(fileContents);
 
-                IDeviceReader.DeviceDescription.Clear();
+                IDevice.DeviceDescription.Clear();
                 foreach (var item in tmp)
                 {
-                    IDeviceReader.DeviceDescription.Add(item);
+                    IDevice.DeviceDescription.Add(item);
                 }
             }
             catch (JsonReaderException e)
@@ -80,16 +88,23 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
                 Dispatcher.UIThread.Invoke(() =>
                     {
                         EncodeData(_);
+                        EncodeFaults(_);
                     });
             });
 
+        }
+
+
+        public void Reset()
+        {
+            IDevice.DeviceFaults.Clear();
         }
 
         static private void EncodeData(ICAN.RxTxCanData mes) {
 
             BitArray bits = new BitArray(mes.data);
 
-            foreach (ShanghaiDeviceParameter item in IDeviceReader.DeviceDescription) {
+            foreach (ShanghaiDeviceParameter item in IDevice.DeviceDescription) {
                 uint id = 0;
                 char[] _trim_hex = new char[] { '0', 'x' };
 
@@ -115,6 +130,42 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
             }
         }
 
+        static private void EncodeFaults(ICAN.RxTxCanData mes) {
+
+            if ( (FaultsList.Count > 0) && (mes.id == (uint)0x18F39CD1) ){ 
+
+                foreach (var fault_new in FaultsList)
+                {
+                    if (fault_new.code == mes.data[2])
+                    {
+                       
+                        bool new_fault = true;
+                        foreach (var fault_now in IDevice.DeviceFaults)
+                        {
+
+                            if (((ShanghaiDeviceFault)fault_now).code == fault_new.code)
+                            {
+                                new_fault = false;
+                                //fault_now.Cells[1].Style.BackColor = Color.LightGray;
+                                //isActive_error = true;
+                            }
+                            else
+                            {
+                                // fault_now.Cells[1].Style.BackColor = Color.White;
+                            }
+                        }
+                        if (new_fault)
+                        {
+                            IDevice.DeviceFaults.Add(fault_new);
+                        }
+
+                    }
+                }
+
+
+            }
+        }
+
         private static BitArray CopySlice(BitArray source, int offset, int length)
         {
             // Urgh: no CopyTo which only copies part of the BitArray
@@ -124,6 +175,19 @@ namespace MCU_CAN_AV.DeviceDescriprion.Shanghai
                 ret[i] = source[offset + i];
             }
             return ret;
+        }
+
+        internal class ShanghaiDeviceFault : IDeviceFault
+        {
+            public string ID => code.ToString();
+
+            public string Name => name;
+
+            [JsonProperty("code")]
+            internal uint code;
+
+            [JsonProperty("name")]
+            internal string name;
         }
 
         internal class ShanghaiDeviceParameter : IDeviceParameter

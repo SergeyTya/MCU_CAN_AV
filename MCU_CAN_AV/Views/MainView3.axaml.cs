@@ -1,5 +1,5 @@
 using Avalonia.Controls;
-using MCU_CAN_AV.DeviceDescriprion;
+using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.CustomControls;
 using Avalonia.Data;
 using ReactiveUI;

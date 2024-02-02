@@ -33,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\ButtonsControlView.axaml.cs">
+      <DependentUpon>ButtonsControlView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ControlView.axaml.cs">
       <DependentUpon>ControlView.axaml</DependentUpon>
     </Compile>
@@ -45,7 +48,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

@@ -1,55 +1,55 @@
 [
     {
         "code": 1,
-        "name": "Bus overvoltage fault"
+        "name": "Overvoltage"
     },
     {
         "code": 2,
-        "name": "Bus undervoltage fault"
+        "name": "Undervoltage"
     },
     {
         "code": 3,
-        "name": "Output short circuit fault to ground"
+        "name": "Output short circuit to ground"
     },
     {
         "code": 4,
-        "name": "U-phase overcurrent fault"
+        "name": "U-phase overcurrent"
     },
     {
         "code": 5,
-        "name": "U phase current too small fault"
+        "name": "U phase current too small"
     },
     {
         "code": 6,
-        "name": "U phase current zero drift fault"
+        "name": "U phase current zero drift"
     },
     {
         "code": 7,
-        "name": "phase current is too large fault"
+        "name": "Phase current is too large"
     },
     {
         "code": 8,
-        "name": "V phase current too small fault"
+        "name": "V phase current too small"
     },
     {
         "code": 9,
-        "name": "V phase current zero drift fault"
+        "name": "V phase current zero drift"
     },
     {
         "code": 10,
-        "name": "W phase current is too large fault"
+        "name": "W phase current is too large"
     },
     {
         "code": 11,
-        "name": "W phase current too small fault"
+        "name": "W phase current too small"
     },
     {
         "code": 12,
-        "name": "W phase current zero drift fault"
+        "name": "W phase current zero drift"
     },
     {
         "code": 13,
-        "name": "Three-phase current unbalance fault"
+        "name": "Three-phase current unbalance"
     },
     {
         "code": 14,
@@ -61,15 +61,15 @@
     },
     {
         "code": 16,
-        "name": "Motor overspeed"
+        "name": "Overspeed"
     },
     {
         "code": 17,
-        "name": "motor overheating"
+        "name": "Motor overheating"
     },
     {
         "code": 18,
-        "name": "motor stall"
+        "name": "Motor stall"
     },
     {
         "code": 19,

@@ -15,7 +15,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Kernel;
 using System;
 using System.Linq;
-using MCU_CAN_AV.DeviceDescriprion;
+using MCU_CAN_AV.Devices;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;

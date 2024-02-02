@@ -8,7 +8,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
-using MCU_CAN_AV.DeviceDescriprion;
+using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.ViewModels;
 using MCU_CAN_AV.Views;
 using ReactiveUI;
@@ -264,24 +264,6 @@ namespace MCU_CAN_AV.CustomControls
 
             panel = new DockPanel();
             Control temp = new Control();
-
-            //var tmp = .Val;
-
-            //Binding binding = new Binding
-            //{
-            //    Path = "Value",
-            //    Source = param,
-            //    Mode = BindingMode.OneWay
-            //};
-
-            //Binding binding = new Binding
-            //{
-
-            //    Path = "Value",
-            //    Source = param.Val,
-            //    Mode = BindingMode.Default
-
-            //};
 
             var binding = param.Value;
 

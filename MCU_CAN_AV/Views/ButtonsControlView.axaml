@@ -3,7 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="200"
-             x:Class="MCU_CAN_AV.CustomControls.ButtonsControl">
+			 xmlns:dd ="clr-namespace:MCU_CAN_AV.Devices"
+			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
+             x:Class="MCU_CAN_AV.Views.ButtonsControlView"
+			  x:DataType="vm:MainViewModel"
+			 >
   <Grid Grid.Column="0" Grid.Row="0" Margin="5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="1*"></ColumnDefinition>
@@ -39,7 +43,7 @@
 					<Button 
 						Grid.Column="0" Name="Start" Content="Start" Margin="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 					<Button 
-						Grid.Column="1" Name="Reset" Content="Reset" Margin="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+						Grid.Column="1" Name="Reset" Content="Reset" Margin="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding onClickResetButton}"/>
 				</Grid>
 				<Button Grid.Row="3" 
 						Name="Stop" 
@@ -49,8 +53,6 @@
 						HorizontalAlignment="Stretch" 
 						VerticalAlignment="Stretch"
 						/>
-				
-				
 			</Grid>
 
 </UserControl>
