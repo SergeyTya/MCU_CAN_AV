@@ -9,7 +9,7 @@
 			 x:CompileBindings="True"
 			 >
 
-	<Grid>
+	<Grid ShowGridLines="True">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="1*"/>
 		</Grid.ColumnDefinitions>

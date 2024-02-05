@@ -10,8 +10,19 @@ namespace MCU_CAN_AV.ViewModels
     internal class ButtonsControlViewModel
     {
         public void onClickResetButton() {
-            IDevice.Device.Reset();
 
+            IDevice.ResetStatic();
         }
+        public void onClickStartButton()
+        {
+
+            IDevice.StartStatic();
+        }
+
+        public void onClickStopButton() { 
+
+            IDevice.StopStatic();
+        }
+
     }
 }

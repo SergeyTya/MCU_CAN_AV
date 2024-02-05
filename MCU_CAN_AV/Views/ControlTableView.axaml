@@ -35,16 +35,14 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Top"
 					TableSource="{Binding $parent.DataContext.TableOfControls}"
-					Margin="5,5,2,5"
-					TypeOfContent ="RW"/>
+					Margin="5,5,2,5"/>
 
 				<cc:ControlTable
 					Grid.Column="1"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Top"
 					TableSource="{Binding $parent.DataContext.TableOfControls}"
-					Margin="2,5,5,5"
-					TypeOfContent ="RO"/>
+					Margin="2,5,5,5"/>
 			</Grid>
 		</Panel>
 

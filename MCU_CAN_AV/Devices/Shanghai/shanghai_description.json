@@ -1,188 +1,210 @@
 [
-  {
-    "CANID": "0x18F120D1",
-    "RW": 0,
-    "len": 16,
-    "offset": 0,
-    "valoffset": 3000,
-    "sname": "Target torque",
-    "scale": 0.1
-  },
-  {
-    "CANID": "0x18F120D1",
-    "RW": 0,
-    "len": 16,
-    "offset": 16,
-    "valoffset": 20000,
-    "sname": "Actual Speed",
-    "unit":  "rpm",
-    "scale": 1
-  },
-  {
-    "CANID": "0x18F120D1",
-    "len": 16,
-    "RW": 0,
-    "offset": 32,
-    "valoffset": 3000,
-    "sname": "Actual torque, Nm",
-    "scale": 0.1
-  },
-  {
-    "CANID": "0x18F120D1",
-    "RW": 0,
-    "len": 8,
-    "offset": 48,
-    "valoffset": 40,
-    "sname": "Motor temperature",
-    "scale": 1.0
-  },
-  {
-    "CANID": "0x18F120D1",
-    "RW": 0,
-    "len": 8,
-    "offset": 56,
-    "valoffset": 40,
-    "sname": "MCU temperature",
-    "scale": 1.0
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 0,
-    "len": 16,
-    "offset": 0,
-    "valoffset": 0,
-    "sname": "Bus voltage",
-    "scale": 0.1
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 0,
-    "len": 16,
-    "offset": 16,
-    "valoffset": 1000,
-    "sname": "Bus Current",
-    "scale": 0.1
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 1,
-    "len": 5,
-    "offset": 34,
-    "sname": "Feedback Mode",
-    "options": [ "closed tube", "torque", "speed", "zerro torque" ]
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 0,
-    "len": 3,
-    "offset": 40,
-    "sname": "Fault level"
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 0,
-    "len": 4,
-    "offset": 44,
-    "sname": "Cycle count"
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 0,
-    "len": 1,
-    "offset": 56,
-    "sname": "Slope status",
-    "options": [ "not on slope", "on slope" ]
-  },
-  {
-    "CANID": "0x18F1F2D1",
-    "RW": 0,
-    "len": 4,
-    "offset": 56,
-    "sname": "Slope release cnt"
-  },
-  {
-    "CANID": "0xCF12AD0",
-    "RW": 1,
-    "len": 16,
-    "offset": 0,
-    "valoffset": 3000,
-    "sname": "Torque upper limit, Nm",
-    "scale": 0.1,
-    "type": "box",
-    "def": 2700,
-    "min": -3000,
-    "max": 3000
-  },
-  {
-    "CANID": "0xCF12AD0",
-    "RW": 1,
-    "len": 16,
-    "offset": 16,
-    "valoffset": 3000,
-    "sname": "Torque lower limit, Nm",
-    "scale": 0.1,
-    "type": "box",
-    "def": 0,
-    "min": -3000,
-    "max": 3000
-  },
-  {
-    "CANID": "0xCF12AD0",
-    "RW": 1,
-    "len": 16,
-    "offset": 32,
-    "valoffset": 20000,
-    "sname": "Speed limit, Nm",
-    "scale": 0.1,
-    "type": "box",
-    "def": 9000,
-    "min": 0,
-    "max": 9000,
-  },
-  {
-    "CANID": "0xCF10AD0",
-    "RW": 1,
-    "len": 16,
-    "offset": 0,
-    "valoffset": 3000,
-    "sname": "target torque",
-    "scale": 0.1
-  },
-  {
-    "CANID": "0xCF10AD0",
-    "RW": 1,
-    "len": 16,
-    "offset": 16,
-    "valoffset": 20000,
-    "sname": "Speed, rpm",
-    "scale": 1
-  },
-  {
-    "CANID": "0xCF10AD0",
-    "RW": 1,
-    "len": 16,
-    "offset": 32,
-    "valoffset": 3000,
-    "sname": "Actual torque",
-    "unit": "Nm",
-    "scale": 0.1
-  },
-  {
-    "CANID": "0xCF10AD0",
-    "RW": 1,
-    "len": 8,
-    "offset": 48,
-    "valoffset": 40,
-    "sname": "Motor temperature",
-    "scale": 1.0
-  },
-  {
-    "CANID": "0xCF10AD0",
-    "RW": 1,
-    "len": 8,
-    "offset": 56,
-    "valoffset": 40,
-    "sname": "MCU temperature",
-    "scale": 1.0
-  }
+    {
+        "CANID": "0x18F120D1",
+        "len": 16,
+        "RW": 0,
+        "offset": 32,
+        "valoffset": 3000,
+        "sname": "Actual torque",
+        "scale": 0.1,
+        "unit": "Nm",
+        "min": 100,
+        "max": -100
+    },
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 3000,
+        "sname": "Target torque",
+        "scale": 0.1,
+        "unit": "Nm",
+        "min": 100,
+        "max": -100
+    },
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 20000,
+        "sname": "Actual Speed",
+        "unit": "rpm",
+        "scale": 1,
+        "min": -4000.0,
+        "max": 4000.0
+    },
+
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 8,
+        "offset": 48,
+        "valoffset": 40,
+        "sname": "Motor temp",
+        "scale": 1.0,
+        "unit": "C",
+        "min": 0.0,
+        "max": 80.0
+    },
+    {
+        "CANID": "0x18F120D1",
+        "RW": 0,
+        "len": 8,
+        "offset": 56,
+        "valoffset": 40,
+        "sname": "MCU temp",
+        "scale": 1.0,
+        "unit": "C",
+        "min": 0.0,
+        "max": 80.0
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 0,
+        "sname": "Bus voltage",
+        "scale": 0.1,
+        "unit": "V",
+        "min": 200.0,
+        "max": 450.0
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 1000,
+        "sname": "Bus Current",
+        "scale": 0.1,
+        "unit": "A",
+        "min": 0.0,
+        "max": 200.0
+    },
+
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 3,
+        "offset": 40,
+        "sname": "Fault level"
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 4,
+        "offset": 44,
+        "sname": "Cycle count"
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 1,
+        "offset": 56,
+        "sname": "Slope status",
+        "options": [ "not on slope", "on slope" ]
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 0,
+        "len": 4,
+        "offset": 56,
+        "sname": "Slope cnt"
+    },
+    {
+        "CANID": "0x18F1F2D1",
+        "RW": 1,
+        "len": 5,
+        "offset": 34,
+        "sname": "Feedback Mode",
+        "options": [ "closed tube", "torque", "speed", "zerro torque" ]
+    },
+    {
+        "CANID": "0xCF12AD0",
+        "RW": 1,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 3000,
+        "sname": "Torque upper limit, Nm",
+        "scale": 0.1,
+        "type": "box",
+        "def": 2700,
+        "min": -3000,
+        "max": 3000
+    },
+    {
+        "CANID": "0xCF12AD0",
+        "RW": 1,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 3000,
+        "sname": "Torque lower limit, Nm",
+        "scale": 0.1,
+        "type": "box",
+        "def": 0,
+        "min": -3000.0,
+        "max": 3000.0
+    },
+    {
+        "CANID": "0xCF12AD0",
+        "RW": 1,
+        "len": 16,
+        "offset": 32,
+        "valoffset": 20000,
+        "sname": "Speed limit, Nm",
+        "scale": 0.1,
+        "type": "box",
+        "def": 9000,
+        "min": 0.0,
+        "max": 9000.0
+    },
+    {
+        "CANID": "0xCF10AD0",
+        "RW": 1,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 3000,
+        "sname": "target torque",
+        "scale": 0.1
+    },
+    {
+        "CANID": "0xCF10AD0",
+        "RW": 1,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 20000,
+        "sname": "Speed, rpm",
+        "scale": 1
+    },
+    {
+        "CANID": "0xCF10AD0",
+        "RW": 1,
+        "len": 16,
+        "offset": 32,
+        "valoffset": 3000,
+        "sname": "Actual torque",
+        "unit": "Nm",
+        "scale": 0.1
+    },
+    {
+        "CANID": "0xCF10AD0",
+        "RW": 1,
+        "len": 8,
+        "offset": 48,
+        "valoffset": 40,
+        "sname": "Motor temperature",
+        "scale": 1.0
+    },
+    {
+        "CANID": "0xCF10AD0",
+        "RW": 1,
+        "len": 8,
+        "offset": 56,
+        "valoffset": 40,
+        "sname": "MCU temperature",
+        "scale": 1.0
+    }
 ]

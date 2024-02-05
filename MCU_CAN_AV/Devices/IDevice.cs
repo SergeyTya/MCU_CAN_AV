@@ -22,9 +22,9 @@ namespace MCU_CAN_AV.Devices
 
         public string Unit { get; }
 
-        public string Min { get; }
+        public double Min { get; }
 
-        public string Max { get; }
+        public double Max { get; }
 
         public string Type { get; }
 
@@ -41,8 +41,8 @@ namespace MCU_CAN_AV.Devices
 
     internal interface IDevice
     {
-        internal static IDevice Device;
 
+        public static IDevice? Device;
         public static ObservableCollection<IDeviceParameter> DeviceDescription = new();
         public static ObservableCollection<IDeviceFault> DeviceFaults = new();
 
@@ -54,13 +54,34 @@ namespace MCU_CAN_AV.Devices
             sr.Close();
             return fileContents;
         }
-       
+
         void Reset();
+        void Start();
+        void Stop();
 
-
-        public void ResetStatic() {
-            Device.Reset();
+        public static void ResetStatic() {
+            if(Device != null)
+            {
+                Device.Reset();
+            }
+            
         }
-        
+
+        public static void StartStatic()
+        {
+            if (Device != null)
+            {
+                Device.Start();
+            }
+        }
+
+        public static void StopStatic()
+        {
+            if (Device != null)
+            {
+                Device.Stop();
+            }
+        }
+
     }
 }

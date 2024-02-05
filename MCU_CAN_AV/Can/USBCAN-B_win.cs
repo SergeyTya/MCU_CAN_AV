@@ -199,6 +199,11 @@ namespace MCU_CAN_AV.Can
           
             UInt32 res = VCI_Receive(m_devtype, Init_structure._devind, Init_structure._canind, ref m_recobj[0], 1000, 100);
 
+            if (res == 0xffffffff)
+            {
+                Debug.WriteLine("USBCAN Recieve Error");
+                return;
+            }
             for (UInt32 i = 0; i < res; i++)
             {
                 fixed (VCI_CAN_OBJ* m_recobj1 = &m_recobj[i])

@@ -140,22 +140,40 @@
 				Classes="Black1"
 				CompactPaneLength="28"
 				DisplayMode="CompactInline"
-				OpenPaneLength="200"
+				OpenPaneLength="150"
 				IsPaneOpen="{Binding #SplitViewToggleButton.IsChecked}"
 				>
+					<!--Split view-->
 					<SplitView.Pane>
-						<StackPanel
-						Orientation="Vertical"
-						Spacing="5"
-						HorizontalAlignment="Stretch"
-						VerticalAlignment="Top">
-							<ToggleButton Name="SplitViewToggleButton" IsChecked="False" Classes="Split" HorizontalAlignment="Right">
+
+						<Grid ShowGridLines="False">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="30"/>
+								<RowDefinition Height="1*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="1*"/>
+							</Grid.ColumnDefinitions>
+
+
+							<ToggleButton Grid.Row="0" Name="SplitViewToggleButton" IsChecked="False" Classes="Split" HorizontalAlignment="Right">
 								<Panel>
 									<Border />
 									<TextBlock>x</TextBlock>
 								</Panel>
 							</ToggleButton>
-						</StackPanel>
+
+							<ScrollViewer Grid.Row="1" >
+								<cc:IdicatorsTable
+								
+								TableSource="{x:Static dd:IDevice.DeviceDescription}"
+								/>
+							</ScrollViewer>
+
+
+						</Grid>
+						
+					
 
 					</SplitView.Pane>
 
@@ -173,12 +191,7 @@
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
 						</TabItem>
 						<TabItem Header="Tables">
-							<!-- <v:ControlTableView Name="_ControlTableView" />  -->
-
-							<!--	TableSource="{Binding TableOfControls}" -->
-							
-							<cc:ControlTable Name="controlTable"
-								TypeOfContent="RW"
+								<cc:ControlTable Name="controlTable"
 								TableSource="{x:Static dd:IDevice.DeviceDescription}"
 								/>
 						</TabItem>
@@ -220,7 +233,7 @@
 						</Panel>
 					</ScrollViewer>
 					<Panel Grid.Row="1" Classes="Black11">
-						<cc:ButtonsControl />
+						<v:ButtonsControlView />
 						<Border Classes="h4"/>
 					</Panel>
 				</Grid>

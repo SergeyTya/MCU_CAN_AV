@@ -78,7 +78,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             var CAN = ICAN.Create(
                       new ICAN.CANInitStruct(
-                   DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 100
+                   DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 20
               ));
 
 
@@ -94,11 +94,6 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
         }
 
-
-        public void Reset()
-        {
-            IDevice.DeviceFaults.Clear();
-        }
 
         static private void EncodeData(ICAN.RxTxCanData mes) {
 
@@ -177,6 +172,21 @@ namespace MCU_CAN_AV.Devices.Shanghai
             return ret;
         }
 
+        void IDevice.Reset()
+        {
+            IDevice.DeviceFaults.Clear();
+        }
+
+        void IDevice.Start()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDevice.Stop()
+        {
+            throw new NotImplementedException();
+        }
+
         internal class ShanghaiDeviceFault : IDeviceFault
         {
             public string ID => code.ToString();
@@ -218,9 +228,9 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             public bool IsReadWrite { get => RW; }
 
-            public string Min { get => throw new NotImplementedException(); }
+            public double Min { get => min; }
 
-            public string Max { get => throw new NotImplementedException(); }
+            public double Max { get => max; }
 
             public string Type { get => throw new NotImplementedException(); }
 
@@ -258,10 +268,10 @@ namespace MCU_CAN_AV.Devices.Shanghai
             internal int def { get; set; }
 
             [JsonProperty("min")]
-            internal int min { get; set; }
+            internal double min { get; set; }
 
             [JsonProperty("max")]
-            internal int max { get; set; }
+            internal double max { get; set; }
         }
     }
 }

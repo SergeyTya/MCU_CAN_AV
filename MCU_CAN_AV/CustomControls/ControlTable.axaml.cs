@@ -25,16 +25,6 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class ControlTable : UserControl
     {
-        //static ControlTable() {
-        //     ItemsSourceProperty.Changed.AddClassHandler<ControlTable>((x, e) => x.OnPropertyChanged(e));
-        //}
-
-        public enum ContentType
-        {
-            ALL = 0,
-            RO,
-            RW
-        };
 
         public static readonly StyledProperty<ObservableCollection<IDeviceParameter>> TableSourceProperty =
              AvaloniaProperty.Register<ControlTable, ObservableCollection<IDeviceParameter>>("TableSource");
@@ -47,15 +37,6 @@ namespace MCU_CAN_AV.CustomControls
                 if(TableSource != null) TableSource.CollectionChanged += TableSource_CollectionChanged;
                 }
             get => GetValue(TableSourceProperty);
-        }
-
-        public static readonly StyledProperty<ContentType> ContentTypeProperty =
-          AvaloniaProperty.Register<ControlTable, ContentType>("TypeOfContent");
-
-        public ContentType TypeOfContent
-        {
-            set => SetValue(ContentTypeProperty, value);
-            get => GetValue(ContentTypeProperty);
         }
 
         public ControlTable()
@@ -78,8 +59,9 @@ namespace MCU_CAN_AV.CustomControls
 
                 case NotifyCollectionChangedAction.Add:
                     IDeviceParameter item = tmp[tmp.Count - 1];
-                    Add_row(item, row_cnt++);
-                    Debug.WriteLine("sdas");
+                    if (item.IsReadWrite) {
+                        Add_row(item, row_cnt++);
+                    }
                     break;
 
                 case NotifyCollectionChangedAction.Move:
@@ -98,7 +80,9 @@ namespace MCU_CAN_AV.CustomControls
                     row_cnt = 1;
                     foreach (var el in tmp)
                     {
-                        Add_row(el, row_cnt++);
+                        if (el.IsReadWrite) {
+                            Add_row(el, row_cnt++);
+                        }
                     }
                     break;
 
@@ -240,8 +224,7 @@ namespace MCU_CAN_AV.CustomControls
         string tbvaluebuf = "0";
         void Add_row(IDeviceParameter param, int row)
         {
-
-
+            
             change_color = !change_color;
 
             var c1 = Avalonia.Media.Colors.Gray;
