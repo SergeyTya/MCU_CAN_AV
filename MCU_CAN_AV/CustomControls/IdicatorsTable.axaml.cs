@@ -20,7 +20,7 @@ namespace MCU_CAN_AV.CustomControls
         public static readonly StyledProperty<ObservableCollection<IDeviceParameter>> TableSourceProperty =
            AvaloniaProperty.Register<IdicatorsTable, ObservableCollection<IDeviceParameter>>("TableSource");
 
-        List<ScopeWindow> ScopeWindowsList = new();
+        List<Logger2Window> LoggerWindowsList = new();
 
         public ObservableCollection<IDeviceParameter> TableSource
         {
@@ -207,31 +207,31 @@ namespace MCU_CAN_AV.CustomControls
 
             spnl.Tapped += (_, _) =>
             {
-                
-                foreach (var scp in ScopeWindowsList) { 
+                foreach (var scp in LoggerWindowsList)
+                {
                     if (scp.Name == item.Name)
                     {
-                        if (scp.IsLoaded)
+                        if (scp.Is_Alive)
                         {
-                            scp.Show();
-
+                            scp.WindowState = WindowState.Minimized;
+                            scp.WindowState = WindowState.Normal;
+                            return;
                         }
-                        else {
+                        else
+                        {
+                            LoggerWindowsList.Remove(scp);
                             break;
                         }
-                        
-                        return;
-
                     }
                 }
 
-                ScopeWindow scopeWindow = new ScopeWindow(item.Name)
+                Logger2Window LoggerWindow = new Logger2Window(item.Name)
                 {
-                    [!ScopeWindow.InputValueProperty] = item.Value.Select(x => x.ToString("0.0#")).ToBinding()
-                   
+                    [!Logger2Window.InputValueProperty] = item.Value.Select(x => x.ToString("0.0#")).ToBinding()
+
                 };
-                ScopeWindowsList.Add(scopeWindow);
-                scopeWindow.Show();
+                LoggerWindowsList.Add(LoggerWindow);
+                LoggerWindow.Show();
             };
 
             GridMain.RowDefinitions.Add(new RowDefinition(new GridLength(40, GridUnitType.Auto)));

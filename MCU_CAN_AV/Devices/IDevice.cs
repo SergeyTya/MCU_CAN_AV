@@ -1,8 +1,14 @@
-﻿using System;
+﻿using Avalonia.Threading;
+using MCU_CAN_AV.Can;
+using MCU_CAN_AV.Devices.EVM_DIAG;
+using MCU_CAN_AV.Devices.Shanghai;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,10 +47,16 @@ namespace MCU_CAN_AV.Devices
 
     internal interface IDevice
     {
-
+        public enum DeviceType { 
+            EVMModbus,
+            Shanghai,
+            Espiritek
+        
+        }
         public static IDevice? Device;
         public static ObservableCollection<IDeviceParameter> DeviceDescription = new();
         public static ObservableCollection<IDeviceFault> DeviceFaults = new();
+        public static Subject<string> logUpdater = new Subject<string>();
 
         public static string ReadJsonFromResources(byte[] res)
         {
@@ -54,7 +66,7 @@ namespace MCU_CAN_AV.Devices
             sr.Close();
             return fileContents;
         }
-
+        void Encode(ICAN.RxTxCanData data);
         void Reset();
         void Start();
         void Stop();
@@ -83,5 +95,46 @@ namespace MCU_CAN_AV.Devices
             }
         }
 
+        public static void Create(DeviceType device, ICAN.CANInitStruct InitStruct) {
+
+            IDevice.logUpdater.Subscribe(_ => Debug.WriteLine(_));
+
+            switch (device)
+            {
+                case DeviceType.EVMModbus:
+                    IDevice.Device = new EVMModbusDevice();
+                    break;
+                case DeviceType.Shanghai:
+                    IDevice.Device = new ShanghaiDevice();
+                    break;
+                case DeviceType.Espiritek:
+
+                    break;
+            }
+
+            if(Device != null)
+            {
+                ICAN.Create(InitStruct);
+
+                if (ICAN.CAN != null) {
+
+                    IDisposable loglistener = ICAN.LogUpdater.Subscribe(
+                        (_) => {
+                            IDevice.logUpdater.OnNext(_);
+                        });
+
+                    IDisposable listener = ICAN.RxTxUpdater.Subscribe(
+                        (_) =>
+                        {
+                            Dispatcher.UIThread.Invoke(() =>
+                            {
+                                IDevice.Device.Encode(_);
+                            });
+                        });
+                }
+
+               
+            }
+        }
     }
 }

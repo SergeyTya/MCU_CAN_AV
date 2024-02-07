@@ -23,12 +23,10 @@ namespace MCU_CAN_AV.Devices.Shanghai
     {
         static List<ShanghaiDeviceFault> FaultsList = new();
 
-        static public void Init()
-        {
-            IDevice.Device = new ShanghaiDevice();
+        public ShanghaiDevice() {
 
             List<ShanghaiDeviceParameter> tmp = new();
-           
+
             try
             {
                 string fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_faults);
@@ -47,50 +45,6 @@ namespace MCU_CAN_AV.Devices.Shanghai
             {
                 throw new NotImplementedException();
             }
-
-
-            //var tester = new MCU_CAN_AV.Models.tester();
-
-            //IDisposable listener = tester.updater.Subscribe(
-            //(_) =>
-            //{
-
-            //    //Update MetterFaultTable
-            //    Dispatcher.UIThread.Invoke(() =>
-            //    {
-            //        //this.Faults.Add("fault" + _.id);
-            //        //if (this.Faults.Count > 10) this.Faults.Clear();
-
-            //        foreach (ShanghaiDeviceParameter item in IDeviceReader.DeviceDescription)
-            //        {
-
-            //            if (item._value != _.id)
-            //            {
-            //                item.writeValue(_.id); // we weel post only new values
-            //            }
-            //            else {
-
-            //                //Debug.WriteLine("Equals!");
-            //            }
-            //        }
-            //    });
-            //});
-
-            var CAN = ICAN.Create(
-                      new ICAN.CANInitStruct(
-                   DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 20
-              ));
-
-
-            IDisposable listener = CAN.Start().Subscribe(
-            (_) =>
-            {
-                Dispatcher.UIThread.Invoke(() =>
-                    {
-                        EncodeData(_);
-                        EncodeFaults(_);
-                    });
-            });
 
         }
 
@@ -185,6 +139,12 @@ namespace MCU_CAN_AV.Devices.Shanghai
         void IDevice.Stop()
         {
             throw new NotImplementedException();
+        }
+
+        void IDevice.Encode(ICAN.RxTxCanData data)
+        {
+            EncodeData(data);
+            EncodeFaults(data);
         }
 
         internal class ShanghaiDeviceFault : IDeviceFault

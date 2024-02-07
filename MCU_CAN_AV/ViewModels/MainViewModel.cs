@@ -34,11 +34,17 @@ public class MainViewModel : ViewModelBase
     }
 
     public void OnClickConnectCommand()
-    {
-        Debug.WriteLine("aass");
-        MCU_CAN_AV.Devices.Shanghai.ShanghaiDevice.Init();
+    { 
+        MCU_CAN_AV.Devices.IDevice.Create(
+            
+            IDevice.DeviceType.Shanghai,
+
+            new ICAN.CANInitStruct(
+                ICAN.CANType.CAN_USBCAN_B,
+                DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 20
+                )
+            );
+
         IsConnVisible = false;
     }
-
-  
 }

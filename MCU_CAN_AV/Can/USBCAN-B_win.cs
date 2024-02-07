@@ -193,17 +193,27 @@ namespace MCU_CAN_AV.Can
             VCI_InitCAN(m_devtype, m_devind, m_canind, ref config);
             _isOpen = true;
         }
-
-        unsafe void Receive(IObserver<ICAN.RxTxCanData> observer)
+        int TimeOut_counter = 0;
+        unsafe void ICAN.Receive()
         {
           
             UInt32 res = VCI_Receive(m_devtype, Init_structure._devind, Init_structure._canind, ref m_recobj[0], 1000, 100);
 
             if (res == 0xffffffff)
             {
-                Debug.WriteLine("USBCAN Recieve Error");
+                ICAN.LogUpdater.OnNext("USBCAN Recieve Error");
                 return;
             }
+
+            if(res == 0) {
+                TimeOut_counter++;
+                if (TimeOut_counter > 100) {
+                    ICAN.LogUpdater.OnNext("USBCAN_B Recieve Timeout");
+                    TimeOut_counter = 0;
+                }
+                
+            }
+
             for (UInt32 i = 0; i < res; i++)
             {
                 fixed (VCI_CAN_OBJ* m_recobj1 = &m_recobj[i])
@@ -215,41 +225,18 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                    observer.OnNext(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
+                    ICAN.RxTxUpdater.OnNext(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
                 }
             }
         }
 
-        public IObservable<ICAN.RxTxCanData> Start()
-        {
-            if (!_isOpen) return null;
-
-            VCI_StartCAN(m_devtype, Init_structure._devind, Init_structure._canind);
-
-            updater = Observable.Create<ICAN.RxTxCanData>(
-                          observer => {
-
-                              System.Timers.Timer timer = new System.Timers.Timer(Init_structure._PollInterval_ms);
-                              timer.Elapsed += (_, __) => {
-                                  Receive(observer);
-                              };
-
-                              timer.Start();
-                              return Disposable.Create(() => {
-                                  timer.Stop();
-                                  timer.Dispose();
-                                  Debug.WriteLine("Rx observer Dispose");
-                              });
-                          });
-            return updater;
-        }
 
         public void Transmit(ICAN.RxTxCanData data)
         {
             throw new NotImplementedException();
         }
 
-        void ICAN.Close()
+        void ICAN.CloseConnection()
         {
             VCI_ResetCAN(m_devtype, Init_structure._devind, Init_structure._canind);
             var tmp = updater.Subscribe();
@@ -260,6 +247,11 @@ namespace MCU_CAN_AV.Can
         bool ICAN.isOpen()
         {
             return _isOpen;
+        }
+
+        void ICAN.Transmit(ICAN.RxTxCanData data)
+        {
+            throw new NotImplementedException();
         }
     }
 }
