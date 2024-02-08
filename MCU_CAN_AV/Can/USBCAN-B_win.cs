@@ -226,7 +226,7 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                    ICAN.RxTxUpdater.OnNext(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
+                    ICAN.RxUpdater.OnNext(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
                 }
             }
         }

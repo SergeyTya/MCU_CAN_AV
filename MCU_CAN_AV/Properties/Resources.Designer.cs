@@ -63,6 +63,16 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
+        public static byte[] EVM_faults {
+            get {
+                object obj = ResourceManager.GetObject("EVM_faults", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
         public static byte[] shanghai_description {
             get {
                 object obj = ResourceManager.GetObject("shanghai_description", resourceCulture);

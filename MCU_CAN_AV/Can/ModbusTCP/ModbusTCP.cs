@@ -9,6 +9,8 @@ using static AsyncSocketTest.ServerModbusTCP;
 using MCU_CAN_AV.utils;
 using MCU_CAN_AV.Devices;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading;
 
 namespace MCU_CAN_AV.Can.ModbusTCP
 {
@@ -21,31 +23,28 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         bool isOpen = false;
 
+        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,3);
+
         public ModbusTCP(ICAN.CANInitStruct InitStruct)
         {
-            //modbus_id = InitStruct._devind;
-            //server_port = InitStruct.server_port;
-            //server_name = InitStruct.server_name;
+            modbus_id = InitStruct._devind;
+            server_port = InitStruct.server_port;
+            server_name = InitStruct.server_name;
 
-            //Func<Task<uint>> _ = async () =>
-            //{
-            //    try
-            //    {
-            //        return await ModbusTCP.ReadRegisterCount(server_name, server_port, modbus_id);
-            //    }
-            //    catch (ServerModbusTCPException ex)
-            //    {
-            //        IDevice.logUpdater.OnNext(ex.Message);
-            //        return 0;
-            //    }
-            //};
-
-            //reg_count = _().GetAwaiter().GetResult();
-
-            //if (reg_count != 0)
-            //{
-            //    isOpen = true;
-            //}
+            Task.Run(async () => {
+                await semaphoreSlim.WaitAsync();
+                try {
+                    var res = await ModbusTCP.ReadRegisterCount(server_name, server_port, modbus_id).ConfigureAwait(false);
+                    return res;
+                } finally { semaphoreSlim.Release(); }
+            }).ToObservable().Take(1).Subscribe(
+                (_) => { reg_count = _; ICAN.LogUpdater.OnNext($"Found  {_} registers");},
+                exeption => { 
+                    ICAN.LogUpdater.OnNext(exeption.Message);
+                   // semaphoreSlim.Release();
+                }
+            );
+            isOpen = true;
         }
 
 
@@ -57,7 +56,11 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         void ICAN.Transmit(ICAN.RxTxCanData data)
         {
-            throw new NotImplementedException();
+            Task.Run(async () => {
+                ServerModbusTCP tmp = new ServerModbusTCP(server_name, (int)server_port);
+                tmp.Timeout = 1000;
+                await tmp.WriteHoldingsAsync((int)modbus_id, (byte)data.id, new ushort[]{BitConverter.ToUInt16(data.data.ToArray(), 0) });
+            });
         }
 
 
@@ -105,20 +108,28 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 */
             List<byte[]> deviceParameters = new();
 
-
-            uint hreg_count = await ReadRegisterCount(server_name, server_port, modbus_id);
-
-            //ushort[] buff = await tmp.ReadHoldingsAsync((byte)modbus_id, 0, hreg_count);
-
-            ServerModbusTCP tmp = new ServerModbusTCP(server_name, (int)server_port);
-            for (int i = 0; i < hreg_count; i++)
+            await semaphoreSlim.WaitAsync();
+            try
             {
-                byte[] RXbuf = await tmp.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 4, (byte)modbus_id, 27, 0, (byte)i });
-                deviceParameters.Add(RXbuf);
+
+                uint hreg_count = await ReadRegisterCount(server_name, server_port, modbus_id);
+
+                //ushort[] buff = await tmp.ReadHoldingsAsync((byte)modbus_id, 0, hreg_count);
+
+                ServerModbusTCP tmp = new ServerModbusTCP(server_name, (int)server_port);
+                for (int i = 0; i < hreg_count; i++)
+                {
+                    byte[] RXbuf = await tmp.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 4, (byte)modbus_id, 27, 0, (byte)i });
+                    deviceParameters.Add(RXbuf);
+                }
+                tmp.close();
+                return deviceParameters;
+            }
+            finally
+            {
+                semaphoreSlim.Release();
             }
 
-            tmp.close();
-            return deviceParameters;
         }
 
         public static async Task<ushort[]> ReadHRsAsync(uint count, string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
@@ -142,30 +153,37 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         void ICAN.Receive()
         {
-            //ushort[] buff;
-            //if (reg_count == 0) {
-            //    return;
-            //}
 
-            //try {
+            Task.Run(async () =>
+            {
+                await semaphoreSlim.WaitAsync();
+                try {
+                    var res = await ReadHRsAsync(reg_count, server_name, server_port, modbus_id).ConfigureAwait(false);
+                   // await Task.Delay(1000);
+                    return res;
+                }
+                finally { 
+                    semaphoreSlim.Release(); 
+                }
+                
+            }).ToObservable().Take(1).Subscribe(
+                (_) =>
+                {
+                    for (int i = 0; i < reg_count; i++)
+                    {
+                        byte[] data = new byte[2];
 
-            //    buff = ReadHRsAsync(reg_count, server_name, server_port, modbus_id).GetAwaiter().GetResult();
 
-            //}
-            //catch (ServerModbusTCPException ex) {
-            //    ICAN.LogUpdater.OnNext(ex.Message);
-            //    return;
-            //}
+                        Buffer.BlockCopy(_, i*2, data, 0, 2);
 
-            //for (int i = 0; i < reg_count; i++)
-            //{
-            //    byte[] data = new byte[2];
-
-            //    Buffer.BlockCopy(buff, i, data, 0, 2);
-
-            //    ICAN.RxTxUpdater.OnNext(new ICAN.RxTxCanData((uint)i, data));
-            //}
-            
+                        ICAN.RxUpdater.OnNext(new ICAN.RxTxCanData((uint)i, data));
+                    }
+                },
+                exeption => { 
+                  ICAN.LogUpdater.OnNext(exeption.Message);
+                  semaphoreSlim.Release();
+                }
+            );
         }
     }
 }

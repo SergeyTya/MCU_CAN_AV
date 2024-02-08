@@ -355,8 +355,7 @@ namespace MCU_CAN_AV.CustomControls
                                 return;
                             }
 
-                            //if (param.onValueChanged != null)
-                            //    param.onValueChanged.Invoke(value, EventArgs.Empty);
+                            param.writeValue(value);
 
                             tb.Background = new SolidColorBrush(Colors.Green);
                             endedit();

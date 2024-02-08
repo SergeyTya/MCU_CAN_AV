@@ -14,7 +14,8 @@ namespace MCU_CAN_AV.Can
     {
         public static ICAN? CAN;
         public static Subject<string> LogUpdater = new();
-        public static Subject<RxTxCanData> RxTxUpdater =new();
+        public static Subject<RxTxCanData> RxUpdater =new();
+        public static Subject<RxTxCanData> TxUpdater = new();
 
         public static System.Timers.Timer timer;
 

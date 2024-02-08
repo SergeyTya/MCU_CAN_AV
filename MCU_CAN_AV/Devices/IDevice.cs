@@ -123,12 +123,21 @@ namespace MCU_CAN_AV.Devices
                             IDevice.logUpdater.OnNext(_);
                         });
 
-                    IDisposable listener = ICAN.RxTxUpdater.Subscribe(
+                    IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
                         (_) =>
                         {
                             Dispatcher.UIThread.Invoke(() =>
                             {
                                 IDevice.Device.Encode(_);
+                            });
+                        });
+
+                    IDisposable Txlistener = ICAN.TxUpdater.Subscribe(
+                        (_) =>
+                        {
+                            Dispatcher.UIThread.Invoke(() =>
+                            {
+                                ICAN.CAN.Transmit(_);
                             });
                         });
                 }
