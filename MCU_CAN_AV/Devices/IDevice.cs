@@ -102,7 +102,7 @@ namespace MCU_CAN_AV.Devices
             switch (device)
             {
                 case DeviceType.EVMModbus:
-                    IDevice.Device = new EVMModbusDevice();
+                    IDevice.Device = new EVMModbusDevice(InitStruct);
                     break;
                 case DeviceType.Shanghai:
                     IDevice.Device = new ShanghaiDevice();
@@ -132,8 +132,6 @@ namespace MCU_CAN_AV.Devices
                             });
                         });
                 }
-
-               
             }
         }
     }

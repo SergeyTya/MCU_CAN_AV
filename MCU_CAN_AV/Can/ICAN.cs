@@ -48,6 +48,9 @@ namespace MCU_CAN_AV.Can
             public UInt32 _Mask = 0xffffffff;
             public UInt32 _PollInterval_ms = 100;  /// Poll interval, ms
 
+            public string server_name = "localhost";
+            public uint   server_port = 8888;
+
             public CANInitStruct(
                 CANType CANType,
                 UInt32 DevId = 0,

@@ -1,48 +1,59 @@
 ﻿using Avalonia.Threading;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Can.ModbusTCP;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
 using System.Text;
 using System.Threading.Tasks;
+using static AsyncSocketTest.ServerModbusTCP;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace MCU_CAN_AV.Devices.EVM_DIAG
 {
     internal class EVMModbusDevice : IDevice
     {
 
-        static void init() {
-
-
-
-
-         //   var CAN =  new ModbusTCP(
-         //        new ICAN.CANInitStruct(
-         //     DevId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 20
-         //));
-
-         //  .. List<byte[]> param = CAN.ReadRegistersInfoAsync();
-
-         //   foreach (var el in param) {
-
-         //       IDevice.DeviceDescription.Add(EncodeDeviceDescription(el));
-         //   }
-
-    
-
-
-
+        public EVMModbusDevice(ICAN.CANInitStruct InitStruct)
+        {
+            Init(InitStruct);
         }
 
-        static private void EncodeData(ICAN.RxTxCanData mes) { 
-            throw new NotImplementedException();
+        void Init(ICAN.CANInitStruct InitStruct)
+        {
+       
+            Task.Run(async () => {
+
+                var res = await ModbusTCP.ReadRegistersInfoAsync(
+                                   server_name: InitStruct.server_name,
+                                   server_port: InitStruct.server_port,
+                                   modbus_id: InitStruct._devind
+                                   ).ConfigureAwait(false);
+                return res;
+            }).ToObservable().Take(1).Subscribe(
+
+                (_) =>
+                {
+                    Dispatcher.UIThread.Invoke(() =>
+                    {
+                        foreach (var el in _)
+                        {
+                            IDevice.DeviceDescription.Add(EncodeDeviceDescription(el));
+                        }
+                    });
+                }, () => IDevice.logUpdater.OnNext("Device description reading done") 
+                );
         }
 
 
-        static private void EncodeFaults(ICAN.RxTxCanData mes){
-            throw new NotImplementedException();
+        void IDevice.Encode(ICAN.RxTxCanData data)
+        {
+            //
         }
 
         void IDevice.Reset()
@@ -60,8 +71,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             throw new NotImplementedException();
         }
 
-
-        static EVMModbusTCPDeviceParametr EncodeDeviceDescription(byte[] RXbuf) {
+        static EVMModbusTCPDeviceParametr EncodeDeviceDescription(byte[] RXbuf)
+        {
 
             if (RXbuf[7] != 27)
             {
@@ -81,18 +92,13 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             Debug.WriteLine(String.Format("HR Info = {0}", info) + " \n");
 
             var retval = new EVMModbusTCPDeviceParametr(
-                        _ID: index.ToString(),
+                        _ID: adr.ToString(),
                         _Name: info,
                         _IsReadWrite: isRO == 0,
                         _Type: null
                     );
 
             return retval;
-        }
-
-        void IDevice.Encode(ICAN.RxTxCanData data)
-        {
-            throw new NotImplementedException();
         }
     }
 
@@ -107,6 +113,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         bool _IsReadWrite;
         Type _Type;
 
+        
+
         public EVMModbusTCPDeviceParametr(string _ID, string _Name, bool _IsReadWrite, string _Unit = "", double _Min = 0, double _Max = 0, Type _Type = null)
         {
             this._ID = _ID;
@@ -118,8 +126,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             this._Type = _Type;
         }
 
-
-        IObservable<double> IDeviceParameter.Value => throw new NotImplementedException();
+        internal BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
+        public IObservable<double> Value { get => Val; }
 
         string IDeviceParameter.ID => _ID;
 

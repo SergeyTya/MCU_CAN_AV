@@ -36,14 +36,27 @@ public class MainViewModel : ViewModelBase
     public void OnClickConnectCommand()
     { 
         MCU_CAN_AV.Devices.IDevice.Create(
-            
-            IDevice.DeviceType.Shanghai,
+
+             
+             IDevice.DeviceType.EVMModbus,
 
             new ICAN.CANInitStruct(
-                ICAN.CANType.CAN_USBCAN_B,
-                DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 20
+                ICAN.CANType.ModbusTCP,
+                DevId: 1
                 )
             );
+
+
+        //MCU_CAN_AV.Devices.IDevice.Create(
+
+        //    //  IDevice.DeviceType.Shanghai,
+        //    IDevice.DeviceType.EVMModbus,
+
+        //   new ICAN.CANInitStruct(
+        //       ICAN.CANType.ModbusTCP,
+        //       DevId: 0, CANId: 0, Baudrate: 500, RcvCode: 0, Mask: 0xffffffff, Interval: 20
+        //       )
+        //   );
 
         IsConnVisible = false;
     }

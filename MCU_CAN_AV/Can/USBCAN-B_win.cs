@@ -191,6 +191,7 @@ namespace MCU_CAN_AV.Can
             config.Filter = 1; // 1 - All , 2 - Standart, 3 - Extended
             config.Mode = 0;  // 0 - Normal, 1 - Listener, 2-Echo
             VCI_InitCAN(m_devtype, m_devind, m_canind, ref config);
+            VCI_StartCAN(m_devtype, Init_structure._devind, Init_structure._canind);
             _isOpen = true;
         }
         int TimeOut_counter = 0;
