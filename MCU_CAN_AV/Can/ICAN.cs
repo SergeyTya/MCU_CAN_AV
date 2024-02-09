@@ -52,23 +52,8 @@ namespace MCU_CAN_AV.Can
             public string server_name = "localhost";
             public uint   server_port = 8888;
 
-            public CANInitStruct(
-                CANType CANType,
-                UInt32 DevId = 0,
-                UInt32 CANId = 0,
-                UInt32 Baudrate = 500,
-                UInt32 RcvCode = 0,
-                UInt32 Mask = 0xffffffff,
-                UInt32 Interval = 100   /// Poll interval, ms
-           )
+            public CANInitStruct()
             {
-                _CANType = CANType;
-                _devind = DevId;
-                _canind = CANId;
-                _Baudrate = Baudrate;
-                _Mask = Mask;
-                _RcvCode= RcvCode;
-                _PollInterval_ms = Interval;
             }
         }
 

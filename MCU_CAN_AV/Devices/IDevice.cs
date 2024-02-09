@@ -56,7 +56,8 @@ namespace MCU_CAN_AV.Devices
         public static IDevice? Device;
         public static ObservableCollection<IDeviceParameter> DeviceDescription = new();
         public static ObservableCollection<IDeviceFault> DeviceFaults = new();
-        public static Subject<string> logUpdater = new Subject<string>();
+        public static Subject<string> LogUpdater = new Subject<string>();
+        public static BehaviorSubject<bool> Init_stage = new(true);
 
         public static string ReadJsonFromResources(byte[] res)
         {
@@ -97,7 +98,7 @@ namespace MCU_CAN_AV.Devices
 
         public static void Create(DeviceType device, ICAN.CANInitStruct InitStruct) {
 
-            IDevice.logUpdater.Subscribe(_ => Debug.WriteLine(_));
+            IDevice.LogUpdater.Subscribe(_ => Debug.WriteLine(_));
 
             switch (device)
             {
@@ -120,13 +121,13 @@ namespace MCU_CAN_AV.Devices
 
                     IDisposable loglistener = ICAN.LogUpdater.Subscribe(
                         (_) => {
-                            IDevice.logUpdater.OnNext(_);
+                            IDevice.LogUpdater.OnNext(_);
                         });
 
                     IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
                         (_) =>
                         {
-                            Dispatcher.UIThread.Invoke(() =>
+                            Dispatcher.UIThread.Post(() =>
                             {
                                 IDevice.Device.Encode(_);
                             });
@@ -135,7 +136,7 @@ namespace MCU_CAN_AV.Devices
                     IDisposable Txlistener = ICAN.TxUpdater.Subscribe(
                         (_) =>
                         {
-                            Dispatcher.UIThread.Invoke(() =>
+                            Dispatcher.UIThread.Post(() =>
                             {
                                 ICAN.CAN.Transmit(_);
                             });

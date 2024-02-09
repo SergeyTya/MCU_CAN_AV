@@ -48,7 +48,7 @@ namespace MCU_CAN_AV.Views
             );
 
             Observable.Interval(TimeSpan.FromSeconds(time_step)).Subscribe(x => {
-                Dispatcher.UIThread.Invoke((() =>
+                Dispatcher.UIThread.Post((() =>
                 {
                     scope.ScopeChannels.Update(new double[] { Double.Parse(InputValue) });
                 }));

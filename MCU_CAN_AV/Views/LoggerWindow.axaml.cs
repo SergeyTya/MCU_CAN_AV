@@ -77,7 +77,7 @@ namespace MCU_CAN_AV.Views
             Chart.SyncContext = Sync;
 
             Observable.Interval(TimeSpan.FromMilliseconds(100)).Subscribe(x => {
-                Dispatcher.UIThread.Invoke((() =>
+                Dispatcher.UIThread.Post((() =>
                 {
                     lock (Sync)
                     {

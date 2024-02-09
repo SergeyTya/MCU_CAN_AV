@@ -41,7 +41,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 (_) => { reg_count = _; ICAN.LogUpdater.OnNext($"Found  {_} registers");},
                 exeption => { 
                     ICAN.LogUpdater.OnNext(exeption.Message);
-                   // semaphoreSlim.Release();
+                    semaphoreSlim.Release();
                 }
             );
             isOpen = true;
@@ -73,7 +73,8 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             
             if (RXbuf[7] != 26)
             {
-                Debug.WriteLine(String.Format("Holding count response error FC = {0}", RXbuf[7]));
+                var str = String.Format("Holding count response error FC = {0}", RXbuf[7]);
+                ICAN.LogUpdater.OnNext(str);
                 return 0;
             }
 
@@ -117,10 +118,15 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 //ushort[] buff = await tmp.ReadHoldingsAsync((byte)modbus_id, 0, hreg_count);
 
                 ServerModbusTCP tmp = new ServerModbusTCP(server_name, (int)server_port);
+
                 for (int i = 0; i < hreg_count; i++)
                 {
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
                     byte[] RXbuf = await tmp.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 4, (byte)modbus_id, 27, 0, (byte)i });
                     deviceParameters.Add(RXbuf);
+                    stopwatch.Stop();
+                    ICAN.LogUpdater.OnNext($"   Register {i} info readed  - {stopwatch.ElapsedMilliseconds} ms");
                 }
                 tmp.close();
                 return deviceParameters;

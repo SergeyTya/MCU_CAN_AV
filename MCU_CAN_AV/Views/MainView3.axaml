@@ -195,11 +195,8 @@
 								TableSource="{x:Static dd:IDevice.DeviceDescription}"
 								/>
 						</TabItem>
-						<TabItem Header="Log">
-							<TextBlock Margin="5">This is tab 3 content</TextBlock>
-						</TabItem>
-						<TabItem Header="Setups">
-							<v:ConnectionView Background="Black" />
+						<TabItem Header="Connection">
+							<v:ConnectionView Background="Black" ControlsEnable="false" SelectedTab="1" />
 						</TabItem>
 						<TabItem Header="Testing">
 							<TextBlock Margin="5">This is tab 3 content</TextBlock>

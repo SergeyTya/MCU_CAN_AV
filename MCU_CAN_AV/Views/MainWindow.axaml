@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:MCU_CAN_AV.Views"
+		xmlns:dd ="clr-namespace:MCU_CAN_AV.Devices"
         mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="700"
         x:Class="MCU_CAN_AV.Views.MainWindow"
 		x:DataType="vm:MainViewModel"
@@ -15,29 +16,19 @@
 		Width="1100"
 		Title="MCU CAN"
 		>
-	
-		<Panel Grid.Row="0">
-			<Panel>
-				<views:MainView3
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"/>
-			</Panel>
 
-			<Panel Background="Black" IsVisible="{Binding IsConnVisible}">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="1.*" />
-						<RowDefinition Height="100"/>
-					</Grid.RowDefinitions>
-				<views:ConnectionView  Grid.Row="0" Background="Black" />
-				<Button 
-					Grid.Row="1" 
-					Content="Connect" 
-					Command="{Binding OnClickConnectCommand}" 
-					IsVisible=""
-					/>
-				</Grid>
-			</Panel>
-		</Panel>
-		
+	<Panel>
+
+		<views:MainView3
+				
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"/>
+
+		<views:ConnectionView
+				Name="ConnectionView"
+				Grid.Row="0"
+				Background="Black" />
+
+
+	</Panel>
 </Window>

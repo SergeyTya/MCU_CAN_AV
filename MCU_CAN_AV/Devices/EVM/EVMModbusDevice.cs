@@ -35,9 +35,14 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
         void Init(ICAN.CANInitStruct InitStruct)
         {
+            IDevice.LogUpdater.OnNext($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
 
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             Task.Run(async () =>
             {
+               
                 var res = await ModbusTCP.ReadRegistersInfoAsync(
                                    server_name: InitStruct.server_name,
                                    server_port: InitStruct.server_port,
@@ -47,13 +52,19 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             }).ToObservable().Take(1).Subscribe(
                 (_) =>
                 {
-                    Dispatcher.UIThread.Invoke(() =>
-                    {
+                    Dispatcher.UIThread.Post(() =>
+                    {   
                         EncodeDeviceDescription(_);
                     });
                 },
-                exeption => { ICAN.LogUpdater.OnNext(exeption.Message); },
-                () => IDevice.logUpdater.OnNext("Device description reading done")
+                exeption => { 
+                    ICAN.LogUpdater.OnNext(exeption.Message); 
+                },
+                () => {
+                    stopwatch.Stop();
+                    IDevice.LogUpdater.OnNext($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
+                    IDevice.Init_stage.OnNext(false);
+                    }
             );
 
 
@@ -148,20 +159,20 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         {
             IDevice.DeviceFaults.Clear();
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
-            IDevice.logUpdater.OnNext("Reset command");
+            IDevice.LogUpdater.OnNext("Reset command sent");
 
         }
 
         void IDevice.Start()
         {
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
-            IDevice.logUpdater.OnNext("Start command");
+            IDevice.LogUpdater.OnNext("Start command sent");
         }
 
         void IDevice.Stop()
         {
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
-            IDevice.logUpdater.OnNext("Stop command");
+            IDevice.LogUpdater.OnNext("Stop command sent");
         }
 
 
@@ -175,20 +186,21 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
                 if (RXbuf[7] != 27)
                 {
-                    Debug.WriteLine(String.Format("Holding info response error FC = {0}", RXbuf[7]));
+
+                    ICAN.LogUpdater.OnNext($"Holding info response error FC = {RXbuf[7]}");
                     return;
                 }
                 UInt32 hl_adr = BitConverter.ToUInt16(RXbuf.ToArray(), 9);
                 UInt32 adr = BitConverter.ToUInt32(RXbuf.ToArray(), 10);
                 //Debug.WriteLine(String.Format("HR location = {0}", adr));
                 var type = RXbuf[14];
-                Debug.WriteLine(String.Format("HR type = {0}", type));
+              //  ICAN.LogUpdater.OnNext(String.Format("HR type = {0}", type));
                 var index = RXbuf[15];
                 //Debug.WriteLine(String.Format("HR index = {0}", index));
                 var isRO = RXbuf[16];
 
                 string info = Encoding.UTF8.GetString(RXbuf.ToList().GetRange(17, RXbuf[5] - 11).ToArray());
-                Debug.WriteLine(String.Format("HR Info = {0}", info) + " \n");
+             //   ICAN.LogUpdater.OnNext(String.Format("HR Info = {0}", info) + " \n");
 
                 var tmp = new EVMModbusTCPDeviceParametr(
                             _ID: i.ToString(),
@@ -263,7 +275,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             {
                 byte[] bval = GetByteFromString(value.ToString(), _Type);
                 if (bval == null) return;
-                IDevice.logUpdater.OnNext($"reg#{_ID} -> {value}");
+                IDevice.LogUpdater.OnNext($"reg#{_ID} -> {value}");
                 int count = 0;
                 int id = 0;
                 var buf = bval.ToList()
