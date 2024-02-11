@@ -6,25 +6,14 @@ using MCU_CAN_AV.CustomControls;
 using MCU_CAN_AV.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MCU_CAN_AV.Views
 {
     public partial class ConnectionView : UserControl
     {
-        public static readonly StyledProperty<bool> ControlsEnableProperty =
-         AvaloniaProperty.Register<ConnectionView, bool>("ControlsEnable");
-        public bool ControlsEnable
-        {
-            set
-            {
-                SetValue(ControlsEnableProperty, value);
-                Panel_setup.IsEnabled = value;
-                Btn_connect.IsVisible = value;
-            }
-            get => GetValue(ControlsEnableProperty);
-        }
-
+     
         public static readonly StyledProperty<int> SelectedTabProperty =
         AvaloniaProperty.Register<ConnectionView, int>("SelectedTab");
         public int SelectedTab
@@ -42,18 +31,7 @@ namespace MCU_CAN_AV.Views
 
             InitializeComponent();
 
-            MCU_CAN_AV.Devices.IDevice.LogUpdater.Subscribe(_ => { 
-                Dispatcher.UIThread.Post(() =>
-                {
-                    Tb_log.Text += $"{_} \n";
-                    Scroll_log.ScrollToEnd();
-                    Tb_cnct_msg.Text += $"{_} \n";
-                    Scroll.ScrollToEnd();
-                });
-            });
-
-
-            Lb_ConType.ItemsSource = new string[] { "USB-CAN-B", "Modbus TCP", "Modbus RTU" };
+            Lb_ConType.ItemsSource = new string[] { "USB-CAN-B", "Modbus TCP", "Modbus RTU", "Dummy" };
             Lb_ConType.SelectedIndex = 0;
             Lb_ConType.DropDownClosed += (_, __) =>
             {

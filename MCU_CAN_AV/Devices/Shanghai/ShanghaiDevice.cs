@@ -19,41 +19,20 @@ using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.Devices.Shanghai
 {
-    internal class ShanghaiDevice : IDevice
+    internal class ShanghaiDevice : BaseDevice
     {
         static List<ShanghaiDeviceFault> FaultsList = new();
 
         public ShanghaiDevice() {
-
-            List<ShanghaiDeviceParameter> tmp = new();
-
-            try
-            {
-                string fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_faults);
-                FaultsList = JsonConvert.DeserializeObject<List<ShanghaiDeviceFault>>(fileContents);
-
-                fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_description);
-                tmp = JsonConvert.DeserializeObject<List<ShanghaiDeviceParameter>>(fileContents);
-
-                IDevice.DeviceDescription.Clear();
-                foreach (var item in tmp)
-                {
-                    IDevice.DeviceDescription.Add(item);
-                }
-            }
-            catch (JsonReaderException e)
-            {
-                throw new NotImplementedException();
-            }
-
+            InitDeviceDescription();
         }
 
 
-        static private void EncodeData(ICAN.RxTxCanData mes) {
+        private void EncodeData(ICAN.RxTxCanData mes) {
 
             BitArray bits = new BitArray(mes.data);
 
-            foreach (ShanghaiDeviceParameter item in IDevice.DeviceDescription) {
+            foreach (ShanghaiDeviceParameter item in base.DeviceDescription) {
                 uint id = 0;
                 char[] _trim_hex = new char[] { '0', 'x' };
 
@@ -79,7 +58,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             }
         }
 
-        static private void EncodeFaults(ICAN.RxTxCanData mes) {
+        private void EncodeFaults(ICAN.RxTxCanData mes) {
 
             if ( (FaultsList.Count > 0) && (mes.id == (uint)0x18F39CD1) ){ 
 
@@ -89,7 +68,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
                     {
                        
                         bool new_fault = true;
-                        foreach (var fault_now in IDevice.DeviceFaults)
+                        foreach (var fault_now in base.DeviceFaults)
                         {
 
                             if (((ShanghaiDeviceFault)fault_now).code == fault_new.code)
@@ -105,7 +84,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
                         }
                         if (new_fault)
                         {
-                            IDevice.DeviceFaults.Add(fault_new);
+                            base.DeviceFaults.Add(fault_new);
                         }
 
                     }
@@ -126,25 +105,49 @@ namespace MCU_CAN_AV.Devices.Shanghai
             return ret;
         }
 
-        void IDevice.Reset()
+        public override void Reset()
         {
-            IDevice.DeviceFaults.Clear();
+            base.DeviceFaults.Clear();
         }
 
-        void IDevice.Start()
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDevice.Stop()
+        public override void Start()
         {
             throw new NotImplementedException();
         }
 
-        void IDevice.Encode(ICAN.RxTxCanData data)
+        public override void Stop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Encode(ICAN.RxTxCanData data)
         {
             EncodeData(data);
             EncodeFaults(data);
+        }
+
+        void InitDeviceDescription()
+        {
+            List<ShanghaiDeviceParameter> tmp = new();
+
+            try
+            {
+                string fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_faults);
+                FaultsList = JsonConvert.DeserializeObject<List<ShanghaiDeviceFault>>(fileContents);
+
+                fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_description);
+                tmp = JsonConvert.DeserializeObject<List<ShanghaiDeviceParameter>>(fileContents);
+
+                base.DeviceDescription.Clear();
+                foreach (var item in tmp)
+                {
+                    base.DeviceDescription.Add(item);
+                }
+            }
+            catch (JsonReaderException e)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         internal class ShanghaiDeviceFault : IDeviceFault

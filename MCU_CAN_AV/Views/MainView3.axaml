@@ -166,7 +166,7 @@
 							<ScrollViewer Grid.Row="1" >
 								<cc:IdicatorsTable
 								
-								TableSource="{x:Static dd:IDevice.DeviceDescription}"
+								TableSource="{Binding Device.DeviceDescription}"
 								/>
 							</ScrollViewer>
 
@@ -181,7 +181,7 @@
 						<TabItem   Header="Controls">
 							<v:ControlView
 								Name="Angular"
-								ControlSource = "{x:Static dd:IDevice.DeviceDescription} "					
+								ControlSource = "{Binding Device.DeviceDescription} "					
 								IsEnabled="{Binding #ControlLocker.IsChecked}"
 								VerticalAlignment="Center"
 								Height="350"
@@ -192,11 +192,11 @@
 						</TabItem>
 						<TabItem Header="Tables">
 								<cc:ControlTable Name="controlTable"
-								TableSource="{x:Static dd:IDevice.DeviceDescription}"
+								TableSource="{Binding Device.DeviceDescription}"
 								/>
 						</TabItem>
 						<TabItem Header="Connection">
-							<v:ConnectionView Background="Black" ControlsEnable="false" SelectedTab="1" />
+							<v:ConnectionView Background="Black" SelectedTab="1" />
 						</TabItem>
 						<TabItem Header="Testing">
 							<TextBlock Margin="5">This is tab 3 content</TextBlock>
@@ -225,7 +225,7 @@
 					</Grid.RowDefinitions>
 					<ScrollViewer Grid.Row="0">
 						<Panel   Classes="Black11">
-							<cc:FaultsIndi  FaultTable="{x:Static dd:IDevice.DeviceFaults}"/>
+							<cc:FaultsIndi  FaultTable="{Binding Device.DeviceFaults}"/>
 							<Border Classes="h4"/>
 						</Panel>
 					</ScrollViewer>

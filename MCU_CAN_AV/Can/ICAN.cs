@@ -19,9 +19,11 @@ namespace MCU_CAN_AV.Can
 
         public static System.Timers.Timer timer;
 
-        public enum CANType { 
-            ModbusTCP,
-            CAN_USBCAN_B
+        public enum CANType {
+            CAN_USBCAN_B = 0,
+            ModbusTCP = 1,
+            ModbusRTU = 2,
+            Dummy = 3 
         }
 
         public class RxTxCanData
@@ -51,6 +53,8 @@ namespace MCU_CAN_AV.Can
 
             public string server_name = "localhost";
             public uint   server_port = 8888;
+
+            public string com_name = "COM1";
 
             public CANInitStruct()
             {
@@ -105,7 +109,9 @@ namespace MCU_CAN_AV.Can
                     timer = new System.Timers.Timer(InitStructure._PollInterval_ms);
                     timer.Elapsed += (_, __) =>
                     {
-                        ICAN.CAN.Receive();
+                       // ICAN.CAN.Receive();
+
+                        ICAN.RxUpdater.OnNext(new RxTxCanData(122, new byte[0]));
                     };
 
                     timer.Start();

@@ -7,22 +7,14 @@ using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.ViewModels
 {
-    internal class ButtonsControlViewModel
+    internal class ButtonsControlViewModel: ViewModelBase
     {
-        public void onClickResetButton() {
-
-            IDevice.ResetStatic();
-        }
-        public void onClickStartButton()
-        {
-
-            IDevice.StartStatic();
-        }
-
-        public void onClickStopButton() { 
-
-            IDevice.StopStatic();
-        }
+        public void onClickResetButton() => IDevice.GetInstnce()?.Reset();
+        
+        public void onClickStartButton() => IDevice.GetInstnce()?.Start();
+        
+        public void onClickStopButton() => IDevice.GetInstnce()?.Stop();
+        
 
     }
 }

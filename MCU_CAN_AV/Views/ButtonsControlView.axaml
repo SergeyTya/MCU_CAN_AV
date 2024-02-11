@@ -49,10 +49,14 @@
 					<RowDefinition Height="1*"/>
 				</Grid.RowDefinitions>
 				<Button
-					Grid.Column="0" Name="Start" Content="Start" Margin="2"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+					Grid.Column="0"
+					Content="Start" 
+					Margin="2"  
+					HorizontalAlignment="Stretch" 
+					VerticalAlignment="Stretch"
+					/>
 				<Button
 					Grid.Column="1"
-					Name="Reset"
 					Content="Reset"
 					Margin="2"
 					HorizontalAlignment="Stretch"
@@ -61,7 +65,6 @@
 						/>
 			</Grid>
 			<Button Grid.Row="3"
-					Name="Stop"
 					Content="Stop"
 					Background="Red"
 					Margin="2"

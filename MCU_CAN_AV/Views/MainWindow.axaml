@@ -26,6 +26,7 @@
 
 		<views:ConnectionView
 				Name="ConnectionView"
+				IsVisible="{Binding isConnectionDone}"
 				Grid.Row="0"
 				Background="Black" />
 

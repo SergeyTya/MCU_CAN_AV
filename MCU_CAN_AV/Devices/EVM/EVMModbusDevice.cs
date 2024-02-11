@@ -25,7 +25,7 @@ using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace MCU_CAN_AV.Devices.EVM_DIAG
 {
-    internal class EVMModbusDevice : IDevice
+    internal class EVMModbusDevice : BaseDevice
     {
         static List<EVMModbusTCPDeviceFault> FaultsList = new();
         public EVMModbusDevice(ICAN.CANInitStruct InitStruct)
@@ -35,7 +35,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
         void Init(ICAN.CANInitStruct InitStruct)
         {
-            IDevice.LogUpdater.OnNext($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
+            base.LogUpdater.OnNext($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
 
 
             Stopwatch stopwatch = new Stopwatch();
@@ -62,8 +62,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 },
                 () => {
                     stopwatch.Stop();
-                    IDevice.LogUpdater.OnNext($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
-                    IDevice.Init_stage.OnNext(false);
+                    base.LogUpdater.OnNext($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
+                    base.Init_stage.OnNext(false);
                     }
             );
 
@@ -79,8 +79,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 ICAN.LogUpdater.OnNext(e.Message);
             }
         }
-
-        void IDevice.Encode(ICAN.RxTxCanData data)
+        public override void Encode(ICAN.RxTxCanData data)
         {
             if (data.id == 1 || data.id == 2)
             {
@@ -93,15 +92,15 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     {
                         var res = FaultsList
                             .Where(x => x.adr == (i + (data.id - 1) * 16))
-                            .Where(x => IDevice.DeviceFaults.IndexOf((IDeviceFault)x) == -1);
+                            .Where(x => base.DeviceFaults.IndexOf((IDeviceFault)x) == -1);
 
-                        foreach (var x in res) { IDevice.DeviceFaults.Add(res); }
+                        foreach (var x in res) { base.DeviceFaults.Add(res); }
                     }
                 }
                 return;
             }
 
-            foreach (EVMModbusTCPDeviceParametr item in IDevice.DeviceDescription)
+            foreach (EVMModbusTCPDeviceParametr item in base.DeviceDescription)
             {
                 foreach (var id in item._ids)
                 {
@@ -155,28 +154,27 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             }
         }
 
-        void IDevice.Reset()
+        public override void Reset()
         {
-            IDevice.DeviceFaults.Clear();
+            base.DeviceFaults.Clear();
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
-            IDevice.LogUpdater.OnNext("Reset command sent");
+            base.LogUpdater.OnNext("Reset command sent");
 
         }
 
-        void IDevice.Start()
+        public override void Start()
         {
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
-            IDevice.LogUpdater.OnNext("Start command sent");
+            base.LogUpdater.OnNext("Start command sent");
         }
 
-        void IDevice.Stop()
+        public override void Stop()
         {
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
-            IDevice.LogUpdater.OnNext("Stop command sent");
+            base.LogUpdater.OnNext("Stop command sent");
         }
 
-
-        static void EncodeDeviceDescription(List<byte[]> data)
+        void EncodeDeviceDescription(List<byte[]> data)
         {
             // skip firs 3 items
             for (uint i = 3; i < data.Count; i++)
@@ -221,7 +219,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     tmp._ids = new uint[] { i };
                 }
 
-                IDevice.DeviceDescription.Add(tmp);
+                base.DeviceDescription.Add(tmp);
             }
         }
 
@@ -275,7 +273,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             {
                 byte[] bval = GetByteFromString(value.ToString(), _Type);
                 if (bval == null) return;
-                IDevice.LogUpdater.OnNext($"reg#{_ID} -> {value}");
+                //IDevice.LogUpdater.OnNext($"reg#{_ID} -> {value}");
                 int count = 0;
                 int id = 0;
                 var buf = bval.ToList()

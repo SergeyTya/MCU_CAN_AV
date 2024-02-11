@@ -12,19 +12,6 @@ public partial class MainWindow : Window
 
 
         InitializeComponent();
-
-
-        MCU_CAN_AV.Devices.IDevice.Init_stage.Subscribe(
-
-            _ =>
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    ConnectionView.IsVisible = _;
-                });
-
-            });
-
         
         this.Width = 800;
 

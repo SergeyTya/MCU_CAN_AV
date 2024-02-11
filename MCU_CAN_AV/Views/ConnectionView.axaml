@@ -12,14 +12,11 @@
 			 x:DataType="vm:ConnectionViewModel"
 			 >
 
-	<Design.DataContext>
-		<vm:ConnectionViewModel />
-	</Design.DataContext>
+	
 
 	<UserControl.DataContext>
 		<vm:ConnectionViewModel />
 	</UserControl.DataContext>
-
 
 	<Grid ShowGridLines="false">
 		<Grid.RowDefinitions>
@@ -32,8 +29,8 @@
 
 		<TabControl Grid.Row="0" Grid.Column="0" TabStripPlacement="Left" Name="TabControl1" VerticalAlignment="Stretch">
 
-			<TabItem Header="Setup">
-				<Panel Background="#1E1E1E" Name="Panel_setup" IsEnabled="{Binding IsConnEnabled}" Margin="10" >
+			<TabItem Header="Connection">
+				<Panel Background="#1E1E1E" Name="Panel_setup" IsEnabled="{Binding isControlEnabled}" Margin="10" >
 
 					<StackPanel Orientation="Vertical">
 
@@ -41,12 +38,12 @@
 
 							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
 								<TextBlock Margin="5"  Width="150" TextAlignment="Right"> Connection type </TextBlock>
-								<ComboBox  Name="Lb_ConType" Width="150" Margin="5"/>
+								<ComboBox  Name="Lb_ConType" Width="150" Margin="5" SelectedIndex="{Binding Connection_Type}"/>
 							</StackPanel>
 
 							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Polling Itervall, ms </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox  Width="150" Margin="5" Text="{Binding Polling_interval}"/>
 							</StackPanel>
 						</StackPanel>
 
@@ -55,77 +52,65 @@
 						<StackPanel Name="stp_can_usb_b" IsVisible="true">
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Dev ID </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Width="150" Margin="5" Text="{Binding Device_id}"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> CAN ID  </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Can_ID} " Width="150" Margin="5"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Baudrate  </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Baudrate}" Width="150" Margin="5"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Mask  </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Canmask} " Width="150" Margin="5"/>
 							</StackPanel>
 						</StackPanel >
 
 						<StackPanel Name="stp_ModbusTCP" IsVisible="False">
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Server name </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding ServerName}" Width="150" Margin="5"/>
 							</StackPanel>
 
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Server port </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding ServerPort}" Width="150" Margin="5"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Slave ID </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Device_id}" Width="150" Margin="5"/>
 							</StackPanel>
 						</StackPanel >
 
 						<StackPanel Name="stp_ModbusRTU" IsVisible="False">
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> COM port name </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding ComName} " Width="150" Margin="5"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Baudrate </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Baudrate}" Width="150" Margin="5"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Slave ID </TextBlock>
-								<TextBox Text=" 1 " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Device_id}" Width="150" Margin="5"/>
 							</StackPanel>
 						</StackPanel >
 					</StackPanel>
 				</Panel>
 			</TabItem>
 
-			<TabItem Header="Log">
-
-				<ScrollViewer Name="Scroll_log" Background="#1E1E1E">
-					<TextBlock Name="Tb_log"
-							   VerticalAlignment="Stretch"
-							   HorizontalAlignment="Stretch"
-							   TextAlignment="Start"
-							   FontWeight="Light"
-				/>
-				</ScrollViewer>
-			</TabItem>
-
 		</TabControl>
 
 		<Button Name="Btn_connect"
+			
 				Grid.Row="1" Grid.Column="0"
 				HorizontalAlignment="Center"
 				Content="Connect"
 				FontSize="20"
-				Command="{Binding OnClickConnectCommand}"
-				IsVisible="{Binding IsConnEnabled}"
+				Command="{Binding ClickConnectCommand}"
 				Margin="5,5,5,15"
 					/>
 
@@ -141,6 +126,7 @@
 			<Border  BorderBrush="DimGray" BorderThickness="1" />
 			<ScrollViewer Name="Scroll" >
 				<TextBlock Name="Tb_cnct_msg"
+						   Text="{Binding LogText}"
 						   VerticalAlignment="Top"
 						   HorizontalAlignment="Stretch"
 						   TextAlignment="Left"
