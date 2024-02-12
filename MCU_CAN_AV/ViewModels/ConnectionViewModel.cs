@@ -177,17 +177,22 @@ namespace MCU_CAN_AV.ViewModels
 
             IsMsgVisible = true;
 
-
-            IDevice._LogUpdater.Subscribe(
-           (_) =>
-           {
+            IDisposable disposable_log = IDevice._LogUpdater.Subscribe(
+            (_) =>
+            {
                LogText += $"{DateTime.Now}: {_} \n";
-           });
+            });
+
+            foreach (var item in ParameterItems)
+            {
+                item.disposable?.Dispose();
+                IDevice._LogUpdater.OnNext($"  {item.Name}= {item.TextInput}");
+            }
 
             IDevice.Create( DeviceSelected, InitStruct );
 
 
-            IDevice.GetInstnce()?.Init_stage.Subscribe(
+            IDisposable? disposable_init = IDevice.GetInstnce()?.Init_stage.Subscribe(
                (_) =>
                {
                    isConnectionDone = _;
@@ -201,6 +206,9 @@ namespace MCU_CAN_AV.ViewModels
             }
 
             Messenger.Send(new ConnectionState(true));
+
+            disposable_log.Dispose();
+            disposable_init?.Dispose();
 
         }
 

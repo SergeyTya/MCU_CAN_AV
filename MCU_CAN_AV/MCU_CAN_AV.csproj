@@ -45,9 +45,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\LoggerWindow.axaml.cs">
-      <DependentUpon>LoggerWindow.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

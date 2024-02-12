@@ -103,9 +103,8 @@ namespace MCU_CAN_AV.Devices
 
             if (ret_obj != null)
             {
-                ret_obj.LogUpdater.Subscribe(_ => Debug.WriteLine(_));
-
-               
+                ret_obj.LogUpdater.OnNext($" !!!! {ret_obj.GetType().Name} connection created ");
+                // ret_obj.LogUpdater.Subscribe(_ => Debug.WriteLine(_));
 
                 IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
                     (_) =>

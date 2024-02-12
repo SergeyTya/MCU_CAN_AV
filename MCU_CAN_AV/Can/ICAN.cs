@@ -104,8 +104,6 @@ namespace MCU_CAN_AV.Can
 
             if (ICAN.CAN != null)
             {
-                LogUpdater.OnNext($"Connection created {ICAN.CAN.GetType().Name}");
-
                 if (ICAN.CAN.isOpen())
                 {
 
@@ -117,7 +115,7 @@ namespace MCU_CAN_AV.Can
 
                     timer.Start();
 
-                    LogUpdater.OnNext($"Connection open type={CANType}");
+                    LogUpdater.OnNext($" !!!! {CANType} connection opened");
                 }
                 else{
                     LogUpdater.OnNext($"Connection open fail {ICAN.CAN.GetType().Name}");

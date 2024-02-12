@@ -19,6 +19,9 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         bool _connectionDone = false;
 
+        [ObservableProperty]
+        string _logText = "sdcdsc";
+
         public void Receive(ConnectionState message)
         {
             ConnectionDone = message.state;

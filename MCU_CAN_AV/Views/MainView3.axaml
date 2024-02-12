@@ -11,13 +11,12 @@
 			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="700"
              x:Class="MCU_CAN_AV.Views.MainView3"
-			 x:DataType="vm:MainViewModel"
-			 x:CompileBindings="False"
 			 >
-	<Design.DataContext>
-		<vm:MainView3Model />
-	</Design.DataContext>
-
+	
+	<UserControl.DataContext>
+		<vm:MainView3Model/>
+	</UserControl.DataContext>
+	
 	<UserControl.Styles>
 		<Style Selector="ToggleButton.Split:checked /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="#262738"/>
@@ -196,7 +195,9 @@
 								/>
 						</TabItem>
 						<TabItem Header="Connection">
-							<v:ConnectionView Background="Black" SelectedTab="1" />
+							<ScrollViewer>
+								<TextBlock Text="{Binding LogText}"/>
+							</ScrollViewer>
 						</TabItem>
 						<TabItem Header="Testing">
 							<TextBlock Margin="5">This is tab 3 content</TextBlock>

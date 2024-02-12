@@ -38,13 +38,13 @@
 					</StackPanel>
 
 					<Panel>
-						<Border  Classes="h2"/>
-						<ItemsControl ItemsSource="{Binding ParameterItems}" Margin="5">
+						<Border  Classes="h2" Margin="5"/>
+						<ItemsControl ItemsSource="{Binding ParameterItems}" Margin="10">
 							<ItemsControl.ItemTemplate >
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Margin="5">
-										<TextBlock Text="{Binding Label}" Width="150" />
-										<TextBox  Width="150" Text="{Binding TextInput}"/>
+										<TextBlock Text="{Binding Label}" Width="200" />
+										<TextBox  Width="150" Text="{Binding TextInput}" HorizontalAlignment="Center"/>
 									</StackPanel>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>

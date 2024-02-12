@@ -1,27 +1,25 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using DynamicData;
-using MCU_CAN_AV.Can;
-using MCU_CAN_AV.CustomControls;
-using MCU_CAN_AV.Devices;
-using MCU_CAN_AV.Models;
-using Microsoft.VisualBasic;
-using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Diagnostics.Metrics;
+﻿using System;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Reflection.Metadata;
-using static MCU_CAN_AV.Can.ICAN;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using MCU_CAN_AV.Devices;
 
-namespace MCU_CAN_AV.ViewModels;
-
-public partial class MainView3Model
+namespace MCU_CAN_AV.ViewModels
 {
- 
+    public partial class MainView3Model : ObservableObject
+    {
+        IDisposable? disposable_log;
+        public MainView3Model()
+        {
+            disposable_log?.Dispose();
+            disposable_log = IDevice._LogUpdater.Subscribe((_) => LogText += $"{DateTime.Now}: {_} \n");
+        }
+
+        [ObservableProperty]
+        string _logText = "";
+
+    }
+
 }
+
