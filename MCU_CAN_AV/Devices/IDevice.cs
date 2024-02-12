@@ -57,9 +57,11 @@ namespace MCU_CAN_AV.Devices
     {
         static IDevice _Device = new BaseDevice();
 
+        public Subject<string> LogUpdater { get; }
+
         public ObservableCollection<IDeviceParameter> DeviceDescriprion { get; }
         public ObservableCollection<IDeviceFault> DeviceFaults { get; }
-        public Subject<string> LogUpdater { get; }
+      
         public BehaviorSubject<bool> Init_stage { get;  }
 
         void Encode(ICAN.RxTxCanData data);

@@ -45,59 +45,44 @@
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Polling Itervall, ms </TextBlock>
 								<TextBox  Width="150" Margin="5" Text="{Binding Polling_interval}"/>
 							</StackPanel>
-						</StackPanel>
 
-						<Border Classes="h1" />
-
-						<StackPanel Name="stp_can_usb_b" IsVisible="true">
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Dev ID </TextBlock>
-								<TextBox Width="150" Margin="5" Text="{Binding Device_id}"/>
+								<TextBox Width="150" Margin="5" Text="{Binding Device_id}" IsVisible="true"/>
 							</StackPanel>
-							<StackPanel Orientation="Horizontal">
+
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_can_ID}">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> CAN ID  </TextBlock>
-								<TextBox Text="{Binding Can_ID} " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Can_ID} " Width="150" Margin="5" />
 							</StackPanel>
-							<StackPanel Orientation="Horizontal">
+
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_baudrate}">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Baudrate  </TextBlock>
-								<TextBox Text="{Binding Baudrate}" Width="150" Margin="5"/>
+								<TextBox Text="{Binding Baudrate}" Width="150" Margin="5" />
 							</StackPanel>
-							<StackPanel Orientation="Horizontal">
+
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_canmask}">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Mask  </TextBlock>
-								<TextBox Text="{Binding Canmask} " Width="150" Margin="5"/>
+								<TextBox Text="{Binding Canmask} " Width="150" Margin="5" />
 							</StackPanel>
-						</StackPanel >
 
-						<StackPanel Name="stp_ModbusTCP" IsVisible="False">
-							<StackPanel Orientation="Horizontal">
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_serverName}">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Server name </TextBlock>
-								<TextBox Text="{Binding ServerName}" Width="150" Margin="5"/>
+								<TextBox Text="{Binding ServerName}" Width="150" Margin="5" />
 							</StackPanel>
 
-							<StackPanel Orientation="Horizontal">
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_serverPort}">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Server port </TextBlock>
-								<TextBox Text="{Binding ServerPort}" Width="150" Margin="5"/>
+								<TextBox Text="{Binding ServerPort}" Width="150" Margin="5" IsVisible="{Binding Visible_serverPort}"/>
 							</StackPanel>
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Slave ID </TextBlock>
-								<TextBox Text="{Binding Device_id}" Width="150" Margin="5"/>
-							</StackPanel>
-						</StackPanel >
 
-						<StackPanel Name="stp_ModbusRTU" IsVisible="False">
-							<StackPanel Orientation="Horizontal">
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_comName}">
 								<TextBlock Margin="5" Width="150" TextAlignment="Right"> COM port name </TextBlock>
-								<TextBox Text="{Binding ComName} " Width="150" Margin="5"/>
+								<TextBox Text="{Binding ComName} " Width="150" Margin="5" IsVisible="{Binding Visible_comName}"/>
 							</StackPanel>
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Baudrate </TextBlock>
-								<TextBox Text="{Binding Baudrate}" Width="150" Margin="5"/>
-							</StackPanel>
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Slave ID </TextBlock>
-								<TextBox Text="{Binding Device_id}" Width="150" Margin="5"/>
-							</StackPanel>
-						</StackPanel >
+
+						</StackPanel>
+
 					</StackPanel>
 				</Panel>
 			</TabItem>

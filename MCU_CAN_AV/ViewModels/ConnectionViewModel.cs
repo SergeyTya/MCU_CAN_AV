@@ -18,7 +18,6 @@ namespace MCU_CAN_AV.ViewModels
     internal partial class ConnectionViewModel : ObservableValidator
     {
 
-       
         int LogRowCount = 0;
 
         [ObservableProperty]
@@ -31,49 +30,100 @@ namespace MCU_CAN_AV.ViewModels
         }
 
         [ObservableProperty]
-        
         private CANType _connection_Type = CANType.ModbusTCP;
 
+        partial void OnConnection_TypeChanged(CANType value)
+        {
+            switch(value)
+            {
+                case CANType.ModbusTCP:
+                    Visible_baudrate = false;
+                    Visible_comName = false;
+                    Visible_serverName = true;
+                    Visible_serverPort = true;
+                    Visible_can_ID = false;
+                    Visible_canmask = false;
 
-        
-       
+                    break;
+                case CANType.CAN_USBCAN_B:
+                    Visible_baudrate = true;
+                    Visible_comName = false;
+                    Visible_serverName = false;
+                    Visible_serverPort = false;
+                    Visible_can_ID = true;
+                    Visible_canmask = true;
+                    break;
+                case CANType.ModbusRTU:
+                    Visible_baudrate = true;
+                    Visible_comName = false;
+                    Visible_serverName = false;
+                    Visible_serverPort = false;
+                    Visible_can_ID = false;
+                    Visible_canmask = false;
+                    break;
+                case CANType.Dummy:
+                    Visible_baudrate = true;
+                    Visible_comName = true;
+                    Visible_serverName = true;
+                    Visible_serverPort = true;
+                    Visible_can_ID = true;
+                    Visible_canmask = true;
+                    break;
+
+            }
+        }
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
-        private uint _device_id = 1;
+        private bool _form_valid = true;
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
-        //[Range(100, 200, ErrorMessage = "Not valid value")]
-        [ValidateAge2(200,100)]
-        private uint _polling_interval = 100;
+        [ValidateUint(nameof(Form_valid))]
+        private string _device_id = "1";
        
-
+        [ObservableProperty]
+        [ValidateUint(nameof(Form_valid), check_lim = true, min = 10, max = 1000)]
+        private string _polling_interval = "100";
+     
+        [ObservableProperty]
+        [ValidateUint(nameof(Form_valid))]
+        private string _can_ID = "0";
+        [ObservableProperty]
+        bool visible_can_ID = true;
 
         [ObservableProperty]
-        private uint _can_ID = 0;
+        [ValidateUint(nameof(Form_valid))]
+        private string _baudrate = "500000";
+        [ObservableProperty]
+        bool visible_baudrate = true;
 
         [ObservableProperty]
-        private uint _baudrate = 500000;
-
-
+        [ValidateUint(nameof(Form_valid))]
+        private string _canmask = "0";
         [ObservableProperty]
-        private uint _canmask= 0;
+        bool visible_canmask = true;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
         string _serverName = "localhost";
-       
+        [ObservableProperty]
+        bool visible_serverName = true;
 
         [ObservableProperty]
-        private uint _serverPort = 8888;
-
-
+        [ValidateUint(nameof(Form_valid))]
+        private string _serverPort = "8888";
         [ObservableProperty]
-        public bool _isControlEnabled = true;
+        bool visible_serverPort = true;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
         string _comName = "COM1";
+        [ObservableProperty]
+        bool visible_comName = true;
+
+        [ObservableProperty]
+        public bool _isControlEnabled = true;
+
 
         [ObservableProperty]
         bool _IsMsgVisible = false;
@@ -89,15 +139,15 @@ namespace MCU_CAN_AV.ViewModels
 
             var init_structure = new ICAN.CANInitStruct
             {
-                _CANType = (CANType) Connection_Type,
-                _PollInterval_ms = Polling_interval,
-                _devind = Device_id,
-                _canind = Can_ID,
-                _Baudrate = Baudrate,
-                _Mask = Canmask,
-                server_name = ServerName,
-                server_port = ServerPort,
-                com_name = ComName
+                _CANType         = (CANType) Connection_Type,
+                _PollInterval_ms = UInt32.Parse(Polling_interval),
+                _devind          = UInt32.Parse(Device_id),
+                _canind          = UInt32.Parse(Can_ID),
+                _Baudrate        = UInt32.Parse(Baudrate),
+                _Mask            = UInt32.Parse(Canmask),
+                server_name      = ServerName,
+                server_port      = UInt32.Parse(ServerPort),
+                com_name         = ComName
             };
 
             IDevice.Create(
@@ -130,33 +180,51 @@ namespace MCU_CAN_AV.ViewModels
             bool ret_val =
                 !string.IsNullOrEmpty(ServerName)
                 && !string.IsNullOrEmpty(ComName)
-                && (Device_id > 0)
-                && (Polling_interval > 0);
-
+                && Form_valid;
             return ret_val;
         }
 
     }
 
-    public sealed class ValidateAge2Attribute : ValidationAttribute
+    public sealed class ValidateUintAttribute : ValidationAttribute
     {
-    //Attributes MaxAge and MinAge will be assigned by characteristic parameters
-    public uint MaxAge { get; }
-        public uint MinAge { get; }
-        public ValidateAge2Attribute(uint maxAge, uint minAge)
+        public ValidateUintAttribute(string propertyName, bool check_lim=false, uint max=0, uint min=0)
         {
-            MaxAge = maxAge;
-            MinAge = minAge;
+            PropertyName = propertyName;
+            this.min = min;
+            this.max = max;
+            this.check_lim = check_lim;
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            uint age = (uint) value;
-        
-            if(age < MaxAge && age > MinAge) return ValidationResult.Success;
+        public string PropertyName { get; }
+        public uint max, min;
+        public bool check_lim;
 
-            
-            return new($"The youngest {MinAge}, the largest {MaxAge}");
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+        {
+            uint res = 0;
+
+            var instance = (ConnectionViewModel) validationContext.ObjectInstance;
+
+            instance.GetType().GetProperty(PropertyName)?.SetValue(instance, false);
+
+            if (UInt32.TryParse(value?.ToString(), out res)) {
+               
+                if (check_lim)
+                {
+                    if (res >= min && res <= max) {
+                        instance.GetType().GetProperty(PropertyName)?.SetValue(instance, true);
+                        return ValidationResult.Success;
+                    }
+                    return new($"Not in range from {min} to {max}");
+                }
+                else {
+                    instance.GetType().GetProperty(PropertyName)?.SetValue(instance, true);
+                    return ValidationResult.Success;
+                }
+            }
+
+            return new($"Wrong number");
         }
     }
 }
