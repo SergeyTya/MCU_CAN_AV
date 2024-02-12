@@ -17,6 +17,6 @@
 		Title="MCU CAN"
 		>
 
-	<views:MainView2 />
+	<views:MainView/>
 	
 </Window>

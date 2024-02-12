@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="900"
+             xmlns:views="clr-namespace:MCU_CAN_AV.Views"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="900"
              x:Class="MCU_CAN_AV.Views.MainView"
              x:DataType="vm:MainViewModel"
 			 >
@@ -18,39 +19,6 @@
 		<vm:MainViewModel/>
 	</UserControl.DataContext>
 
+	<views:MainView2/>
 
-	<StackPanel >
-
-
-		<Grid Name="Grid_left"
-			
-			  ShowGridLines="True"
-			  HorizontalAlignment="Left"
-			  VerticalAlignment="Top">
-
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
-			<cc:MetersControl Grid.Row="0"
-							  Width="700"
-							  Height="400"
-							  Name="Meters"
-							  Angular1Value="{Binding $parent.DataContext.Id}"
-							  Angular2Value="{Binding $parent.DataContext.Id}"
-							  LabelMeter1Value="{Binding $parent.DataContext.Id, StringFormat='Curent {0} A'}"
-							  LabelMeter2Value="{Binding $parent.DataContext.Id, StringFormat='Voltage {0} %'}"
-							  FaultTable="{Binding $parent.DataContext.Faults}"
-							  Slider1Label ="Speed, rpm"
-							  Slider1Max="9000.0"
-							  Slider1Min="-9000.0"
-							  Slider2Label ="Torque, %"
-							  Slider2Max="200.0"
-							  Slider2Min="-200.0"
-		   />
-		</Grid>
-
-	</StackPanel>
 </UserControl>

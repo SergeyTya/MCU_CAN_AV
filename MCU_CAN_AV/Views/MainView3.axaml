@@ -15,7 +15,7 @@
 			 x:CompileBindings="False"
 			 >
 	<Design.DataContext>
-		<vm:MainViewModel />
+		<vm:MainView3Model />
 	</Design.DataContext>
 
 	<UserControl.Styles>
