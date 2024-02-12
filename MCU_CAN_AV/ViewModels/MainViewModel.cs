@@ -21,7 +21,7 @@ using static MCU_CAN_AV.Can.ICAN;
 
 namespace MCU_CAN_AV.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public partial class MainViewModel
 {
-
+ 
 }

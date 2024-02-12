@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static MCU_CAN_AV.Devices.Shanghai.ShanghaiDevice;
@@ -45,12 +46,17 @@ namespace MCU_CAN_AV.Devices.Dummy
         {
             ((ShanghaiDeviceParameter)DeviceDescription[0]).Val.OnNext(3);
 
-          
-            cnt++; if (cnt == 10) {
-                base.Init_stage.OnNext(false);
-            }
+            if (cnt < 20) {
 
-            base.LogUpdater.OnNext("sds");
+                if (cnt++ == 19)
+                {
+                    base.Init_stage.OnNext(false);
+                    base.LogUpdater.OnNext("Connected!");
+                }
+                else {
+                    base.LogUpdater.OnNext(cnt.ToString());
+                }
+            }
         }
 
         public override void Reset()

@@ -15,14 +15,13 @@ namespace MCU_CAN_AV.Devices
 
         public ObservableCollection<IDeviceParameter> DeviceDescription = new();
         public ObservableCollection<IDeviceFault> DeviceFaults = new();
-        public Subject<string> LogUpdater = new Subject<string>();
         public BehaviorSubject<bool> Init_stage = new(true);
 
         ObservableCollection<IDeviceParameter> IDevice.DeviceDescriprion => DeviceDescription;
 
         ObservableCollection<IDeviceFault> IDevice.DeviceFaults => DeviceFaults;
 
-        Subject<string> IDevice.LogUpdater => LogUpdater;
+        public Subject<string> LogUpdater => IDevice._LogUpdater;
 
         BehaviorSubject<bool> IDevice.Init_stage => Init_stage;
 

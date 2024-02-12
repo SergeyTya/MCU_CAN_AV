@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MCU_CAN_AV.ViewModels"
+		     xmlns:views="clr-namespace:MCU_CAN_AV.Views"
+		     xmlns:dd ="clr-namespace:MCU_CAN_AV.Devices"
+			 
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MCU_CAN_AV.Views.MainView2">
+
+	<UserControl.DataContext>
+		<vm:MainView2Model/>
+	</UserControl.DataContext>
+
+	<Panel>
+
+		<Panel IsVisible="{Binding ConnectionDone}">
+			<views:MainView3
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"/>
+		</Panel>
+
+		<Panel IsVisible="{Binding !ConnectionDone}">
+			<views:ConnectionView
+					Name="ConnectionView"
+					Grid.Row="0"
+					Background="Black" />
+		</Panel>
+
+	</Panel>
+
+</UserControl>

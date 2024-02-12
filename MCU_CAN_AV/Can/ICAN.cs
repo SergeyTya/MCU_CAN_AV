@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MCU_CAN_AV.Devices.Dummy;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -94,8 +95,11 @@ namespace MCU_CAN_AV.Can
                 case CANType.CAN_USBCAN_B:
                     ICAN.CAN = new USBCAN_B_win(InitStructure);
                     break;
-            }
 
+                case CANType.Dummy:
+                    ICAN.CAN = new DummyCAN();
+                    break;
+            }
 
 
             if (ICAN.CAN != null)
@@ -108,9 +112,7 @@ namespace MCU_CAN_AV.Can
                     timer = new System.Timers.Timer(InitStructure._PollInterval_ms);
                     timer.Elapsed += (_, __) =>
                     {
-                       // ICAN.CAN.Receive();
-
-                        ICAN.RxUpdater.OnNext(new RxTxCanData(122, new byte[0]));
+                        ICAN.CAN.Receive();
                     };
 
                     timer.Start();

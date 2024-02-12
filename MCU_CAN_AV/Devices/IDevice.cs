@@ -55,6 +55,7 @@ namespace MCU_CAN_AV.Devices
 
     internal interface IDevice
     {
+        public static Subject<string> _LogUpdater = new Subject<string>();
         static IDevice _Device = new BaseDevice();
 
         public Subject<string> LogUpdater { get; }
@@ -76,6 +77,11 @@ namespace MCU_CAN_AV.Devices
 
             IDevice? ret_obj = null;
 
+            IDisposable loglistener = ICAN.LogUpdater.Subscribe(
+                      (_) => {
+                          IDevice._LogUpdater.OnNext(_);
+                      });
+
             switch (device)
             {
                 case DeviceType.EVMModbus:
@@ -89,9 +95,9 @@ namespace MCU_CAN_AV.Devices
                 case DeviceType.EspiritekCAN:
                     ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
                     break;
-
                 case DeviceType.Dummy:
                     ret_obj = new DummyDevice();
+                    ICAN.Create(InitStruct, ICAN.CANType.Dummy);
                     break;
             }
 
@@ -99,10 +105,7 @@ namespace MCU_CAN_AV.Devices
             {
                 ret_obj.LogUpdater.Subscribe(_ => Debug.WriteLine(_));
 
-                IDisposable loglistener = ICAN.LogUpdater.Subscribe(
-                       (_) => {
-                           ret_obj.LogUpdater.OnNext(_);
-                       });
+               
 
                 IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
                     (_) =>

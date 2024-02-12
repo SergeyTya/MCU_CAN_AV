@@ -9,19 +9,8 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace MCU_CAN_AV.ViewModels
 {
-    public partial class MainWindowModel: ObservableRecipient, IRecipient<ConnectionState>
+    internal partial class MainWindowModel: ObservableObject//ObservableRecipient, IRecipient<ConnectionState>
     {
-        public MainWindowModel() {
-
-            Messenger.RegisterAll(this);
-        }
-
-        [ObservableProperty]
-        bool _connectionDone = false;
-
-       public void Receive(ConnectionState message)
-        {
-            ConnectionDone = message.state;
-        }
+     
     }
 }

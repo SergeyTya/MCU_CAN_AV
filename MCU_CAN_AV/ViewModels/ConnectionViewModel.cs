@@ -1,22 +1,16 @@
-﻿using Avalonia.Data;
-using Avalonia.Data.Converters;
+﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices;
-using ScottPlot.Drawing.Colormaps;
-using ScottPlot.Renderable;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using static MCU_CAN_AV.Can.ICAN;
-using static MCU_CAN_AV.ViewModels.ParameterField;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -26,12 +20,14 @@ namespace MCU_CAN_AV.ViewModels
     {
         
         public ConnectionViewModel() {
-            DeviceSelected = 0;
+          
             foreach (var item in ParameterItems)
             {
                 // Kostyli!
-                item.Valid.Subscribe((_) => ClickConnectCommand.NotifyCanExecuteChanged());
+                item.disposable?.Dispose();
+                item.disposable = item.Valid.Subscribe((_) => ClickConnectCommand.NotifyCanExecuteChanged());
             }
+
         }
 
         public static CANInitStruct InitStruct = new CANInitStruct();
@@ -130,7 +126,7 @@ namespace MCU_CAN_AV.ViewModels
         }
 
         [ObservableProperty]
-        private DeviceType _deviceSelected = DeviceType.EVMModbus;
+        private DeviceType _deviceSelected = DeviceType.Dummy;
 
         partial void OnDeviceSelectedChanged(DeviceType value)
         {
@@ -176,21 +172,19 @@ namespace MCU_CAN_AV.ViewModels
         private async Task ClickConnect()
         {
             // Relay command blocking button until it executing
-
+          
             bool isConnectionDone = true;
 
             IsMsgVisible = true;
 
-            IDevice.Create(
-                DeviceSelected,
-                InitStruct
-                );
 
-            IDevice.GetInstnce()?.LogUpdater.Subscribe(
-                (_) =>
-                {
-                    LogText += $"{DateTime.Now}: {_} \n";
-                });
+            IDevice._LogUpdater.Subscribe(
+           (_) =>
+           {
+               LogText += $"{DateTime.Now}: {_} \n";
+           });
+
+            IDevice.Create( DeviceSelected, InitStruct );
 
 
             IDevice.GetInstnce()?.Init_stage.Subscribe(
@@ -198,8 +192,7 @@ namespace MCU_CAN_AV.ViewModels
                {
                    isConnectionDone = _;
                    
-               });
-
+            });
 
             while (isConnectionDone == true)
             {
@@ -207,7 +200,8 @@ namespace MCU_CAN_AV.ViewModels
                 await Task.Delay(100);
             }
 
-            Messenger.Send(new ConnectionState(false));
+            Messenger.Send(new ConnectionState(true));
+
         }
 
         private bool CanConnect()
@@ -273,6 +267,7 @@ namespace MCU_CAN_AV.ViewModels
         }
 
         public Subject<bool> Valid = new();
+        public IDisposable? disposable = null;
 
         public Action<uint> onNext_uint = (_) => { };
 
