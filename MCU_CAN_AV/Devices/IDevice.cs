@@ -18,9 +18,9 @@ namespace MCU_CAN_AV.Devices
     public enum DeviceType
     {
         EVMModbus,
-        Shanghai,
-        Espiritek
-
+        ShanghaiCAN,
+        EspiritekCAN,
+        Dummy
     }
 
     public interface IDeviceParameter
@@ -76,52 +76,52 @@ namespace MCU_CAN_AV.Devices
 
             IDevice? ret_obj = null;
 
-            ret_obj = new DummyDevice();
+            switch (device)
+            {
+                case DeviceType.EVMModbus:
+                    ret_obj = new EVMModbusDevice(InitStruct);
+                    ICAN.Create(InitStruct, ICAN.CANType.ModbusTCP);
+                    break;
+                case DeviceType.ShanghaiCAN:
+                    ret_obj = new ShanghaiDevice();
+                    ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
+                    break;
+                case DeviceType.EspiritekCAN:
+                    ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
+                    break;
 
-            //switch (device)
-            //{
-            //    case DeviceType.EVMModbus:
-            //        ret_obj = new EVMModbusDevice(InitStruct);
-            //        break;
-            //    case DeviceType.Shanghai:
-            //        ret_obj = new ShanghaiDevice();
-            //        break;
-            //    case DeviceType.Espiritek:
-
-            //        break;
-            //}
+                case DeviceType.Dummy:
+                    ret_obj = new DummyDevice();
+                    break;
+            }
 
             if (ret_obj != null)
             {
                 ret_obj.LogUpdater.Subscribe(_ => Debug.WriteLine(_));
 
-                ICAN.Create(InitStruct);
+                IDisposable loglistener = ICAN.LogUpdater.Subscribe(
+                       (_) => {
+                           ret_obj.LogUpdater.OnNext(_);
+                       });
 
-                if (ICAN.CAN != null) {
-
-                    IDisposable loglistener = ICAN.LogUpdater.Subscribe(
-                        (_) => {
-                            ret_obj.LogUpdater.OnNext(_);
-                        });
-
-                    IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
-                        (_) =>
+                IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
+                    (_) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
                         {
-                            Dispatcher.UIThread.Post(() =>
-                            {
-                                ret_obj.Encode(_);
-                            });
+                            ret_obj.Encode(_);
                         });
+                    });
 
-                    IDisposable Txlistener = ICAN.TxUpdater.Subscribe(
-                        (_) =>
+                IDisposable Txlistener = ICAN.TxUpdater.Subscribe(
+                    (_) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
                         {
-                            Dispatcher.UIThread.Post(() =>
-                            {
-                                ICAN.CAN.Transmit(_);
-                            });
+                            ICAN.CAN?.Transmit(_);
                         });
-                }
+                    });
+
             }
 
            IDevice._Device = ret_obj;

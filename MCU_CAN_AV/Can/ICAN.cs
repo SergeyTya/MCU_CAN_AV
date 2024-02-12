@@ -43,10 +43,9 @@ namespace MCU_CAN_AV.Can
 
         public struct CANInitStruct {
 
-            public CANType _CANType;
-            public UInt32 _devind = 0;
+            public UInt32 _devind = 1;
             public UInt32 _canind = 0;
-            public UInt32 _Baudrate = 0;
+            public UInt32 _Baudrate = 500000;
             public UInt32 _RcvCode = 0;
             public UInt32 _Mask = 0xffffffff;
             public UInt32 _PollInterval_ms = 100;  /// Poll interval, ms
@@ -82,10 +81,10 @@ namespace MCU_CAN_AV.Can
 
         }
 
-        public static void Create(CANInitStruct InitStructure)
+        public static void Create(CANInitStruct InitStructure, CANType CANType)
         {
 
-            switch (InitStructure._CANType)
+            switch (CANType)
             {
                 case CANType.ModbusTCP:
 
@@ -116,7 +115,7 @@ namespace MCU_CAN_AV.Can
 
                     timer.Start();
 
-                    LogUpdater.OnNext($"Connection open type={InitStructure._CANType}");
+                    LogUpdater.OnNext($"Connection open type={CANType}");
                 }
                 else{
                     LogUpdater.OnNext($"Connection open fail {ICAN.CAN.GetType().Name}");

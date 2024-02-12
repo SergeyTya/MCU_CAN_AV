@@ -6,19 +6,119 @@ using CommunityToolkit.Mvvm.Messaging;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices;
 using ScottPlot.Drawing.Colormaps;
+using ScottPlot.Renderable;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using static MCU_CAN_AV.Can.ICAN;
+using static MCU_CAN_AV.ViewModels.ParameterField;
 
 namespace MCU_CAN_AV.ViewModels
 {
+    public record class ConnectionState(bool state);
 
-    internal partial class ConnectionViewModel : ObservableValidator
+    internal partial class ConnectionViewModel : ObservableRecipient
     {
+        
+        public ConnectionViewModel() {
+            DeviceSelected = 0;
+            foreach (var item in ParameterItems)
+            {
+                // Kostyli!
+                item.Valid.Subscribe((_) => ClickConnectCommand.NotifyCanExecuteChanged());
+            }
+        }
+
+        public static CANInitStruct InitStruct = new CANInitStruct();
+
+        [ObservableProperty]
+        public ObservableCollection<ParameterField> _parameterItems = new() {
+
+            new ParameterField {
+                Label = "Polling interval",
+                Name = nameof(InitStruct._PollInterval_ms),
+                TextInput = "100",
+                onNext_uint = (_) => {
+                    InitStruct._PollInterval_ms=_;
+                }
+            },
+
+            new ParameterField {
+                Label = "Device Id",
+                Name = nameof(InitStruct._devind),
+                TextInput = "1",
+                onNext_uint = (_) => {
+                    InitStruct._devind=_;
+                }
+            },
+
+            new ParameterField {
+                Label = "Baudrate",
+                Name = nameof(InitStruct._Baudrate),
+                TextInput = "500000",
+                onNext_uint = (_) => {
+                    InitStruct._Baudrate=_;
+                }
+            },
+
+            new ParameterField {
+                Label = "Can ID",
+                Name = nameof(InitStruct._canind),
+                TextInput = "0",
+                onNext_uint = (_) => {
+                    InitStruct._canind=_;
+                }
+            },
+
+            new ParameterField {
+                Label = "Can Mask",
+                Name = nameof(InitStruct._Mask),
+                TextInput = "0",
+                onNext_uint = (_) => {
+                    InitStruct._Mask=_;
+                }
+            },
+
+            new ParameterField {
+                Label = "TCP Server Name",
+                Name = nameof(InitStruct.server_name),
+                TextInput = "localhost",
+                Validate = false,
+                onNext_string = (_) => {
+                    InitStruct.server_name=_;
+                }
+            },
+
+            new ParameterField {
+                 Label = "TCP Server Port",
+                 Name = nameof(InitStruct.server_port),
+                 TextInput = "8888",
+                 onNext_uint = (_) => {
+                    InitStruct.server_port=_;
+                 }
+            },
+
+            new ParameterField {
+                 Label = "COM Port Name",
+                 Name = nameof(InitStruct.com_name),
+                 TextInput = "COM1",
+                  Validate = false,
+                 onNext_string = (_) => {
+                    InitStruct.com_name=_;
+                 }
+            },
+
+        };
 
         int LogRowCount = 0;
+
+        [ObservableProperty]
+        public List<String> _deviceAvalible = new List<String>() {nameof(DeviceType.EVMModbus), nameof(DeviceType.ShanghaiCAN), nameof(DeviceType.EspiritekCAN), nameof(DeviceType.Dummy) };
 
         [ObservableProperty]
         private string _logText = " ";
@@ -26,100 +126,44 @@ namespace MCU_CAN_AV.ViewModels
         partial void OnLogTextChanged(string? oldValue, string newValue)
         {
             // property changed event
-            if(LogRowCount++ > 200 ) { LogRowCount = 0; _logText = ""; }
+            if (LogRowCount++ > 100) { LogRowCount = 0; _logText = "";  }
         }
 
         [ObservableProperty]
-        private CANType _connection_Type = CANType.ModbusTCP;
+        private DeviceType _deviceSelected = DeviceType.EVMModbus;
 
-        partial void OnConnection_TypeChanged(CANType value)
+        partial void OnDeviceSelectedChanged(DeviceType value)
         {
-            switch(value)
+            foreach (var item in ParameterItems)
             {
-                case CANType.ModbusTCP:
-                    Visible_baudrate = false;
-                    Visible_comName = false;
-                    Visible_serverName = true;
-                    Visible_serverPort = true;
-                    Visible_can_ID = false;
-                    Visible_canmask = false;
-
-                    break;
-                case CANType.CAN_USBCAN_B:
-                    Visible_baudrate = true;
-                    Visible_comName = false;
-                    Visible_serverName = false;
-                    Visible_serverPort = false;
-                    Visible_can_ID = true;
-                    Visible_canmask = true;
-                    break;
-                case CANType.ModbusRTU:
-                    Visible_baudrate = true;
-                    Visible_comName = false;
-                    Visible_serverName = false;
-                    Visible_serverPort = false;
-                    Visible_can_ID = false;
-                    Visible_canmask = false;
-                    break;
-                case CANType.Dummy:
-                    Visible_baudrate = true;
-                    Visible_comName = true;
-                    Visible_serverName = true;
-                    Visible_serverPort = true;
-                    Visible_can_ID = true;
-                    Visible_canmask = true;
-                    break;
-
+                // Grabli
+                if (item.Name is nameof(InitStruct._Baudrate))
+                {
+                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy;
+                }
+                if (item.Name is nameof(InitStruct.com_name))
+                {
+                    item.IsVisible = value == DeviceType.Dummy; 
+                }
+                if (item.Name is nameof(InitStruct._canind))
+                {
+                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy;
+                }
+                if (item.Name is nameof(InitStruct._Mask))
+                {
+                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy; 
+                }
+                if (item.Name is nameof(InitStruct.server_name))
+                {
+                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
+                }
+                if (item.Name is nameof(InitStruct.server_port))
+                {
+                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
+                }
             }
         }
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
-        private bool _form_valid = true;
-
-        [ObservableProperty]
-        [ValidateUint(nameof(Form_valid))]
-        private string _device_id = "1";
-       
-        [ObservableProperty]
-        [ValidateUint(nameof(Form_valid), check_lim = true, min = 10, max = 1000)]
-        private string _polling_interval = "100";
-     
-        [ObservableProperty]
-        [ValidateUint(nameof(Form_valid))]
-        private string _can_ID = "0";
-        [ObservableProperty]
-        bool visible_can_ID = true;
-
-        [ObservableProperty]
-        [ValidateUint(nameof(Form_valid))]
-        private string _baudrate = "500000";
-        [ObservableProperty]
-        bool visible_baudrate = true;
-
-        [ObservableProperty]
-        [ValidateUint(nameof(Form_valid))]
-        private string _canmask = "0";
-        [ObservableProperty]
-        bool visible_canmask = true;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
-        string _serverName = "localhost";
-        [ObservableProperty]
-        bool visible_serverName = true;
-
-        [ObservableProperty]
-        [ValidateUint(nameof(Form_valid))]
-        private string _serverPort = "8888";
-        [ObservableProperty]
-        bool visible_serverPort = true;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ClickConnectCommand))]
-        string _comName = "COM1";
-        [ObservableProperty]
-        bool visible_comName = true;
 
         [ObservableProperty]
         public bool _isControlEnabled = true;
@@ -137,22 +181,9 @@ namespace MCU_CAN_AV.ViewModels
 
             IsMsgVisible = true;
 
-            var init_structure = new ICAN.CANInitStruct
-            {
-                _CANType         = (CANType) Connection_Type,
-                _PollInterval_ms = UInt32.Parse(Polling_interval),
-                _devind          = UInt32.Parse(Device_id),
-                _canind          = UInt32.Parse(Can_ID),
-                _Baudrate        = UInt32.Parse(Baudrate),
-                _Mask            = UInt32.Parse(Canmask),
-                server_name      = ServerName,
-                server_port      = UInt32.Parse(ServerPort),
-                com_name         = ComName
-            };
-
             IDevice.Create(
-                DeviceType.EVMModbus,
-                init_structure
+                DeviceSelected,
+                InitStruct
                 );
 
             IDevice.GetInstnce()?.LogUpdater.Subscribe(
@@ -166,59 +197,142 @@ namespace MCU_CAN_AV.ViewModels
                (_) =>
                {
                    isConnectionDone = _;
+                   
                });
-            
-            
+
+
             while (isConnectionDone == true)
             {
 
                 await Task.Delay(100);
             }
+
+            Messenger.Send(new ConnectionState(false));
         }
 
-        private bool CanConnect() {
-            bool ret_val =
-                !string.IsNullOrEmpty(ServerName)
-                && !string.IsNullOrEmpty(ComName)
-                && Form_valid;
-            return ret_val;
+        private bool CanConnect()
+        {
+            bool res = true;
+            foreach (var item in ParameterItems)
+            {
+                res &= item.IsValid;
+            }
+            return res;
         }
 
     }
 
+
+    public partial class ParameterField :  ObservableValidator
+    {
+        public ParameterField() {
+           OnTextInputChanged(_textInput);
+        }
+
+        public string? Name { get; set; }
+
+        [ObservableProperty]
+        public bool _validate = true;
+
+        [ObservableProperty]
+        string _label = "no name";
+
+        [ObservableProperty]
+        [ValidateUint(nameof(IsValid), nameof(Validate))]
+        string _textInput = "";
+
+        [ObservableProperty]
+        uint _value = 0;
+
+        partial void OnValueChanged(uint value)
+        {
+            onNext_uint(Value);
+        }
+
+        partial void OnTextInputChanged(string value)
+        {
+            uint res = 0;
+            if (UInt32.TryParse(TextInput, out res))
+            {
+                Value = res;
+            }
+
+            onNext_string(value);
+        }
+
+        [ObservableProperty]
+        bool _isVisible = true;
+
+        [ObservableProperty]
+        bool _isValid = true;
+
+        partial void OnIsValidChanged(bool value)
+        {
+            // Kostyli!
+            Valid.OnNext(value);
+        }
+
+        public Subject<bool> Valid = new();
+
+        public Action<uint> onNext_uint = (_) => { };
+
+        public Action<string> onNext_string = (_) => { };
+
+    }
+
+
     public sealed class ValidateUintAttribute : ValidationAttribute
     {
-        public ValidateUintAttribute(string propertyName, bool check_lim=false, uint max=0, uint min=0)
+        public ValidateUintAttribute(string propertyName, string EnableFieldName, bool check_lim = false, uint max = 0, uint min = 0)
         {
             PropertyName = propertyName;
+            this.EnableFieldName = EnableFieldName;
             this.min = min;
             this.max = max;
             this.check_lim = check_lim;
+            
         }
 
         public string PropertyName { get; }
+        public string EnableFieldName { get;  }
+
         public uint max, min;
         public bool check_lim;
+       
 
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             uint res = 0;
 
-            var instance = (ConnectionViewModel) validationContext.ObjectInstance;
+            var instance = (ParameterField)validationContext.ObjectInstance;
+            var validate = instance.GetType().GetProperty(EnableFieldName)?.GetValue(instance);
+
+            if(validate != null)
+            {
+                if ((bool)validate == false)
+                {
+                    instance.GetType().GetProperty(PropertyName)?.SetValue(instance, true);
+                    return ValidationResult.Success;
+                }
+
+            }
 
             instance.GetType().GetProperty(PropertyName)?.SetValue(instance, false);
 
-            if (UInt32.TryParse(value?.ToString(), out res)) {
-               
+            if (UInt32.TryParse(value?.ToString(), out res))
+            {
+
                 if (check_lim)
                 {
-                    if (res >= min && res <= max) {
+                    if (res >= min && res <= max)
+                    {
                         instance.GetType().GetProperty(PropertyName)?.SetValue(instance, true);
                         return ValidationResult.Success;
                     }
                     return new($"Not in range from {min} to {max}");
                 }
-                else {
+                else
+                {
                     instance.GetType().GetProperty(PropertyName)?.SetValue(instance, true);
                     return ValidationResult.Success;
                 }

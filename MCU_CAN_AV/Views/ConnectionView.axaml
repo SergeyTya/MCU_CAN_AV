@@ -12,7 +12,7 @@
 			 x:DataType="vm:ConnectionViewModel"
 			 >
 
-	
+
 
 	<UserControl.DataContext>
 		<vm:ConnectionViewModel />
@@ -30,61 +30,27 @@
 		<TabControl Grid.Row="0" Grid.Column="0" TabStripPlacement="Left" Name="TabControl1" VerticalAlignment="Stretch">
 
 			<TabItem Header="Connection">
-				<Panel Background="#1E1E1E" Name="Panel_setup" IsEnabled="{Binding isControlEnabled}" Margin="10" >
+				<StackPanel Background="#1E1E1E" IsEnabled="{Binding isControlEnabled}" Margin="10" >
 
-					<StackPanel Orientation="Vertical">
-
-						<StackPanel Orientation="Vertical" Margin="5">
-
-							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-								<TextBlock Margin="5"  Width="150" TextAlignment="Right"> Connection type </TextBlock>
-								<ComboBox  Name="Lb_ConType" Width="150" Margin="5" SelectedIndex="{Binding Connection_Type}"/>
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Polling Itervall, ms </TextBlock>
-								<TextBox  Width="150" Margin="5" Text="{Binding Polling_interval}"/>
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Dev ID </TextBlock>
-								<TextBox Width="150" Margin="5" Text="{Binding Device_id}" IsVisible="true"/>
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_can_ID}">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> CAN ID  </TextBlock>
-								<TextBox Text="{Binding Can_ID} " Width="150" Margin="5" />
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_baudrate}">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Baudrate  </TextBlock>
-								<TextBox Text="{Binding Baudrate}" Width="150" Margin="5" />
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_canmask}">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Mask  </TextBlock>
-								<TextBox Text="{Binding Canmask} " Width="150" Margin="5" />
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_serverName}">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Server name </TextBlock>
-								<TextBox Text="{Binding ServerName}" Width="150" Margin="5" />
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_serverPort}">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> Server port </TextBlock>
-								<TextBox Text="{Binding ServerPort}" Width="150" Margin="5" IsVisible="{Binding Visible_serverPort}"/>
-							</StackPanel>
-
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding Visible_comName}">
-								<TextBlock Margin="5" Width="150" TextAlignment="Right"> COM port name </TextBlock>
-								<TextBox Text="{Binding ComName} " Width="150" Margin="5" IsVisible="{Binding Visible_comName}"/>
-							</StackPanel>
-
-						</StackPanel>
-
+					<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+						<TextBlock Text="Device Type" Width="150" TextAlignment="Center" VerticalAlignment="Center"/>
+						<ComboBox  Width="200" Margin="5" SelectedIndex="{Binding DeviceSelected}" ItemsSource="{Binding DeviceAvalible}"/>
 					</StackPanel>
-				</Panel>
+
+					<Panel>
+						<Border  Classes="h2"/>
+						<ItemsControl ItemsSource="{Binding ParameterItems}" Margin="5">
+							<ItemsControl.ItemTemplate >
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Margin="5">
+										<TextBlock Text="{Binding Label}" Width="150" />
+										<TextBox  Width="150" Text="{Binding TextInput}"/>
+									</StackPanel>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Panel>
+				</StackPanel>
 			</TabItem>
 
 		</TabControl>
