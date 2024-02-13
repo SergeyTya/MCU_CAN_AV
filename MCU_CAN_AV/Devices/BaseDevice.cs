@@ -13,15 +13,15 @@ namespace MCU_CAN_AV.Devices
     {
         internal BaseDevice() { }
 
-        public ObservableCollection<IDeviceParameter> DeviceDescription = new();
-        public ObservableCollection<IDeviceFault> DeviceFaults = new();
+       
+       
         public BehaviorSubject<bool> Init_stage = new(true);
 
-        ObservableCollection<IDeviceParameter> IDevice.DeviceDescriprion => DeviceDescription;
+        public ObservableCollection<IDeviceParameter> DeviceDescription => IDevice._DeviceDescription;
 
-        ObservableCollection<IDeviceFault> IDevice.DeviceFaults => DeviceFaults;
+        public ObservableCollection<IDeviceFault>  DeviceFaults => IDevice._DeviceFaults;
 
-        public Subject<string> LogUpdater => IDevice._LogUpdater;
+       //public Subject<string> LogUpdater => IDevice._LogUpdater;
 
         BehaviorSubject<bool> IDevice.Init_stage => Init_stage;
 
@@ -44,5 +44,10 @@ namespace MCU_CAN_AV.Devices
         {
             throw new NotImplementedException();
         }
+
+        public virtual void Close() {  
+            throw new NotImplementedException(); 
+        }
+
     }
 }

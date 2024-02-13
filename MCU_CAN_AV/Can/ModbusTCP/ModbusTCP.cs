@@ -150,11 +150,9 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         }
 
-
-
-        void ICAN.CloseConnection()
+        void ICAN.Close()
         {
-
+            isOpen = false;
         }
 
         void ICAN.Receive()

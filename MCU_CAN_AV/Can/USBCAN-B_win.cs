@@ -237,7 +237,7 @@ namespace MCU_CAN_AV.Can
             throw new NotImplementedException();
         }
 
-        void ICAN.CloseConnection()
+        void ICAN.Close()
         {
             VCI_ResetCAN(m_devtype, Init_structure._devind, Init_structure._canind);
             var tmp = updater.Subscribe();

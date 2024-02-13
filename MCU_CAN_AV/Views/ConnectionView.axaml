@@ -18,16 +18,10 @@
 		<vm:ConnectionViewModel />
 	</UserControl.DataContext>
 
-	<Grid ShowGridLines="false">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="1*" />
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*"/>
-		</Grid.ColumnDefinitions>
+	<Panel>
 
-		<TabControl Grid.Row="0" Grid.Column="0" TabStripPlacement="Left" Name="TabControl1" VerticalAlignment="Stretch">
+		<StackPanel>
+		<TabControl  TabStripPlacement="Left" Name="TabControl1" VerticalAlignment="Stretch">
 
 			<TabItem Header="Connection">
 				<StackPanel Background="#1E1E1E" IsEnabled="{Binding isControlEnabled}" Margin="10" >
@@ -57,16 +51,15 @@
 
 		<Button Name="Btn_connect"
 			
-				Grid.Row="1" Grid.Column="0"
 				HorizontalAlignment="Center"
 				Content="Connect"
 				FontSize="20"
 				Command="{Binding ClickConnectCommand}"
 				Margin="5,5,5,15"
 					/>
+		</StackPanel>
 
-
-		<Panel Grid.Row="0" Grid.Column="0"
+		<Panel 
 			IsVisible="{Binding IsMsgVisible}"
 			VerticalAlignment="Center"
 			HorizontalAlignment="Center"
@@ -75,7 +68,15 @@
 			Background="Black"
 				>
 			<Border  BorderBrush="DimGray" BorderThickness="1" />
-			<ScrollViewer Name="Scroll" >
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*" />
+					<RowDefinition Height="100"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1*"/>
+				</Grid.ColumnDefinitions>
+			<ScrollViewer Name="Scroll" Grid.Row="0">
 				<TextBlock Name="Tb_cnct_msg"
 						   Text="{Binding LogText}"
 						   VerticalAlignment="Top"
@@ -86,8 +87,10 @@
 						   
 					/>
 			</ScrollViewer>
+				<Button Grid.Row="1" Content="Stop" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" Command="{Binding ClickDisconnectCommand}"/>
+			</Grid>
 		</Panel>
-	</Grid>
+	</Panel>
 
 
 </UserControl>

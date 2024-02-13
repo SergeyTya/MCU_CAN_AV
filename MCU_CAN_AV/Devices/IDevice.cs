@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Logging;
+using Avalonia.Threading;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices.Dummy;
 using MCU_CAN_AV.Devices.EVM_DIAG;
@@ -55,31 +56,73 @@ namespace MCU_CAN_AV.Devices
 
     internal interface IDevice
     {
-        public static Subject<string> _LogUpdater = new Subject<string>();
+        static Subject<string> _logUpdater = new Subject<string>();
         static IDevice _Device = new BaseDevice();
 
-        public Subject<string> LogUpdater { get; }
+        public static ObservableCollection<IDeviceParameter> _DeviceDescription = new();
+        public static ObservableCollection<IDeviceFault> _DeviceFaults = new();
 
-        public ObservableCollection<IDeviceParameter> DeviceDescriprion { get; }
+        public ObservableCollection<IDeviceParameter> DeviceDescription { get; }
         public ObservableCollection<IDeviceFault> DeviceFaults { get; }
-      
-        public BehaviorSubject<bool> Init_stage { get;  }
 
+        public BehaviorSubject<bool> Init_stage { get; }
+
+        /// <summary>
+        /// Close connection
+        /// </summary>
+        void Close();
+        /// <summary>
+        /// Encode message from ICAN hardware
+        /// </summary>
+        /// <param name="data"></param>
         void Encode(ICAN.RxTxCanData data);
+        
+        /// <summary>
+        /// Send reset to device
+        /// </summary>
         public void Reset();
+        /// <summary>
+        /// Send Start to device
+        /// </summary>
         public void Start();
+        /// <summary>
+        /// Send Stop to device
+        /// </summary>
         public void Stop();
 
+        /// <summary>
+        /// Get device instatnce
+        /// </summary>
+        /// <returns>
+        /// IDevice object
+        /// </returns>
         public static IDevice GetInstnce() {
             return IDevice._Device;
         }
+
+        /// <summary>
+        /// Close connection and dispose IDevice instatnce
+        /// </summary>
+        public static void Dispose(){
+            IDevice._Device.Close();
+            ICAN.Dispose();
+            IDevice._logUpdater.OnNext($" Connection closed ");
+            IDevice._Device = null;
+        }
+
+        /// <summary>
+        /// Create new IDevice instatnce and start new connection
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="InitStruct"></param>
+        /// <returns></returns>
         public static IDevice Create(DeviceType device, ICAN.CANInitStruct InitStruct) {
 
             IDevice? ret_obj = null;
 
             IDisposable loglistener = ICAN.LogUpdater.Subscribe(
                       (_) => {
-                          IDevice._LogUpdater.OnNext(_);
+                          IDevice._logUpdater.OnNext(_);
                       });
 
             switch (device)
@@ -103,9 +146,7 @@ namespace MCU_CAN_AV.Devices
 
             if (ret_obj != null)
             {
-                ret_obj.LogUpdater.OnNext($" !!!! {ret_obj.GetType().Name} connection created ");
-                // ret_obj.LogUpdater.Subscribe(_ => Debug.WriteLine(_));
-
+                IDevice.Log($" !!!! {ret_obj.GetType().Name} connection created ");
                 IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
                     (_) =>
                     {
@@ -131,13 +172,26 @@ namespace MCU_CAN_AV.Devices
            return GetInstnce();
         }
 
-        public static string ReadJsonFromResources(byte[] res)
+        /// <summary>
+        /// Static IDevice observable logger
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+
+        public static IDisposable SubscribeToLogger(Action<string> action)
         {
-            MemoryStream MS = new MemoryStream(res);
-            StreamReader sr = new StreamReader(MS);
-            string fileContents = sr.ReadToEnd();
-            sr.Close();
-            return fileContents;
+
+            return _logUpdater.Subscribe(action);
         }
+
+        /// <summary>
+        /// Log message via static IDevice observable logger
+        /// </summary>
+        /// <param name="message"></param>
+        public static void Log(string message)
+        {
+            _logUpdater.OnNext(message);
+        }
+
     }
 }

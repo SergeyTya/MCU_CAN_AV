@@ -1,6 +1,7 @@
 ﻿using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Properties;
 using Newtonsoft.Json;
+using ScottPlot.Drawing.Colormaps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,10 @@ namespace MCU_CAN_AV.Devices.Dummy
 
             try
             {
-                string fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_faults);
+                string fileContents = MCU_CAN_AV.utils.utils.ReadJsonFromResources(Resources.shanghai_faults);
                 FaultsList = JsonConvert.DeserializeObject<List<ShanghaiDeviceFault>>(fileContents);
 
-                fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_description);
+                fileContents = MCU_CAN_AV.utils.utils.ReadJsonFromResources(Resources.shanghai_description);
                 tmp = JsonConvert.DeserializeObject<List<ShanghaiDeviceParameter>>(fileContents);
 
                 base.DeviceDescription.Clear();
@@ -46,17 +47,23 @@ namespace MCU_CAN_AV.Devices.Dummy
         {
             ((ShanghaiDeviceParameter)DeviceDescription[0]).Val.OnNext(3);
 
-            if (cnt < 20) {
+            if (cnt < 5) {
 
-                if (cnt++ == 19)
+                if (cnt++ == 4)
                 {
                     base.Init_stage.OnNext(false);
-                    base.LogUpdater.OnNext("Connected!");
+                    IDevice.Log("Connected!");
                 }
                 else {
-                    base.LogUpdater.OnNext(cnt.ToString());
+                    IDevice.Log(cnt.ToString());
                 }
             }
+        }
+        public override void Close()
+        {
+            FaultsList.Clear();   
+            DeviceDescription.Clear();
+            FaultsList.Clear();
         }
 
         public override void Reset()

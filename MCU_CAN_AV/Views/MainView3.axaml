@@ -107,6 +107,12 @@
 					<MenuItem Header="_Exit"/>
 				</MenuItem>
 				<MenuItem Header="_Scope"/>
+
+				<MenuItem Header="Disconnect" Command="{Binding ClickDisconnectCommand}" >
+					<MenuItem.DataContext>
+						<vm:ConnectionViewModel/>
+					</MenuItem.DataContext>
+				</MenuItem>
 			</Menu>
 			<TextBlock/>
 		</DockPanel>
@@ -161,14 +167,12 @@
 									<TextBlock>x</TextBlock>
 								</Panel>
 							</ToggleButton>
-
+							
+							<!-- <cc:IdicatorsTable DataContext="vm:MainView3Model" TableSource="{x:Static dd:IDevice._DeviceDescription}-->
+							
 							<ScrollViewer Grid.Row="1" >
-								<cc:IdicatorsTable
-								
-								TableSource="{Binding Device.DeviceDescription}"
-								/>
+								<v:IndicatorView/>
 							</ScrollViewer>
-
 
 						</Grid>
 						
@@ -191,12 +195,12 @@
 						</TabItem>
 						<TabItem Header="Tables">
 								<cc:ControlTable Name="controlTable"
-								TableSource="{Binding Device.DeviceDescription}"
+								TableSource="{Binding DeviceParameters}"
 								/>
 						</TabItem>
-						<TabItem Header="Connection">
+						<TabItem Header="Log">
 							<ScrollViewer>
-								<TextBlock Text="{Binding LogText}"/>
+								<TextBlock Text="{Binding LogText}" FontSize="12" FontWeight="Light"/>
 							</ScrollViewer>
 						</TabItem>
 						<TabItem Header="Testing">
@@ -226,7 +230,7 @@
 					</Grid.RowDefinitions>
 					<ScrollViewer Grid.Row="0">
 						<Panel   Classes="Black11">
-							<cc:FaultsIndi  FaultTable="{Binding Device.DeviceFaults}"/>
+							<cc:FaultsIndi  FaultTable="{Binding vv}"/>
 							<Border Classes="h4"/>
 						</Panel>
 					</ScrollViewer>

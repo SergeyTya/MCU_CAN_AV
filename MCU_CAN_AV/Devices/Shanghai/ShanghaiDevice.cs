@@ -105,6 +105,11 @@ namespace MCU_CAN_AV.Devices.Shanghai
             return ret;
         }
 
+        public override void Close()
+        {
+            base.DeviceFaults.Clear();
+        }
+
         public override void Reset()
         {
             base.DeviceFaults.Clear();
@@ -132,10 +137,10 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             try
             {
-                string fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_faults);
+                string fileContents = utils.utils.ReadJsonFromResources(Resources.shanghai_faults);
                 FaultsList = JsonConvert.DeserializeObject<List<ShanghaiDeviceFault>>(fileContents);
 
-                fileContents = IDevice.ReadJsonFromResources(Resources.shanghai_description);
+                fileContents = utils.utils.ReadJsonFromResources(Resources.shanghai_description);
                 tmp = JsonConvert.DeserializeObject<List<ShanghaiDeviceParameter>>(fileContents);
 
                 base.DeviceDescription.Clear();

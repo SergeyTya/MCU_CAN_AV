@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MCU_CAN_AV.Devices;
+using MCU_CAN_AV.utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,10 +12,16 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using static MCU_CAN_AV.Can.ICAN;
+using static MCU_CAN_AV.ViewModels.ConnectionState;
 
 namespace MCU_CAN_AV.ViewModels
 {
-    public record class ConnectionState(bool state);
+    public record class ConnectionState(State state) {
+        public enum State { 
+            Connected,
+            Disconnected
+        }
+    };
 
     internal partial class ConnectionViewModel : ObservableRecipient
     {
@@ -168,48 +175,74 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         bool _IsMsgVisible = false;
 
+
+        IDisposable? disposable_logDevice;
+        IDisposable? disposable_log;
+        IDisposable? disposable_init;
+        bool isConnectionDone = true;
+
+        [RelayCommand]
+        private void ClickDisconnect()
+        {
+            IsMsgVisible = false;
+            disposable_log?.Dispose();
+            disposable_init?.Dispose();
+            isConnectionDone = false;
+            Messenger.Send(new ConnectionState(ConnectionState.State.Disconnected));
+            IDevice.Dispose();
+
+        }
+
         [RelayCommand(CanExecute = nameof(CanConnect))]
         private async Task ClickConnect()
         {
+            LogText = "";
+           
             // Relay command blocking button until it executing
-          
-            bool isConnectionDone = true;
-
             IsMsgVisible = true;
 
-            IDisposable disposable_log = IDevice._LogUpdater.Subscribe(
+            // Subscribe log window to logger eventualy
+            disposable_log?.Dispose();
+            disposable_log = StaticLogger.Subscribe(
+            
             (_) =>
             {
-               LogText += $"{DateTime.Now}: {_} \n";
+               LogText +=_;
             });
 
+            // Print current setups
             foreach (var item in ParameterItems)
             {
-                item.disposable?.Dispose();
-                IDevice._LogUpdater.OnNext($"  {item.Name}= {item.TextInput}");
+                //  item.disposable?.Dispose();
+                StaticLogger.Log( $"  {item.Name}= {item.TextInput}" );
             }
 
+            // One time Subscribe to device logger observable 
+            if(disposable_logDevice == null) disposable_logDevice = IDevice.SubscribeToLogger((_) => StaticLogger.Log(_));
+
+            // Create user reqested device
             IDevice.Create( DeviceSelected, InitStruct );
 
-
-            IDisposable? disposable_init = IDevice.GetInstnce()?.Init_stage.Subscribe(
+            // Wait for connection done    
+            disposable_init = IDevice.GetInstnce()?.Init_stage.Subscribe(
                (_) =>
                {
                    isConnectionDone = _;
+                   if (!_) {
+                       Messenger.Send(new ConnectionState(ConnectionState.State.Connected));
+
+                       disposable_init?.Dispose();
+                       disposable_log.Dispose();
+                       disposable_init?.Dispose();
+                   }
                    
-            });
+               });
 
             while (isConnectionDone == true)
             {
-
                 await Task.Delay(100);
             }
-
-            Messenger.Send(new ConnectionState(true));
-
-            disposable_log.Dispose();
-            disposable_init?.Dispose();
-
+            IsMsgVisible = false;
         }
 
         private bool CanConnect()

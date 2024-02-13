@@ -35,7 +35,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
         void Init(ICAN.CANInitStruct InitStruct)
         {
-            base.LogUpdater.OnNext($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
+            IDevice.Log($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
 
 
             Stopwatch stopwatch = new Stopwatch();
@@ -62,7 +62,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 },
                 () => {
                     stopwatch.Stop();
-                    base.LogUpdater.OnNext($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
+                    IDevice.Log($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
                     base.Init_stage.OnNext(false);
                     }
             );
@@ -70,7 +70,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             try
             {
-                string fileContents = IDevice.ReadJsonFromResources(Resources.EVM_faults);
+                string fileContents = MCU_CAN_AV.utils.utils.ReadJsonFromResources(Resources.EVM_faults);
                 FaultsList = JsonConvert.DeserializeObject<List<EVMModbusTCPDeviceFault>>(fileContents);
 
             }
@@ -154,24 +154,30 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             }
         }
 
+        public override void Close()
+        {
+            FaultsList.Clear();
+        }
+
+
         public override void Reset()
         {
             base.DeviceFaults.Clear();
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
-            base.LogUpdater.OnNext("Reset command sent");
+            IDevice.Log("Reset command sent");
 
         }
 
         public override void Start()
         {
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
-            base.LogUpdater.OnNext("Start command sent");
+            IDevice.Log("Start command sent");
         }
 
         public override void Stop()
         {
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
-            base.LogUpdater.OnNext("Stop command sent");
+            IDevice.Log("Stop command sent");
         }
 
         void EncodeDeviceDescription(List<byte[]> data)
@@ -253,21 +259,23 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             public IObservable<double> Value { get => Val; }
 
-            string IDeviceParameter.ID => _ID;
+            public string ID => _ID;
 
-            string IDeviceParameter.Name => _Name;
+            public string Name => _Name;
 
-            string IDeviceParameter.Unit => _Unit;
+            public string Unit => _Unit;
 
-            double IDeviceParameter.Min => _Min;
+            public double Min => _Min;
 
-            double IDeviceParameter.Max => _Max;
+            public double Max => _Max;
 
-            string IDeviceParameter.Type => throw new NotImplementedException();
+            public string Type => throw new NotImplementedException();
+
+            public bool IsReadWrite => _IsReadWrite;
 
             List<string> IDeviceParameter.Options => null;
 
-            bool IDeviceParameter.IsReadWrite => _IsReadWrite;
+         
 
             void IDeviceParameter.writeValue(double value)
             {

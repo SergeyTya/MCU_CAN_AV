@@ -13,18 +13,16 @@ namespace MCU_CAN_AV.Can
 {
     public interface ICAN
     {
-        public static ICAN? CAN;
-        public static Subject<string> LogUpdater = new();
-        public static Subject<RxTxCanData> RxUpdater =new();
-        public static Subject<RxTxCanData> TxUpdater = new();
-
-        public static System.Timers.Timer timer;
-
-        public enum CANType {
+        class ICANException : Exception
+        {
+            public ICANException(string message) : base(message) { }
+        }
+        public enum CANType
+        {
             CAN_USBCAN_B = 0,
             ModbusTCP = 1,
             ModbusRTU = 2,
-            Dummy = 3 
+            Dummy = 3
         }
 
         public class RxTxCanData
@@ -42,7 +40,8 @@ namespace MCU_CAN_AV.Can
             }
         }
 
-        public struct CANInitStruct {
+        public struct CANInitStruct
+        {
 
             public UInt32 _devind = 1;
             public UInt32 _canind = 0;
@@ -52,7 +51,7 @@ namespace MCU_CAN_AV.Can
             public UInt32 _PollInterval_ms = 100;  /// Poll interval, ms
 
             public string server_name = "localhost";
-            public uint   server_port = 8888;
+            public uint server_port = 8888;
 
             public string com_name = "COM1";
 
@@ -61,25 +60,25 @@ namespace MCU_CAN_AV.Can
             }
         }
 
-        class ICANException : Exception
-        {
-            public ICANException(string message):base(message) { }
-        }
 
-        abstract void CloseConnection();
+        public static ICAN? CAN;
+        public static Subject<string> LogUpdater = new();
+        public static Subject<RxTxCanData> RxUpdater =new();
+        public static Subject<RxTxCanData> TxUpdater = new();
 
+        public static System.Timers.Timer timer;
+
+        abstract void Close();
         abstract void Receive(); // Must post all recieve message to RxTxUpdater
         abstract void Transmit(RxTxCanData data);
         abstract bool isOpen();
 
-        public static void Close() {
-
+        public static void Dispose() {
 
             timer.Stop();
             timer.Dispose();
-
-            LogUpdater.OnNext("Connection closed");
-
+            ICAN.CAN.Close();
+            LogUpdater.OnNext("ICAN Connection closed");
         }
 
         public static void Create(CANInitStruct InitStructure, CANType CANType)

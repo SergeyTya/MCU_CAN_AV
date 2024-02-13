@@ -27,5 +27,10 @@ namespace MCU_CAN_AV.Can
         {
             throw new NotImplementedException();
         }
+
+        public void Close()
+        {
+            
+        }
     }
 }
