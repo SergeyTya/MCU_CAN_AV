@@ -5,40 +5,43 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
              x:Class="MCU_CAN_AV.Views.IndicatorView">
-	
-	<UserControl.DataContext>
-		<vm:IndicatorViewModel/>		
-	</UserControl.DataContext>
-	
-  <ItemsControl ItemsSource="{Binding IndicatorsList}">
-	  <ItemsControl.ItemTemplate >
-		  <DataTemplate>
-			  <Panel IsVisible="{Binding !IsReadWrite}">
-				 		<Border Classes="h3" Margin="5"/>
-				<StackPanel Orientation="Vertical" >
-				 <TextBlock Text="{Binding Name}" 
-							Margin="5,5,0,5" 
-							FontSize="15"
-							FontWeight="Regular"
-							TextAlignment="Left"
-							VerticalAlignment="Center"
-							/>
-				 <TextBlock Text="{Binding Value^, StringFormat=\{0:0.0\}}"
-							Margin="5,0,5,5"
-							FontSize="15"
-							FontWeight="Regular"
-							TextAlignment="Center"
-							VerticalAlignment="Center"
-							
-							/>
-					<Button Content="as" Command="{Binding ClickItemCommand}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-				</StackPanel>
-				 
 
-			  </Panel>
-			  
-		  </DataTemplate>
-	  </ItemsControl.ItemTemplate>
-  </ItemsControl>
+	<UserControl.DataContext>
+		<vm:IndicatorViewModel/>
+	</UserControl.DataContext>
+
+	<ItemsControl ItemsSource="{Binding IndicatorsList}">
+		<ItemsControl.ItemTemplate >
+			<DataTemplate>
+				<Button 
+					IsVisible="{Binding !IsReadWrite}"  
+					Command="{Binding ClickItemCommand}" 
+					VerticalAlignment="Stretch" 
+					HorizontalAlignment="Stretch"
+					Background="Black"
+					>
+					<Panel Background="{Binding IndicatorColor}">
+						<Border Classes="h2" Margin="0"/>
+						<StackPanel Orientation="Vertical" >
+							<TextBlock Text="{Binding Name}"
+									   Margin="5,5,0,5"
+									   FontSize="14"
+									   FontWeight="Regular"
+									   TextAlignment="Left"
+									   VerticalAlignment="Center"
+							/>
+							<TextBlock Text="{Binding Value}"
+									   Margin="5,0,5,5"
+									   FontSize="16"
+									   FontWeight="Bold"
+									   TextAlignment="Center"
+									   VerticalAlignment="Center"
+							/>
+						</StackPanel>
+					</Panel>
+				</Button>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
 
 </UserControl>

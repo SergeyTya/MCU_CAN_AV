@@ -177,7 +177,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             public void writeValue(double value)
             {
-
+                ICAN.LogUpdater.OnNext($"{ID} <- {value.ToString()} ");
                 Val.OnNext(value);
             }
 

@@ -194,9 +194,7 @@
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
 						</TabItem>
 						<TabItem Header="Tables">
-								<cc:ControlTable Name="controlTable"
-								TableSource="{Binding DeviceParameters}"
-								/>
+							<v:ParamTableView/>
 						</TabItem>
 						<TabItem Header="Log">
 							<ScrollViewer>

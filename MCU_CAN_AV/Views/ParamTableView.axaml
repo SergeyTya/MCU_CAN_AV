@@ -1,0 +1,68 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
+
+			 x:Class="MCU_CAN_AV.Views.ParamTableView">
+
+	<UserControl.DataContext>
+		<vm:ParamTableViewModel/>
+	</UserControl.DataContext>
+
+	<DataGrid Margin="0" ItemsSource="{Binding Rows}"
+		 GridLinesVisibility="All"
+		 BorderThickness="1" BorderBrush="Gray">
+
+		<DataGrid.Columns>
+
+			<DataGridTextColumn Header="Description" Width="3*" IsReadOnly="True"
+			   Binding="{Binding Name}" />
+			<DataGridTextColumn Header="ID" Width="2*" IsReadOnly="True"
+			   Binding="{Binding Id}" />
+
+			<DataGridTemplateColumn Header="Value" Width="2*">
+				<DataGridTemplateColumn.CellTemplate>
+					<DataTemplate DataType="vm:RowTemplate">
+						<Panel>
+							<TextBlock
+								Text="{Binding Value}"
+								TextAlignment="Center"
+								VerticalAlignment="Center"
+								IsVisible="{Binding !IsComboCell}"
+								/>
+							<ComboBox
+							
+								ItemsSource="{Binding Options}"
+								IsVisible="{Binding IsComboCell}"
+								HorizontalAlignment="Stretch"
+								SelectedIndex="{Binding OptionSelected}"
+								/>
+						</Panel>
+					</DataTemplate>
+				</DataGridTemplateColumn.CellTemplate>
+
+				<DataGridTemplateColumn.CellEditingTemplate>
+					<DataTemplate DataType="vm:RowTemplate">
+						<Panel>
+							<StackPanel Orientation="Horizontal" IsVisible="{Binding !IsComboCell}">
+								<TextBox Text="{Binding Value_edt}"/>
+								<Button Content="Apply" Command="{Binding Write}"/>
+							</StackPanel>
+							<ComboBox
+								ItemsSource="{Binding Options}"
+								IsVisible="{Binding IsComboCell}"
+								HorizontalAlignment="Stretch"
+								SelectedIndex="{Binding OptionSelected}"
+								/>
+						</Panel>
+					</DataTemplate>
+				</DataGridTemplateColumn.CellEditingTemplate>
+
+			</DataGridTemplateColumn>
+
+		</DataGrid.Columns>
+	</DataGrid>
+
+</UserControl>

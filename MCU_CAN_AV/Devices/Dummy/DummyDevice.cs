@@ -49,7 +49,7 @@ namespace MCU_CAN_AV.Devices.Dummy
 
             if (cnt < 5) {
 
-                if (cnt++ == 4)
+                if (cnt++ == 1)
                 {
                     base.Init_stage.OnNext(false);
                     IDevice.Log("Connected!");
