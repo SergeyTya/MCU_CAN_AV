@@ -1,6 +1,7 @@
 ﻿using Avalonia.Logging;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData.Binding;
 using MCU_CAN_AV.Devices;
@@ -8,6 +9,7 @@ using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Text;
@@ -74,6 +76,19 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         Action _write;
 
+        [RelayCommand]
+        public void CellEndEdit() {
+            Debug.WriteLine("----------------------->");
+
+            if (IsComboCell)
+            {
+                OptionSelected = Options.IndexOf(Value);
+                return;
+            }
+            Value_edt = Value;
+
+        }
+
         IDisposable disposable;
 
         public RowTemplate(IDeviceParameter Item)
@@ -85,19 +100,28 @@ namespace MCU_CAN_AV.ViewModels
             Id = Item.ID;
             Options = Item.Options;
             IsComboCell = (Item.Options != null) && (Item.Options.Count > 0);
-            Write = () => { 
-                Item.writeValue(6666);
+            Write = () => {
+                if (IsComboCell)
+                {
+                    Item.writeValue(OptionSelected);
+                    return;
+                }
+
+                double db = 0;
+                if (Double.TryParse(Value_edt, out db)){
+                    Item.writeValue(db);
+                }  
             };
 
             disposable = Item.Value.Subscribe((_) =>
             {
+                string new_val = _.ToString("#0.##");
+
                 if (IsComboCell)
                 {
-                    OptionSelected = (int)_;
-                    return;
+                    new_val = Options[(int)_];
                 }
 
-                string new_val = _.ToString("#0.##");
                 if (new_val != Value)
                 {
                     Value = new_val;

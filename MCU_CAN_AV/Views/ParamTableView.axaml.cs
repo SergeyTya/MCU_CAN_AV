@@ -8,5 +8,6 @@ namespace MCU_CAN_AV.Views
         {
             InitializeComponent();
         }
+
     }
 }

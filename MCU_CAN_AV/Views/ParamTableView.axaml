@@ -4,58 +4,69 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
-
+		     xmlns:i="using:Avalonia.Xaml.Interactivity"
+             xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
 			 x:Class="MCU_CAN_AV.Views.ParamTableView">
 
 	<UserControl.DataContext>
 		<vm:ParamTableViewModel/>
 	</UserControl.DataContext>
 
-	<DataGrid Margin="0" ItemsSource="{Binding Rows}"
+	<DataGrid Margin="0" ItemsSource="{Binding Rows}" 
 		 GridLinesVisibility="All"
-		 BorderThickness="1" BorderBrush="Gray">
+		 BorderThickness="1" BorderBrush="Gray"
+			  CanUserResizeColumns="True">
 
-		<DataGrid.Columns>
+		<DataGrid.Columns >
 
-			<DataGridTextColumn Header="Description" Width="3*" IsReadOnly="True"
+			<DataGridTextColumn Header="ID" Width="0.2*" IsReadOnly="True"
+			   Binding="{Binding Id}" >
+			</DataGridTextColumn>
+
+			<DataGridTextColumn Header="Description" Width="0.5*" IsReadOnly="True"
 			   Binding="{Binding Name}" />
-			<DataGridTextColumn Header="ID" Width="2*" IsReadOnly="True"
-			   Binding="{Binding Id}" />
-
-			<DataGridTemplateColumn Header="Value" Width="2*">
+			
+			<DataGridTemplateColumn Header="Value" Width="0.3*">
 				<DataGridTemplateColumn.CellTemplate>
 					<DataTemplate DataType="vm:RowTemplate">
-						<Panel>
+						<Panel >
 							<TextBlock
 								Text="{Binding Value}"
 								TextAlignment="Center"
 								VerticalAlignment="Center"
-								IsVisible="{Binding !IsComboCell}"
-								/>
-							<ComboBox
-							
-								ItemsSource="{Binding Options}"
-								IsVisible="{Binding IsComboCell}"
-								HorizontalAlignment="Stretch"
-								SelectedIndex="{Binding OptionSelected}"
 								/>
 						</Panel>
 					</DataTemplate>
 				</DataGridTemplateColumn.CellTemplate>
 
-				<DataGridTemplateColumn.CellEditingTemplate>
+				<DataGridTemplateColumn.CellEditingTemplate  >
 					<DataTemplate DataType="vm:RowTemplate">
-						<Panel>
-							<StackPanel Orientation="Horizontal" IsVisible="{Binding !IsComboCell}">
-								<TextBox Text="{Binding Value_edt}"/>
-								<Button Content="Apply" Command="{Binding Write}"/>
-							</StackPanel>
-							<ComboBox
+						<Panel  >
+							<Grid >
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.65*"/>
+									<ColumnDefinition Width="0.35*"/>
+								</Grid.ColumnDefinitions>
+								<Panel Grid.Column="0">
+									<i:Interaction.Behaviors>
+										<ia:EventTriggerBehavior EventName="Loaded">
+											<ia:InvokeCommandAction Command="{Binding CellEndEditCommand}"/>
+										</ia:EventTriggerBehavior>
+									</i:Interaction.Behaviors>
+								<TextBox 
+									Text="{Binding Value_edt}" 
+									IsVisible="{Binding !IsComboCell}" 
+								/>
+								<ComboBox
 								ItemsSource="{Binding Options}"
 								IsVisible="{Binding IsComboCell}"
-								HorizontalAlignment="Stretch"
 								SelectedIndex="{Binding OptionSelected}"
+								HorizontalAlignment="Stretch"
 								/>
+								</Panel>
+								<Button Grid.Column="1" Content="Apply" Command="{Binding Write}" HorizontalAlignment="Stretch"/>
+							</Grid>
+							
 						</Panel>
 					</DataTemplate>
 				</DataGridTemplateColumn.CellEditingTemplate>
