@@ -281,7 +281,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             {
                 byte[] bval = GetByteFromString(value.ToString(), _Type);
                 if (bval == null) return;
-                //IDevice.LogUpdater.OnNext($"reg#{_ID} -> {value}");
+                IDevice.Log($"reg#{_ID} <- {value}");
                 int count = 0;
                 int id = 0;
                 var buf = bval.ToList()

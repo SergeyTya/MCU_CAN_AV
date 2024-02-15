@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Text;
@@ -106,11 +107,17 @@ namespace MCU_CAN_AV.ViewModels
                     Item.writeValue(OptionSelected);
                     return;
                 }
-
+                //
                 double db = 0;
-                if (Double.TryParse(Value_edt, out db)){
+                Value_edt = Value_edt.Replace(',', CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
+                Value_edt = Value_edt.Replace('.', CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
+                if (Double.TryParse(Value_edt, out db))
+                {
                     Item.writeValue(db);
-                }  
+                }
+                else {
+                    Value_edt = Value;
+                }
             };
 
             disposable = Item.Value.Subscribe((_) =>

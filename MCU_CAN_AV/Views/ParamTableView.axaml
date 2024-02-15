@@ -53,10 +53,16 @@
 											<ia:InvokeCommandAction Command="{Binding CellEndEditCommand}"/>
 										</ia:EventTriggerBehavior>
 									</i:Interaction.Behaviors>
-								<TextBox 
-									Text="{Binding Value_edt}" 
-									IsVisible="{Binding !IsComboCell}" 
-								/>
+									<TextBox
+										Text="{Binding Value_edt}"
+										IsVisible="{Binding !IsComboCell}"
+								>
+
+										<TextBox.KeyBindings>
+											<KeyBinding Gesture="Enter" Command="{Binding Write}" />
+										</TextBox.KeyBindings>	
+
+									</TextBox>
 								<ComboBox
 								ItemsSource="{Binding Options}"
 								IsVisible="{Binding IsComboCell}"
