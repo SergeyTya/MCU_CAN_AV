@@ -81,6 +81,12 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         }
         public override void Encode(ICAN.RxTxCanData data)
         {
+            if (data.Timeout == true) {
+
+                //TODO Timeout handler
+                return;
+            }
+
             if (data.id == 1 || data.id == 2)
             {
 

@@ -53,15 +53,9 @@
 											<ia:InvokeCommandAction Command="{Binding CellEndEditCommand}"/>
 										</ia:EventTriggerBehavior>
 									</i:Interaction.Behaviors>
-									<TextBox
+									<TextBox 
 										Text="{Binding Value_edt}"
-										IsVisible="{Binding !IsComboCell}"
-								>
-
-										<TextBox.KeyBindings>
-											<KeyBinding Gesture="Enter" Command="{Binding Write}" />
-										</TextBox.KeyBindings>	
-
+										IsVisible="{Binding !IsComboCell}">
 									</TextBox>
 								<ComboBox
 								ItemsSource="{Binding Options}"
@@ -70,7 +64,11 @@
 								HorizontalAlignment="Stretch"
 								/>
 								</Panel>
-								<Button Grid.Column="1" Content="Apply" Command="{Binding Write}" HorizontalAlignment="Stretch"/>
+								<Button
+									Grid.Column="1" 
+									Content="Apply" 
+									Command="{Binding Write}" 
+									HorizontalAlignment="Stretch"/>
 							</Grid>
 							
 						</Panel>

@@ -70,7 +70,7 @@ namespace MCU_CAN_AV.ViewModels
             string unit = Item.Unit is null ? "" : $", {Item.Unit}";
             Name = $"{Item.Name}{unit}";
             IsReadWrite = Item.IsReadWrite;
-            Dispatcher.UIThread.Post(() => IndicatorColor = new(Avalonia.Media.Colors.Black, 0.4));
+            Dispatcher.UIThread.Post(() => IndicatorColor = new(Avalonia.Media.Colors.Black, 0.2));
 
 
             disposable = Item.Value.Subscribe((_) =>
@@ -89,7 +89,7 @@ namespace MCU_CAN_AV.ViewModels
                     else
                     if (Item.Min != 0 && _ < Item.Min) { IndicatorColor.Color = Avalonia.Media.Colors.Blue; }
                     else
-                    { IndicatorColor.Color = Avalonia.Media.Colors.Black; }
+                    { IndicatorColor.Color = Avalonia.Media.Colors.Green; }
 
                     Value = _.ToString("#0.##");
                 });

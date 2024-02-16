@@ -9,5 +9,17 @@ namespace MCU_CAN_AV.Views
             InitializeComponent();
         }
 
+
+        //void KeyUpEventTextBox(object sender, KeyPre e)
+        //{
+
+        //}
+        /*
+         
+        <TextBox.KeyBindings>
+											<KeyBinding Gesture="Enter" Command="{Binding Write}" />
+										</TextBox.KeyBindings>	
+
+         */
     }
 }

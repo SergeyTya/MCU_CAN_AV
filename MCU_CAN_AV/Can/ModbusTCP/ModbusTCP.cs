@@ -23,7 +23,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         bool isOpen = false;
 
-        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,3);
+        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,2);
 
         public ModbusTCP(ICAN.CANInitStruct InitStruct)
         {
@@ -184,8 +184,8 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                     }
                 },
                 exeption => { 
-                  ICAN.LogUpdater.OnNext(exeption.Message);
-                  semaphoreSlim.Release();
+                    ICAN.LogUpdater.OnNext(exeption.Message);
+                    ICAN.RxUpdater.OnNext(new ICAN.RxTxCanData() { Timeout = true } );
                 }
             );
         }

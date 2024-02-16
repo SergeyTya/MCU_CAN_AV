@@ -27,6 +27,9 @@ namespace MCU_CAN_AV.Can
 
         public class RxTxCanData
         {
+            bool _timeout;
+            public bool Timeout { get { return _timeout; } set { _timeout = value; } }
+
             uint _id;
             public uint id { get { return _id; } }
 
@@ -38,6 +41,13 @@ namespace MCU_CAN_AV.Can
                 _id = id;
                 _data = data;
             }
+
+            public RxTxCanData()
+            {
+                _id = 0;
+                _data = null;
+            }
+
         }
 
         public struct CANInitStruct
