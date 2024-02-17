@@ -152,7 +152,7 @@ namespace MCU_CAN_AV.ViewModels
             if (disposing)
             {
                 disposable.Dispose();
-                Options.Clear();
+                Options?.Clear();
             }
             // освобождаем неуправляемые объекты
             disposed = true;
