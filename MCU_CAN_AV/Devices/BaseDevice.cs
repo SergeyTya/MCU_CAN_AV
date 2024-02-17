@@ -1,4 +1,5 @@
-﻿using MCU_CAN_AV.Can;
+﻿using Avalonia.Xaml.Interactivity;
+using MCU_CAN_AV.Can;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,24 +7,32 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reactive;
+using static MCU_CAN_AV.ViewModels.ConnectionState;
 
 namespace MCU_CAN_AV.Devices
 {
     internal class BaseDevice : IDevice
     {
+
+        
+        internal int _err_cnt = 0;
+
         internal BaseDevice() { }
 
-       
-       
-        public BehaviorSubject<bool> Init_stage = new(true);
 
         public ObservableCollection<IDeviceParameter> DeviceDescription => IDevice._DeviceDescription;
 
         public ObservableCollection<IDeviceFault>  DeviceFaults => IDevice._DeviceFaults;
 
-       //public Subject<string> LogUpdater => IDevice._LogUpdater;
+        public BehaviorSubject<string> State => IDevice._State;
+        internal string _state { set { State.OnNext(value); } }
+        BehaviorSubject<bool> IDevice.Init_stage => IDevice._Init_stage;
+        internal bool _Init_stage { set { IDevice._Init_stage.OnNext(value); } }
 
-        BehaviorSubject<bool> IDevice.Init_stage => Init_stage;
+
+
+        public int Connection_errors_cnt => _err_cnt;
 
         public virtual void Encode(ICAN.RxTxCanData data)
         {

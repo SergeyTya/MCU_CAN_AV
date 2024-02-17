@@ -228,7 +228,7 @@
 					</Grid.RowDefinitions>
 					<ScrollViewer Grid.Row="0">
 						<Panel   Classes="Black11">
-							<cc:FaultsIndi  FaultTable="{Binding vv}"/>
+							<v:FaultTableView/>
 							<Border Classes="h4"/>
 						</Panel>
 					</ScrollViewer>

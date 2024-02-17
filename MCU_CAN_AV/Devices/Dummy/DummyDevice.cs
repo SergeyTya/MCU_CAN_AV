@@ -14,6 +14,10 @@ namespace MCU_CAN_AV.Devices.Dummy
 {
     internal class DummyDevice : BaseDevice
     {
+        bool fault = false;
+        bool start = false;
+      
+
         List<ShanghaiDeviceFault> FaultsList = new();
 
         public DummyDevice()
@@ -42,23 +46,56 @@ namespace MCU_CAN_AV.Devices.Dummy
 
 
         int cnt = 0;
+        int reg = 0;
 
         public override void Encode(ICAN.RxTxCanData data)
         {
-            ((ShanghaiDeviceParameter)DeviceDescription[0]).Val.OnNext(3);
-
-            if (cnt < 5) {
+            
+            if (cnt < 5)
+            {
 
                 if (cnt++ == 1)
                 {
-                    base.Init_stage.OnNext(false);
+                    base._Init_stage = false;
                     IDevice.Log("Connected!");
                 }
-                else {
+                else
+                {
                     IDevice.Log(cnt.ToString());
                 }
             }
+            else {
+
+                if (!fault)
+                {
+                    base.DeviceFaults.Clear();
+                    ((DummyCAN)ICAN.CAN).faultmode = false;
+                    ((ShanghaiDeviceParameter)DeviceDescription[0]).Val.OnNext(reg++);
+                    ((ShanghaiDeviceParameter)DeviceDescription[1]).Val.OnNext(reg++);
+                    ((ShanghaiDeviceParameter)DeviceDescription[2]).Val.OnNext(reg++);
+
+                   if(!start) base._state = DeviceState.Ready;
+                   if(start) base._state = DeviceState.Run;
+                    if (base.DeviceFaults.Count == 0)
+                    {
+                        base.DeviceFaults.Add(new ShanghaiDeviceFault { code = 0, name = "DC ok" });
+                    }
+                }
+                else
+                {
+                    IDevice.Log("Time out");
+                    ((DummyCAN)ICAN.CAN).faultmode = true;
+                    base._err_cnt++;
+                    base._state = DeviceState.NoConnect;
+
+                    if (base.DeviceFaults.Count <2) {
+                        base.DeviceFaults.Add( new ShanghaiDeviceFault { code=0, name = "test fault"});
+                    }
+                }
+
+            }
         }
+
         public override void Close()
         {
             FaultsList.Clear();   
@@ -68,17 +105,18 @@ namespace MCU_CAN_AV.Devices.Dummy
 
         public override void Reset()
         {
-            throw new NotImplementedException();
+            fault = !fault;
+            start = false;
         }
 
         public override void Start()
         {
-            throw new NotImplementedException();
+            start = true;
         }
 
         public override void Stop()
         {
-            throw new NotImplementedException();
+           start = false;
         }
     }
 }

@@ -24,6 +24,13 @@ namespace MCU_CAN_AV.Devices
         Dummy
     }
 
+    public struct DeviceState {
+        public static readonly string Run   = "Run";
+        public static readonly string Ready = "Ready";
+        public static readonly string Error = "Error";
+        public static readonly string NoConnect = "Not connected";
+    }
+
     public interface IDeviceParameter
     {
 
@@ -56,17 +63,20 @@ namespace MCU_CAN_AV.Devices
 
     internal interface IDevice
     {
-        static Subject<string> _logUpdater = new Subject<string>();
-        static IDevice _Device = new BaseDevice();
-
-        public static ObservableCollection<IDeviceParameter> _DeviceDescription = new();
-        public static ObservableCollection<IDeviceFault> _DeviceFaults = new();
+        internal static Subject<string> _logUpdater = new Subject<string>();
+        internal static IDevice _Device = new BaseDevice();
+        internal static ObservableCollection<IDeviceParameter> _DeviceDescription = new();
+        internal static ObservableCollection<IDeviceFault> _DeviceFaults = new();
+        internal static BehaviorSubject<string> _State = new("no state");
+        internal static BehaviorSubject<bool> _Init_stage = new(true);
 
         public ObservableCollection<IDeviceParameter> DeviceDescription { get; }
         public ObservableCollection<IDeviceFault> DeviceFaults { get; }
-
         public BehaviorSubject<bool> Init_stage { get; }
+        public BehaviorSubject<string> State { get; }
+        public int Connection_errors_cnt { get; }
 
+        
         /// <summary>
         /// Close connection
         /// </summary>
@@ -116,7 +126,7 @@ namespace MCU_CAN_AV.Devices
         /// <param name="device"></param>
         /// <param name="InitStruct"></param>
         /// <returns></returns>
-        public static IDevice Create(DeviceType device, ICAN.CANInitStruct InitStruct) {
+        public static IDevice Create( DeviceType device, ICAN.CANInitStruct InitStruct) {
 
             IDevice? ret_obj = null;
 
@@ -153,6 +163,13 @@ namespace MCU_CAN_AV.Devices
                         Dispatcher.UIThread.Post(() =>
                         {
                             ret_obj.Encode(_);
+                            if (_.Timeout)
+                            {
+                                ICAN.timer.Interval = 1000;
+                            }
+                            else {
+                                ICAN.timer.Interval = ICAN.CAN.InitStructure._PollInterval_ms;
+                            }
                         });
                     });
 

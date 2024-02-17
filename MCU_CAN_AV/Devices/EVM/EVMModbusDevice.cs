@@ -63,7 +63,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 () => {
                     stopwatch.Stop();
                     IDevice.Log($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
-                    base.Init_stage.OnNext(false);
+                    base._Init_stage = false;
                     }
             );
 

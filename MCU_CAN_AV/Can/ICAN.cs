@@ -76,6 +76,8 @@ namespace MCU_CAN_AV.Can
         public static Subject<RxTxCanData> RxUpdater =new();
         public static Subject<RxTxCanData> TxUpdater = new();
 
+        public CANInitStruct InitStructure { get; }
+
         public static System.Timers.Timer timer;
 
         abstract void Close();
@@ -106,7 +108,7 @@ namespace MCU_CAN_AV.Can
                     break;
 
                 case CANType.Dummy:
-                    ICAN.CAN = new DummyCAN();
+                    ICAN.CAN = new DummyCAN(InitStructure);
                     break;
             }
 

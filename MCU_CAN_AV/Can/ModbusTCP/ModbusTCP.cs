@@ -25,8 +25,13 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,2);
 
+        ICAN.CANInitStruct InitStruct;
+
+        public ICAN.CANInitStruct InitStructure => InitStruct;
+
         public ModbusTCP(ICAN.CANInitStruct InitStruct)
         {
+            this.InitStruct = InitStruct;
             modbus_id = InitStruct._devind;
             server_port = InitStruct.server_port;
             server_name = InitStruct.server_name;

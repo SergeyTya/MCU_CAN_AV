@@ -132,7 +132,7 @@ namespace MCU_CAN_AV.Can
 
         VCI_CAN_OBJ[] m_recobj = new VCI_CAN_OBJ[1000];
 
-        ICAN.CANInitStruct Init_structure;
+        ICAN.CANInitStruct _initStructure;
 
         bool _isOpen = false;
 
@@ -140,7 +140,8 @@ namespace MCU_CAN_AV.Can
 
         IObservable<ICAN.RxTxCanData> updater;
 
-        public USBCAN_B_win(ICAN.CANInitStruct init) { 
+        public USBCAN_B_win(ICAN.CANInitStruct init) {
+            _initStructure = init;
             InitCAN(init);
         }
        
@@ -149,12 +150,9 @@ namespace MCU_CAN_AV.Can
 
         public void InitCAN(ICAN.CANInitStruct init)
         {
-            Init_structure=init;
-
-   
-
-            UInt32 m_devind = Init_structure._devind;
-            UInt32 m_canind = Init_structure._canind;
+          
+            UInt32 m_devind = _initStructure._devind;
+            UInt32 m_canind = _initStructure._canind;
             
 
             if (_isOpen)
@@ -172,8 +170,8 @@ namespace MCU_CAN_AV.Can
          
             VCI_INIT_CONFIG config = new VCI_INIT_CONFIG();
 
-            config.AccCode = Init_structure._RcvCode;
-            config.AccMask = Init_structure._Mask;
+            config.AccCode = InitStructure._RcvCode;
+            config.AccMask = InitStructure._Mask;
 
             //00, 1c - 500k
             //01, 1c - 250k
@@ -181,7 +179,7 @@ namespace MCU_CAN_AV.Can
             byte Timing1 = 0x00;
             byte Timing2 = 0x1c;
 
-            if (Init_structure._Baudrate == 250) {
+            if (InitStructure._Baudrate == 250) {
                 Timing1 = 1;
             }
 
@@ -191,14 +189,17 @@ namespace MCU_CAN_AV.Can
             config.Filter = 1; // 1 - All , 2 - Standart, 3 - Extended
             config.Mode = 0;  // 0 - Normal, 1 - Listener, 2-Echo
             VCI_InitCAN(m_devtype, m_devind, m_canind, ref config);
-            VCI_StartCAN(m_devtype, Init_structure._devind, Init_structure._canind);
+            VCI_StartCAN(m_devtype, InitStructure._devind, InitStructure._canind);
             _isOpen = true;
         }
         int TimeOut_counter = 0;
+
+        public ICAN.CANInitStruct InitStructure => _initStructure;
+
         unsafe void ICAN.Receive()
         {
           
-            UInt32 res = VCI_Receive(m_devtype, Init_structure._devind, Init_structure._canind, ref m_recobj[0], 1000, 100);
+            UInt32 res = VCI_Receive(m_devtype, InitStructure._devind, InitStructure._canind, ref m_recobj[0], 1000, 100);
 
             if (res == 0xffffffff)
             {
@@ -239,7 +240,7 @@ namespace MCU_CAN_AV.Can
 
         void ICAN.Close()
         {
-            VCI_ResetCAN(m_devtype, Init_structure._devind, Init_structure._canind);
+            VCI_ResetCAN(m_devtype, InitStructure._devind, InitStructure._canind);
             var tmp = updater.Subscribe();
             tmp.Dispose();
             _isOpen = false;
