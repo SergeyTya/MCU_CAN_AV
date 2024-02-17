@@ -26,7 +26,8 @@ namespace MCU_CAN_AV.ViewModels
             //IDevice.GetInstnce().DeviceDescriprion.CollectionChanged += DeviceDescriprion_CollectionChanged;
         }
 
-      
+        [ObservableProperty]
+        public string _deviceName = "no device name";
 
         [ObservableProperty]
         string _logText = "";
@@ -43,7 +44,11 @@ namespace MCU_CAN_AV.ViewModels
 
         public void Receive(ConnectionState message)
         {
-           if(message.state == ConnectionState.State.Connected) connected();
+            if (message.state == ConnectionState.State.Connected)
+            {
+                DeviceName = IDevice.GetInstnce().Name;
+                connected();
+            }
         }
 
         void connected() {

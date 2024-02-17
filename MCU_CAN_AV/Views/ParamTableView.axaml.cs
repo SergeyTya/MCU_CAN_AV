@@ -1,5 +1,7 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using System.Diagnostics;
 
 namespace MCU_CAN_AV.Views
@@ -12,15 +14,24 @@ namespace MCU_CAN_AV.Views
         }
 
 
-        void SwitchFocusEvent(object sender, RoutedEventArgs e)
+        void ButtonClickEvent(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("sd");
+            ((Button)sender).Command.Execute(this); 
+            DataGrid.CommitEdit();
         }
+
+        void TextBoxKeyUpEvent(object sender, KeyEventArgs e) {
+
+            if (e.Key == Avalonia.Input.Key.Enter)
+            {
+                DataGrid.CommitEdit();
+            }
+
+        }
+
         /*
          
-        <TextBox.KeyBindings>
-											<KeyBinding Gesture="Enter" Command="{Binding Write}" />
-										</TextBox.KeyBindings>	
+        
 
          */
     }

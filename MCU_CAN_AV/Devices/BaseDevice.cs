@@ -34,6 +34,8 @@ namespace MCU_CAN_AV.Devices
 
         public int Connection_errors_cnt => _err_cnt;
 
+        public virtual string Name => throw new NotImplementedException();
+
         public virtual void Encode(ICAN.RxTxCanData data)
         {
             throw new NotImplementedException();

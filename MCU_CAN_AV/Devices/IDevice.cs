@@ -75,6 +75,7 @@ namespace MCU_CAN_AV.Devices
         public BehaviorSubject<bool> Init_stage { get; }
         public BehaviorSubject<string> State { get; }
         public int Connection_errors_cnt { get; }
+        public string Name { get; }
 
         
         /// <summary>
@@ -118,6 +119,8 @@ namespace MCU_CAN_AV.Devices
             ICAN.Dispose();
             IDevice._logUpdater.OnNext($" Connection closed ");
             IDevice._Device = null;
+            Rxlistener?.Dispose();
+            Txlistener?.Dispose();
         }
 
         /// <summary>
@@ -126,6 +129,10 @@ namespace MCU_CAN_AV.Devices
         /// <param name="device"></param>
         /// <param name="InitStruct"></param>
         /// <returns></returns>
+        /// 
+        static IDisposable Rxlistener;
+        static IDisposable Txlistener;
+
         public static IDevice Create( DeviceType device, ICAN.CANInitStruct InitStruct) {
 
             IDevice? ret_obj = null;
@@ -153,11 +160,13 @@ namespace MCU_CAN_AV.Devices
                     ICAN.Create(InitStruct, ICAN.CANType.Dummy);
                     break;
             }
+            Rxlistener?.Dispose();
+            Txlistener?.Dispose();
 
             if (ret_obj != null)
             {
                 IDevice.Log($" !!!! {ret_obj.GetType().Name} connection created ");
-                IDisposable Rxlistener = ICAN.RxUpdater.Subscribe(
+                Rxlistener = ICAN.RxUpdater.Subscribe(
                     (_) =>
                     {
                         Dispatcher.UIThread.Post(() =>
@@ -173,7 +182,7 @@ namespace MCU_CAN_AV.Devices
                         });
                     });
 
-                IDisposable Txlistener = ICAN.TxUpdater.Subscribe(
+                Txlistener = ICAN.TxUpdater.Subscribe(
                     (_) =>
                     {
                         Dispatcher.UIThread.Post(() =>

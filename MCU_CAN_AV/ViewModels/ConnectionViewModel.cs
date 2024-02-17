@@ -39,6 +39,8 @@ namespace MCU_CAN_AV.ViewModels
 
         public static CANInitStruct InitStruct = new CANInitStruct();
 
+     
+
         [ObservableProperty]
         public ObservableCollection<ParameterField> _parameterItems = new() {
 
@@ -133,7 +135,7 @@ namespace MCU_CAN_AV.ViewModels
         }
 
         [ObservableProperty]
-        private DeviceType _deviceSelected = DeviceType.Dummy;
+        private DeviceType _deviceSelected = DeviceType.EVMModbus;
 
         partial void OnDeviceSelectedChanged(DeviceType value)
         {
@@ -230,6 +232,7 @@ namespace MCU_CAN_AV.ViewModels
                    isConnectionDone = _;
                    if (!_) {
                        Messenger.Send(new ConnectionState(ConnectionState.State.Connected));
+                     
 
                        disposable_init?.Dispose();
                        disposable_log.Dispose();

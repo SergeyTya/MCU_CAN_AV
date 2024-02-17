@@ -12,7 +12,7 @@
 		<vm:ParamTableViewModel/>
 	</UserControl.DataContext>
 
-	<DataGrid Margin="0" ItemsSource="{Binding Rows}" 
+	<DataGrid Margin="0" Name="DataGrid" ItemsSource="{Binding Rows}" 
 		 GridLinesVisibility="All"
 		 BorderThickness="1" BorderBrush="Gray"
 			  CanUserResizeColumns="True">
@@ -53,9 +53,14 @@
 											<ia:InvokeCommandAction Command="{Binding CellEndEditCommand}"/>
 										</ia:EventTriggerBehavior>
 									</i:Interaction.Behaviors>
-									<TextBox 
+									<TextBox
 										Text="{Binding Value_edt}"
-										IsVisible="{Binding !IsComboCell}">
+										IsVisible="{Binding !IsComboCell}"
+										KeyUp="TextBoxKeyUpEvent"
+										>
+										<TextBox.KeyBindings>
+											<KeyBinding Gesture="Enter" Command="{Binding Write}" />
+										</TextBox.KeyBindings>
 									</TextBox>
 								<ComboBox
 								ItemsSource="{Binding Options}"
@@ -67,8 +72,8 @@
 								<Button
 									Grid.Column="1" 
 									Content="Apply" 
-									Command="{Binding Write}" 
-									Click="SwitchFocusEvent"
+									Command="{Binding Write}"
+									Click = "ButtonClickEvent"
 									HorizontalAlignment="Stretch"/>
 							</Grid>
 							

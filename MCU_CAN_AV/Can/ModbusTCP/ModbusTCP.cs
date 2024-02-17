@@ -23,33 +23,38 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         bool isOpen = false;
 
-        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,2);
+        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
 
         ICAN.CANInitStruct InitStruct;
 
         public ICAN.CANInitStruct InitStructure => InitStruct;
 
+
+
         public ModbusTCP(ICAN.CANInitStruct InitStruct)
         {
+          
             this.InitStruct = InitStruct;
             modbus_id = InitStruct._devind;
             server_port = InitStruct.server_port;
             server_name = InitStruct.server_name;
 
             Task.Run(async () => {
-                await semaphoreSlim.WaitAsync();
+
+                await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);
                 try {
                     var res = await ModbusTCP.ReadRegisterCount(server_name, server_port, modbus_id).ConfigureAwait(false);
                     return res;
                 } finally { semaphoreSlim.Release(); }
+
             }).ToObservable().Take(1).Subscribe(
                 (_) => { reg_count = _; ICAN.LogUpdater.OnNext($"Found  {_} registers");},
                 exeption => { 
                     ICAN.LogUpdater.OnNext(exeption.Message);
-                    semaphoreSlim.Release();
                 }
             );
             isOpen = true;
+          
         }
 
 
@@ -114,7 +119,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 */
             List<byte[]> deviceParameters = new();
 
-            await semaphoreSlim.WaitAsync();
+            await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);
             try
             {
 
@@ -158,14 +163,16 @@ namespace MCU_CAN_AV.Can.ModbusTCP
         void ICAN.Close()
         {
             isOpen = false;
+            Debug.WriteLine(semaphoreSlim.CurrentCount);
         }
 
         void ICAN.Receive()
         {
-
+            if (!isOpen) return;
+            if (semaphoreSlim.CurrentCount == 0) return;
             Task.Run(async () =>
             {
-                await semaphoreSlim.WaitAsync();
+                await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);
                 try {
                     var res = await ReadHRsAsync(reg_count, server_name, server_port, modbus_id).ConfigureAwait(false);
                    // await Task.Delay(1000);

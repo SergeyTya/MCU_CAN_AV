@@ -111,17 +111,34 @@
 		</DockPanel>
 		<!--Low side status bar-->
 		<Panel Grid.Row="2"  Classes="Black3" >
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="0.3*"/>
-					<ColumnDefinition Width="0.7*"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="1*"/>
-				</Grid.RowDefinitions>
-				<TextBlock Grid.Column="0"					  Text="Connected" VerticalAlignment="Center" TextAlignment="Left" Margin="5,0,0,0"/>
-				<TextBlock Grid.Column="1" Name="tb_DeviceID" Text="Traction Inverter" VerticalAlignment="Center" TextAlignment="Center"/>
-			</Grid>
+			<StackPanel Orientation="Horizontal" Spacing="10">
+
+				<TextBlock
+							  
+					Text="Connected:" 
+					VerticalAlignment="Center" 
+					TextAlignment="Left" 
+					Margin="5,0,0,0"
+					/>
+				
+				<TextBlock
+				
+					Text="{Binding DeviceName}"
+					VerticalAlignment="Center"
+					TextAlignment="Center"/>
+
+				<TextBlock
+				
+					Text="Fault Counter: "
+					VerticalAlignment="Center"
+					TextAlignment="Center"/>
+
+				<TextBlock	
+					Text="0"
+					VerticalAlignment="Center"
+					TextAlignment="Center"/>
+
+			</StackPanel>
 		</Panel>
 		<!--Second grid-->
 		<Grid Grid.Row="1">

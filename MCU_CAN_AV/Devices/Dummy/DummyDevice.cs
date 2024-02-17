@@ -16,6 +16,8 @@ namespace MCU_CAN_AV.Devices.Dummy
     {
         bool fault = false;
         bool start = false;
+
+        public override string Name => "Dummy device";
       
 
         List<ShanghaiDeviceFault> FaultsList = new();
