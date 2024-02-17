@@ -68,6 +68,7 @@
 									Grid.Column="1" 
 									Content="Apply" 
 									Command="{Binding Write}" 
+									Click="SwitchFocusEvent"
 									HorizontalAlignment="Stretch"/>
 							</Grid>
 							

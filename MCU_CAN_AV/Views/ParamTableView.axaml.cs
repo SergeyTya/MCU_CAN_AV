@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using System.Diagnostics;
 
 namespace MCU_CAN_AV.Views
 {
@@ -10,10 +12,10 @@ namespace MCU_CAN_AV.Views
         }
 
 
-        //void KeyUpEventTextBox(object sender, KeyPre e)
-        //{
-
-        //}
+        void SwitchFocusEvent(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("sd");
+        }
         /*
          
         <TextBox.KeyBindings>

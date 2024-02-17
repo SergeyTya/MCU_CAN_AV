@@ -88,14 +88,7 @@
 		<!--Menu Items-->
 		<DockPanel Grid.Row="0" HorizontalAlignment="Right">
 			<Menu DockPanel.Dock="Top" FontWeight="Light">
-				<MenuItem Header="_View"  Name="menuitem_view">
-					<MenuItem Header="Tables"   />
-					<MenuItem Header="Controls" />
-					<MenuItem Header="Console"  />
-					<Separator/>
-					<MenuItem Header="User view"   />
-					<MenuItem Header="Profi view"  />
-				</MenuItem>
+				
 				<MenuItem Header="Controls">
 					<CheckBox Name="ControlLocker" Content="Unlocked" IsChecked="false"/>
 				</MenuItem>
@@ -181,6 +174,9 @@
 					</SplitView.Pane>
 
 					<TabControl Margin="5" TabStripPlacement="Top">
+						<TabItem Header="Tables">
+							<v:ParamTableView/>
+						</TabItem>
 						<TabItem   Header="Controls">
 							<v:ControlView
 								Name="Angular"
@@ -192,9 +188,6 @@
 								Foreground="White"
 								Margin="5"
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
-						</TabItem>
-						<TabItem Header="Tables">
-							<v:ParamTableView/>
 						</TabItem>
 						<TabItem Header="Log">
 							<ScrollViewer>
