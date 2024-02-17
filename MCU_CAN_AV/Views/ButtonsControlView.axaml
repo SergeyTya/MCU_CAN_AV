@@ -54,6 +54,7 @@
 					Margin="2"  
 					HorizontalAlignment="Stretch" 
 					VerticalAlignment="Stretch"
+					 Command="{Binding onClickStartButtonCommand}"
 					/>
 				<Button
 					Grid.Column="1"
@@ -61,7 +62,7 @@
 					Margin="2"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
-					Command="{Binding onClickResetButton}"
+					Command="{Binding onClickResetButtonCommand}"
 						/>
 			</Grid>
 			<Button Grid.Row="3"
@@ -70,6 +71,7 @@
 					Margin="2"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
+				    Command="{Binding onClickStopButtonCommand}"
 						/>
 		</Grid>
 

@@ -107,16 +107,19 @@ namespace MCU_CAN_AV.Devices.Dummy
         {
             fault = !fault;
             start = false;
+            IDevice.Log("Reset command");
         }
 
         public override void Start()
         {
             start = true;
+            IDevice.Log("Start command");
         }
 
         public override void Stop()
         {
            start = false;
+            IDevice.Log("Stop command");
         }
     }
 }
