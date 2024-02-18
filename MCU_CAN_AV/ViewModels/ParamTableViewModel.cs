@@ -1,20 +1,30 @@
-﻿using Avalonia.Logging;
+﻿using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Logging;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
 using DynamicData.Binding;
 using MCU_CAN_AV.Devices;
 using ScottPlot;
+using ScottPlot.Renderable;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using MCU_CAN_AV.utils;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -61,6 +71,72 @@ namespace MCU_CAN_AV.ViewModels
                 }
             });
         }
+
+        [RelayCommand]
+        private async Task OpenFile()
+        {
+           // ErrorMessages?.Clear();
+            try
+            {
+                var filesService = App.Current?.Services?.GetService<IFilesService>();
+                if (filesService is null) throw new NullReferenceException("Missing File Service instance.");
+
+                var file = await filesService.OpenFileAsync();
+                if (file is null) return;
+
+                // Limit the text file to 1MB so that the demo wont lag.
+                if ((await file.GetBasicPropertiesAsync()).Size <= 1024 * 1024 * 1)
+                {
+                    await using var readStream = await file.OpenReadAsync();
+                    using var reader = new StreamReader(readStream);
+                    var FileText = await reader.ReadToEndAsync();
+                }
+                else
+                {
+                    throw new Exception("File exceeded 1MB limit.");
+                }
+            }
+            catch (Exception e)
+            {
+                //ErrorMessages?.Add(e.Message);
+            }
+        }
+
+
+        [RelayCommand]
+        private async Task SaveFile()
+        {
+           // ErrorMessages?.Clear();
+            try
+            {
+                var filesService = App.Current?.Services?.GetService<IFilesService>();
+                if (filesService is null) throw new NullReferenceException("Missing File Service instance.");
+
+                var file = await filesService.SaveFileAsync();
+                if (file is null) return;
+
+
+                //// Limit the text file to 1MB so that the demo wont lag.
+                //if (FileText?.Length <= 1024 * 1024 * 1)
+                //{
+                //    var stream = new MemoryStream(Encoding.Default.GetBytes((string)FileText));
+                //    await using var writeStream = await file.OpenWriteAsync();
+                //    await stream.CopyToAsync(writeStream);
+                //}
+                //else
+                //{
+                //    throw new Exception("File exceeded 1MB limit.");
+                //}
+            }
+            catch (Exception e)
+            {
+               // ErrorMessages?.Add(e.Message);
+            }
+        }
+
+
+
+
     }
 
 
@@ -73,7 +149,11 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         public string _id = "ID";
         [ObservableProperty]
-        List<string> _options;
+        List<string> _optionsItems;
+
+
+        List<List<string>> _optionsList;
+
         [ObservableProperty]
         public string _value;
         [ObservableProperty]
@@ -86,11 +166,17 @@ namespace MCU_CAN_AV.ViewModels
 
         [RelayCommand]
         public void CellEndEdit() {
-            Debug.WriteLine("----------------------->");
 
             if (IsComboCell)
             {
-                OptionSelected = Options.IndexOf(Value);
+                foreach (var item in _optionsList)
+                {
+                    if (item[1] == Value)
+                    {
+                        OptionSelected = _optionsList.IndexOf(item);
+                    }
+                }
+
                 return;
             }
             Value_edt = Value;
@@ -106,12 +192,50 @@ namespace MCU_CAN_AV.ViewModels
 
             Name = Item.Name;
             Id = Item.ID;
-            Options = Item.Options;
-            IsComboCell = (Item.Options != null) && (Item.Options.Count > 0);
+            
+            if (Item.Options != null && Item.Options.Count > 0)
+            {
+                IsComboCell = true;
+                _optionsList = Item.Options;
+                OptionsItems = new List<string>();
+                foreach (var item in _optionsList) 
+                {
+                    if(item.Count>0) OptionsItems.Add(item[0]);
+                    
+                    double dev_val = 0;
+                    Item.Value.Take(1).Subscribe(_ => dev_val = _);
+
+                    if (item.Count > 1)
+                    {
+                        double opt_val = 0;
+                        if (double.TryParse(item[1], out opt_val))
+                        {
+                            if (dev_val == opt_val)
+                            {
+                                OptionSelected = _optionsList.IndexOf(item);
+                            }
+                        }
+                    }
+                    else {
+                        item.Add(_optionsList.IndexOf(item).ToString());
+                        if ((int) dev_val == _optionsList.IndexOf(item)) {
+                            OptionSelected = (int)dev_val;
+                        }
+                    }
+                }   
+            }
+            else {
+                IsComboCell = false;
+            }
+
             Write = () => {
                 if (IsComboCell)
                 {
-                    Item.writeValue(OptionSelected);
+                    double val = 0;
+                    if (Double.TryParse(_optionsList[OptionSelected][1], out val))
+                    {
+                        Item.writeValue(val);
+                    }
                     return;
                 }
                 //
@@ -133,7 +257,11 @@ namespace MCU_CAN_AV.ViewModels
 
                 if (IsComboCell)
                 {
-                    new_val = Options[(int)_];
+                    foreach (var item in _optionsList) {
+                        if (item[1] == ((int)_).ToString()) {
+                            new_val = item[0]; 
+                        }
+                    }
                 }
 
                 if (new_val != Value)
@@ -159,7 +287,7 @@ namespace MCU_CAN_AV.ViewModels
             if (disposing)
             {
                 disposable?.Dispose();
-                Options?.Clear();
+                OptionsItems?.Clear();
             }
             // освобождаем неуправляемые объекты
             disposed = true;

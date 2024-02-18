@@ -18,8 +18,8 @@
 			  CanUserResizeColumns="True">
 		<DataGrid.ContextMenu>
 			<ContextMenu>
-				<MenuItem Header="Save table to file"/>
-				<MenuItem Header="Load table from file"/>
+				<MenuItem Header="Save table to file" Command="{Binding SaveFileCommand}"/>
+				<MenuItem Header="Load table from file" Command="{Binding OpenFileCommand}"/>
 			</ContextMenu>
 		</DataGrid.ContextMenu>
 		
@@ -68,7 +68,7 @@
 										</TextBox.KeyBindings>
 									</TextBox>
 								<ComboBox
-								ItemsSource="{Binding Options}"
+								ItemsSource="{Binding OptionsItems}"
 								IsVisible="{Binding IsComboCell}"
 								SelectedIndex="{Binding OptionSelected}"
 								HorizontalAlignment="Stretch"

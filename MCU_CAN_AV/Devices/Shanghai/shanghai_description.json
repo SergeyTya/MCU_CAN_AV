@@ -105,7 +105,10 @@
         "len": 1,
         "offset": 56,
         "sname": "Slope status",
-        "options": [ "not on slope", "on slope" ]
+      "options": [
+        [ "not on slope"  ],
+        [ "on slope"      ]
+      ]
     },
     {
         "CANID": "0x18F1F2D1",
@@ -120,7 +123,12 @@
         "len": 5,
         "offset": 34,
         "sname": "Feedback Mode",
-        "options": [ "closed tube", "torque", "speed", "zerro torque" ]
+      "options": [
+        [ "closed tube"  ],
+        [ "torque"       ],
+        [ "speed"        ],
+        [ "zerro torque" ]
+      ]
     },
     {
         "CANID": "0xCF12AD0",
@@ -161,15 +169,21 @@
         "min": 0.0,
         "max": 9000.0
     },
-    {
-        "CANID": "0xCF10AD0",
-        "RW": 1,
-        "len": 16,
-        "offset": 0,
-        "valoffset": 3000,
-        "sname": "target torque",
-        "scale": 0.1
-    },
+  {
+    "CANID": "0xCF10AD0",
+    "RW": 1,
+    "len": 16,
+    "offset": 0,
+    "valoffset": 3000,
+    "sname": "target torque",
+    "scale": 0.1,
+    "options": [
+      [ "0%"  , "0"   ],
+      [ "25%" , "25"  ],
+      [ "50%" , "50"  ],
+      [ "100%", "100" ]
+    ]
+  },
     {
         "CANID": "0xCF10AD0",
         "RW": 1,

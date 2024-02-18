@@ -192,7 +192,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             public string Unit { get => unit; }
 
-            public List<string> Options { get => options; }
+            public List<List<string>> Options { get => options; }
 
             public bool IsReadWrite { get => RW; }
 
@@ -212,7 +212,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             internal string unit { get; set; }
 
             [JsonProperty("options")]
-            internal List<string> options { get; set; }
+            internal List<List<string>> options { get; set; }
 
             [JsonProperty("RW")]
             internal bool RW { get; set; }

@@ -70,6 +70,8 @@ namespace MCU_CAN_AV.ViewModels
 
         public IDisposable? disposable;
 
+        bool _isCombo = false;
+
         public IndicatorTemplate(IDeviceParameter Item)
         {
             
@@ -87,7 +89,8 @@ namespace MCU_CAN_AV.ViewModels
                 {
                     if (Item.Options != null && Item.Options.Count > 0 && (int)_ < Item.Options.Count)
                     {
-                        Value = Item.Options[(int)_];
+                        Value = Item.Options[(int)_][0];
+                        _isCombo = true;
                         return;
                     }
 
@@ -106,6 +109,7 @@ namespace MCU_CAN_AV.ViewModels
         [RelayCommand]
         public void ClickItem()
         {
+            if (_isCombo) return;
             if (Logger!=null && Logger.Is_Alive)
             {
                 Logger.WindowState = WindowState.Minimized;

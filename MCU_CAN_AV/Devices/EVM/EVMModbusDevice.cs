@@ -279,7 +279,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             public bool IsReadWrite => _IsReadWrite;
 
-            List<string> IDeviceParameter.Options => null;
+            public List<List<string>> Options => null;
 
          
 

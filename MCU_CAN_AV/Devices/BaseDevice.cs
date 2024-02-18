@@ -15,13 +15,6 @@ namespace MCU_CAN_AV.Devices
     internal class BaseDevice : IDevice
     {
 
-        
-       
-        internal BaseDevice() {
-        
-        }
-
-
         public ObservableCollection<IDeviceParameter> DeviceDescription => IDevice._DeviceDescription;
 
         public ObservableCollection<IDeviceFault>  DeviceFaults => IDevice._DeviceFaults;

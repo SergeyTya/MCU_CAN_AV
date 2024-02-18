@@ -16,6 +16,11 @@ using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.Devices
 {
+    public class DeviceOptions {
+        public double Value;
+        public string? Name; 
+    }
+
     public enum DeviceType
     {
         EVMModbus,
@@ -50,7 +55,7 @@ namespace MCU_CAN_AV.Devices
 
         public string Type { get; }
 
-        public List<string> Options { get; } // parameter options
+        public List<List<string>> Options { get; } // parameter options
 
         public bool IsReadWrite { get; } 
 

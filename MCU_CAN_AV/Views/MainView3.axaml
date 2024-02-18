@@ -89,22 +89,19 @@
 		<DockPanel Grid.Row="0" HorizontalAlignment="Right">
 			<Menu DockPanel.Dock="Top" FontWeight="Light">
 				
-				<MenuItem Header="Controls">
-					<CheckBox Name="ControlLocker" Content="Unlocked" IsChecked="false"/>
-				</MenuItem>
-					
-				<MenuItem Header="_Setup">
+				<MenuItem Header="Commands">
+					<CheckBox Name="ControlLocker" Content="UnlockedControl" IsChecked="false"/>
+					<Separator/>
 					<MenuItem Header="Load from file"/>
 					<MenuItem Header="Save to file "/>
 					<Separator/>
-					<MenuItem Header="_Exit"/>
-				</MenuItem>
-				<MenuItem Header="_Scope"/>
-
-				<MenuItem Header="Disconnect" Command="{Binding ClickDisconnectCommand}" >
-					<MenuItem.DataContext>
-						<vm:ConnectionViewModel/>
-					</MenuItem.DataContext>
+					<MenuItem Header="Scope"/>
+					<Separator/>
+					<MenuItem Header="Disconnect" Command="{Binding ClickDisconnectCommand}" >
+						<MenuItem.DataContext>
+							<vm:ConnectionViewModel/>
+						</MenuItem.DataContext>
+					</MenuItem>
 				</MenuItem>
 			</Menu>
 			<TextBlock/>
