@@ -11,14 +11,19 @@
 	<UserControl.DataContext>
 		<vm:ParamTableViewModel/>
 	</UserControl.DataContext>
-
-	<DataGrid Margin="0" Name="DataGrid" ItemsSource="{Binding Rows}" 
+		
+	<DataGrid Grid.Row="0" Margin="0" Name="DataGrid" ItemsSource="{Binding Rows}" 
 		 GridLinesVisibility="All"
 		 BorderThickness="1" BorderBrush="Gray"
 			  CanUserResizeColumns="True">
-
+		<DataGrid.ContextMenu>
+			<ContextMenu>
+				<MenuItem Header="Save table to file"/>
+				<MenuItem Header="Load table from file"/>
+			</ContextMenu>
+		</DataGrid.ContextMenu>
+		
 		<DataGrid.Columns >
-
 			<DataGridTextColumn Header="ID" Width="0.2*" IsReadOnly="True"
 			   Binding="{Binding Id}" >
 			</DataGridTextColumn>
@@ -76,13 +81,10 @@
 									Click = "ButtonClickEvent"
 									HorizontalAlignment="Stretch"/>
 							</Grid>
-							
 						</Panel>
 					</DataTemplate>
 				</DataGridTemplateColumn.CellEditingTemplate>
-
 			</DataGridTemplateColumn>
-
 		</DataGrid.Columns>
 	</DataGrid>
 

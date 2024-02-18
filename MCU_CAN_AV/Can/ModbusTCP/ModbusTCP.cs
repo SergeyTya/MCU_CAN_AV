@@ -170,6 +170,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
         {
             if (!isOpen) return;
             if (semaphoreSlim.CurrentCount == 0) return;
+        
             Task.Run(async () =>
             {
                 await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);

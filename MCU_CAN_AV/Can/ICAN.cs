@@ -89,6 +89,7 @@ namespace MCU_CAN_AV.Can
 
             timer.Stop();
             timer.Dispose();
+            timer = null;
             ICAN.CAN.Close();
             ICAN.CAN = null;
             LogUpdater.OnNext("ICAN Connection closed");

@@ -21,7 +21,7 @@ namespace MCU_CAN_AV.ViewModels
     public partial class ParamTableViewModel : ObservableRecipient, IRecipient<ConnectionState>
     {
         [ObservableProperty]
-        public ObservableCollection<RowTemplate> _rows = new();
+        public ObservableCollection<RowTemplate>? _rows;
 
         public ParamTableViewModel()
         {
@@ -34,8 +34,21 @@ namespace MCU_CAN_AV.ViewModels
         {
             Dispatcher.UIThread.Post(() =>
             {
+
+                var _clear = () => {
+                    if (Rows != null) {
+                        foreach (var item in Rows)
+                        {
+                            item.Dispose();
+                        }
+                        Rows.Clear();
+                    }
+                };
+
                 if (message.state == ConnectionState.State.Connected)
                 {
+                    // _clear();
+                    Rows = new();
                     foreach (var item in IDevice.GetInstnce().DeviceDescription)
                     {
                         if (item.IsReadWrite) Rows.Add(new RowTemplate(item));
@@ -44,13 +57,7 @@ namespace MCU_CAN_AV.ViewModels
 
                 if (message.state == ConnectionState.State.Disconnected)
                 {
-
-                    foreach (var item in Rows)
-                    {
-                        item.Dispose();
-                    }
-                    Rows.Clear();
-
+                    _clear();
                 }
             });
         }
@@ -151,7 +158,7 @@ namespace MCU_CAN_AV.ViewModels
             if (disposed) return;
             if (disposing)
             {
-                disposable.Dispose();
+                disposable?.Dispose();
                 Options?.Clear();
             }
             // освобождаем неуправляемые объекты

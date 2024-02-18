@@ -23,12 +23,14 @@ namespace MCU_CAN_AV.ViewModels
         }
 
         [ObservableProperty]
-        ObservableCollection<IndicatorTemplate> _indicatorsList = new();
+        ObservableCollection<IndicatorTemplate>? _indicatorsList;
 
         public void Receive(ConnectionState message)
         {
+           
             if (message.state == ConnectionState.State.Connected)
             {
+                IndicatorsList = new();
                 foreach (var item in IDevice.GetInstnce().DeviceDescription)
                 {
                     IndicatorsList.Add(new IndicatorTemplate(item));
@@ -36,12 +38,16 @@ namespace MCU_CAN_AV.ViewModels
             };
 
             if (message.state == ConnectionState.State.Disconnected) {
+                if (IndicatorsList != null) {
 
-                foreach (var item in IndicatorsList) { 
-                   item.Dispose(); 
-                }       
-                IndicatorsList.Clear();
+                    foreach (var item in IndicatorsList)
+                    {
+                        item.Dispose();
+                    }
+                    IndicatorsList?.Clear();
 
+                }
+                
             }
         }
     }

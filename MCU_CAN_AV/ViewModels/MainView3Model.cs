@@ -19,12 +19,10 @@ namespace MCU_CAN_AV.ViewModels
             Messenger.RegisterAll(this);
             disposable_log?.Dispose();
             disposable_log = StaticLogger.Subscribe((_) => LogText += _);
-
-            //IDevice.GetInstnce().DeviceDescriprion.ToObservable().Subscribe(
-            //   (_) => DeviceParametrs.Add(_));
-
-            //IDevice.GetInstnce().DeviceDescriprion.CollectionChanged += DeviceDescriprion_CollectionChanged;
         }
+
+        [ObservableProperty]
+        public int _error_cnt;
 
         [ObservableProperty]
         public string _deviceName = "no device name";
@@ -35,11 +33,7 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         public ObservableCollection<IDeviceParameter> _deviceParameters;
 
-        partial void OnDeviceParametersChanged(ObservableCollection<IDeviceParameter> value)
-        {
-           // throw new NotImplementedException();
-        }
-
+        IDisposable disposable_errcnt;
 
 
         public void Receive(ConnectionState message)
@@ -47,6 +41,10 @@ namespace MCU_CAN_AV.ViewModels
             if (message.state == ConnectionState.State.Connected)
             {
                 DeviceName = IDevice.GetInstnce().Name;
+
+                disposable_errcnt?.Dispose();
+                disposable_errcnt = IDevice.GetInstnce().Connection_errors_cnt.Subscribe((_) => Error_cnt = _ );
+
                 connected();
             }
         }

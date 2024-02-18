@@ -16,9 +16,10 @@ namespace MCU_CAN_AV.Devices
     {
 
         
-        internal int _err_cnt = 0;
-
-        internal BaseDevice() { }
+       
+        internal BaseDevice() {
+        
+        }
 
 
         public ObservableCollection<IDeviceParameter> DeviceDescription => IDevice._DeviceDescription;
@@ -27,15 +28,17 @@ namespace MCU_CAN_AV.Devices
 
         public BehaviorSubject<string> State => IDevice._State;
         internal string _state { set { State.OnNext(value); } }
+
         BehaviorSubject<bool> IDevice.Init_stage => IDevice._Init_stage;
         internal bool _Init_stage { set { IDevice._Init_stage.OnNext(value); } }
 
+        public BehaviorSubject<int> Connection_errors_cnt => IDevice._Connection_errors_cnt;
 
-
-        public int Connection_errors_cnt => _err_cnt;
+        public int _Connection_errors_cnt { set { Connection_errors_cnt.OnNext(value); } }
 
         public virtual string Name => throw new NotImplementedException();
 
+      
         public virtual void Encode(ICAN.RxTxCanData data)
         {
             throw new NotImplementedException();

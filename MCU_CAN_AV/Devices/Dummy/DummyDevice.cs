@@ -17,6 +17,9 @@ namespace MCU_CAN_AV.Devices.Dummy
         bool fault = false;
         bool start = false;
 
+        int _err_cnt = 0;
+ 
+
         public override string Name => "Dummy device";
       
 
@@ -24,6 +27,7 @@ namespace MCU_CAN_AV.Devices.Dummy
 
         public DummyDevice()
         {
+            base._Connection_errors_cnt = 0;
             List<ShanghaiDeviceParameter> tmp = new();
 
             try
@@ -87,7 +91,7 @@ namespace MCU_CAN_AV.Devices.Dummy
                 {
                     IDevice.Log("Time out");
                     ((DummyCAN)ICAN.CAN).faultmode = true;
-                    base._err_cnt++;
+                    base._Connection_errors_cnt = _err_cnt++;
                     base._state = DeviceState.NoConnect;
 
                     if (base.DeviceFaults.Count <2) {

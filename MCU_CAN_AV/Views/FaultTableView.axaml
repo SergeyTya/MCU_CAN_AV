@@ -17,17 +17,18 @@
 			<RowDefinition Height="40"/>
 			<RowDefinition Height="1.0*"/>
 		</Grid.RowDefinitions>
-		<TextBlock Grid.Row="0" Height="35"
-			   Margin="0,5,0,0"
+		<Panel Grid.Row="0"  Background="{Binding IndicatorColor}">
+		<TextBlock  Height="35"
+			   Margin="0,0,0,0"
 			   Name="label"
 			   Text="{Binding State}"
-			   Foreground="{Binding IndicatorColor}"
 			   FontSize="20"
 			   FontWeight="Heavy"
 			   TextAlignment="Center"
-			   VerticalAlignment="Top"
-			   HorizontalAlignment="Stretch"
-						   />
+			   VerticalAlignment="Center"
+			   HorizontalAlignment="Stretch" />
+		</Panel>
+
 		<DataGrid Grid.Column="0" Grid.Row="1"
 			ItemsSource="{Binding DeviceFaults}"
 			Margin="0"

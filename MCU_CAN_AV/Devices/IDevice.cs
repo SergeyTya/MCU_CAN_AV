@@ -63,19 +63,20 @@ namespace MCU_CAN_AV.Devices
 
     internal interface IDevice
     {
-        internal static Subject<string> _logUpdater = new Subject<string>();
-        internal static IDevice _Device = new BaseDevice();
-        internal static ObservableCollection<IDeviceParameter> _DeviceDescription = new();
-        internal static ObservableCollection<IDeviceFault> _DeviceFaults = new();
-        internal static BehaviorSubject<string> _State = new("no state");
-        internal static BehaviorSubject<bool> _Init_stage = new(true);
+        internal static Subject<string>                        _logUpdater            = new();
+        internal static IDevice                                _Device                = new BaseDevice();
+        internal static ObservableCollection<IDeviceParameter> _DeviceDescription     = new();
+        internal static ObservableCollection<IDeviceFault>     _DeviceFaults          = new();
+        internal static BehaviorSubject<string>                _State                 = new("no state");
+        internal static BehaviorSubject<bool>                  _Init_stage            = new(true);
+        internal static BehaviorSubject<int>                   _Connection_errors_cnt = new(0);
 
-        public ObservableCollection<IDeviceParameter> DeviceDescription { get; }
-        public ObservableCollection<IDeviceFault> DeviceFaults { get; }
-        public BehaviorSubject<bool> Init_stage { get; }
-        public BehaviorSubject<string> State { get; }
-        public int Connection_errors_cnt { get; }
-        public string Name { get; }
+        public ObservableCollection<IDeviceParameter>          DeviceDescription     { get; }
+        public ObservableCollection<IDeviceFault>              DeviceFaults          { get; }
+        public BehaviorSubject<bool>                           Init_stage            { get; }
+        public BehaviorSubject<string>                         State                 { get; }
+        public BehaviorSubject<int>                            Connection_errors_cnt { get; }
+        public string                                          Name                  { get; }
 
         
         /// <summary>
@@ -130,17 +131,22 @@ namespace MCU_CAN_AV.Devices
         /// <param name="InitStruct"></param>
         /// <returns></returns>
         /// 
-        static IDisposable Rxlistener;
-        static IDisposable Txlistener;
+        static IDisposable? Rxlistener;
+        static IDisposable? Txlistener;
+        static IDisposable? loglistener;
 
         public static IDevice Create( DeviceType device, ICAN.CANInitStruct InitStruct) {
 
             IDevice? ret_obj = null;
 
-            IDisposable loglistener = ICAN.LogUpdater.Subscribe(
+            loglistener?.Dispose();
+            loglistener = ICAN.LogUpdater.Subscribe(
                       (_) => {
                           IDevice._logUpdater.OnNext(_);
                       });
+
+            _DeviceDescription.Clear();
+            _DeviceFaults.Clear();
 
             switch (device)
             {

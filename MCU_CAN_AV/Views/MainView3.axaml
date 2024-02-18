@@ -114,27 +114,29 @@
 			<StackPanel Orientation="Horizontal" Spacing="10">
 
 				<TextBlock
-							  
 					Text="Connected:" 
 					VerticalAlignment="Center" 
 					TextAlignment="Left" 
-					Margin="5,0,0,0"
-					/>
+					Margin="5,0,0,0"/>
 				
 				<TextBlock
-				
 					Text="{Binding DeviceName}"
 					VerticalAlignment="Center"
 					TextAlignment="Center"/>
-
-				<TextBlock
 				
+				<TextBlock
+					Text="|"
+					Foreground="DimGray"
+					VerticalAlignment="Center"
+					TextAlignment="Center"/>
+				
+				<TextBlock
 					Text="Fault Counter: "
 					VerticalAlignment="Center"
 					TextAlignment="Center"/>
 
 				<TextBlock	
-					Text="0"
+					Text="{Binding Error_cnt}"
 					VerticalAlignment="Center"
 					TextAlignment="Center"/>
 
