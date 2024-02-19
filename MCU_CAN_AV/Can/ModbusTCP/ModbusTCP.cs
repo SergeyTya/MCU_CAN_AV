@@ -148,6 +148,27 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         }
 
+         public static async Task<string> getDevId(string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
+         {
+            /**
+            *   0x2B function - Report device info
+
+            *        _________________________RESPONSE FRAME________________________________
+            *
+            *       +-----+----+-----------------+---------+
+            * index | 0   | 1  |                 |    |    |
+            *       +-----+----+-----------------+---------+
+             * FRAME | ADR |CMD |   info string   |   CRC   |
+            *       +-----+----+-----------------+---------+
+
+            */
+            
+            ServerModbusTCP tmp = new ServerModbusTCP(server_name, (int) server_port);
+            var RXbuf = await tmp.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 2, (byte)modbus_id, 0x2B }); // get device holding count
+            string res = Encoding.UTF8.GetString(RXbuf.ToList().GetRange(7, RXbuf.Length - (4 + 7)).ToArray());
+            return res;
+         }
+
         public static async Task<ushort[]> ReadHRsAsync(uint count, string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
         {
 

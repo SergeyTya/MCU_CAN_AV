@@ -44,7 +44,7 @@ namespace MCU_CAN_AV.ViewModels
                     _disposed = IDevice.GetInstnce().State.Subscribe((_) => {
                         State = _;
                         if (_ == DeviceState.Run) { IndicatorColor.Color = Colors.Green; }
-                        if (_ == DeviceState.Error) { IndicatorColor.Color = Colors.Red; }
+                        if (_ == DeviceState.Fault) { IndicatorColor.Color = Colors.Red; }
                         if (_ == DeviceState.Ready) { IndicatorColor.Color = Colors.Blue; }
                         if (_ == DeviceState.NoConnect) { IndicatorColor.Color = Colors.DimGray; }
                     });

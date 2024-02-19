@@ -32,7 +32,7 @@ namespace MCU_CAN_AV.Devices
     public struct DeviceState {
         public static readonly string Run   = "Run";
         public static readonly string Ready = "Ready";
-        public static readonly string Error = "Error";
+        public static readonly string Fault = "Fault";
         public static readonly string NoConnect = "Not connected";
     }
 

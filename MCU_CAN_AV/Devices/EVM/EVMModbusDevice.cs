@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
@@ -28,14 +29,40 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
     internal class EVMModbusDevice : BaseDevice
     {
         static List<EVMModbusTCPDeviceFault> FaultsList = new();
+
+        string _name = "no name";
+        int _err_cnt = 0;
+
+        ICAN.CANInitStruct InitStruct;
+
         public EVMModbusDevice(ICAN.CANInitStruct InitStruct)
         {
+            _err_cnt = 0;
+            this.InitStruct = InitStruct;
             Init(InitStruct);
         }
 
         void Init(ICAN.CANInitStruct InitStruct)
         {
             IDevice.Log($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
+
+
+            Task.Run(async () => {
+                var ret_val = await ModbusTCP.getDevId(
+                               server_name: InitStruct.server_name,
+                               server_port: InitStruct.server_port,
+                               modbus_id: InitStruct._devind
+                    ).ConfigureAwait(false);
+
+                return ret_val;
+
+            }).ToObservable().Take(1).Subscribe(
+               (value) => { 
+                   _name = value.Trim('\0'); 
+               },
+               exeption => { ICAN.LogUpdater.OnNext(exeption.Message); },
+               () => { }
+            );
 
 
             Stopwatch stopwatch = new Stopwatch();
@@ -83,7 +110,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         {
             if (data.Timeout == true) {
 
-                //TODO Timeout handler
+                base._Connection_errors_cnt = _err_cnt++;
+                base._state = DeviceState.NoConnect;
                 return;
             }
 
@@ -101,6 +129,20 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                             .Where(x => base.DeviceFaults.IndexOf((IDeviceFault)x) == -1);
 
                         foreach (var x in res) { base.DeviceFaults.Add(res); }
+                        if (data.id == 1) {
+                            if (i == 0)
+                            {
+                                base._state = DeviceState.Run;
+                            }
+                            if (i == 1)
+                            {
+                                base._state = DeviceState.Ready;
+                            }
+                            if (i == 2)
+                            {
+                                base._state = DeviceState.Fault;
+                            }
+                        }
                     }
                 }
                 return;
@@ -159,6 +201,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 }
             }
         }
+
+        public override string Name { get{ return _name; } }
 
         public override void Close()
         {
