@@ -1,16 +1,8 @@
-﻿using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Logging;
-using Avalonia.Platform.Storage;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using DynamicData;
-using DynamicData.Binding;
 using MCU_CAN_AV.Devices;
-using ScottPlot;
-using ScottPlot.Renderable;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,13 +10,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MCU_CAN_AV.utils;
+using Avalonia.Media;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -45,8 +35,10 @@ namespace MCU_CAN_AV.ViewModels
             Dispatcher.UIThread.Post(() =>
             {
 
-                var _clear = () => {
-                    if (Rows != null) {
+                var _clear = () =>
+                {
+                    if (Rows != null)
+                    {
                         foreach (var item in Rows)
                         {
                             item.Dispose();
@@ -75,7 +67,7 @@ namespace MCU_CAN_AV.ViewModels
         [RelayCommand]
         private async Task OpenFile()
         {
-           // ErrorMessages?.Clear();
+            // ErrorMessages?.Clear();
             try
             {
                 var filesService = App.Current?.Services?.GetService<IFilesService>();
@@ -106,7 +98,7 @@ namespace MCU_CAN_AV.ViewModels
         [RelayCommand]
         private async Task SaveFile()
         {
-           // ErrorMessages?.Clear();
+            // ErrorMessages?.Clear();
             try
             {
                 var filesService = App.Current?.Services?.GetService<IFilesService>();
@@ -130,7 +122,7 @@ namespace MCU_CAN_AV.ViewModels
             }
             catch (Exception e)
             {
-               // ErrorMessages?.Add(e.Message);
+                // ErrorMessages?.Add(e.Message);
             }
         }
 
@@ -164,8 +156,13 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         Action _write;
 
+        [ObservableProperty]
+        public SolidColorBrush _cellColor = new(Avalonia.Media.Colors.Black, opacity: 0.45);
+
+
         [RelayCommand]
-        public void CellEndEdit() {
+        public void CellEndEdit()
+        {
 
             if (IsComboCell)
             {
@@ -192,16 +189,16 @@ namespace MCU_CAN_AV.ViewModels
 
             Name = Item.Name;
             Id = Item.ID;
-            
+
             if (Item.Options != null && Item.Options.Count > 0)
             {
                 IsComboCell = true;
                 _optionsList = Item.Options;
                 OptionsItems = new List<string>();
-                foreach (var item in _optionsList) 
+                foreach (var item in _optionsList)
                 {
-                    if(item.Count>0) OptionsItems.Add(item[0]);
-                    
+                    if (item.Count > 0) OptionsItems.Add(item[0]);
+
                     double dev_val = 0;
                     Item.Value.Take(1).Subscribe(_ => dev_val = _);
 
@@ -216,60 +213,91 @@ namespace MCU_CAN_AV.ViewModels
                             }
                         }
                     }
-                    else {
+                    else
+                    {
                         item.Add(_optionsList.IndexOf(item).ToString());
-                        if ((int) dev_val == _optionsList.IndexOf(item)) {
+                        if ((int)dev_val == _optionsList.IndexOf(item))
+                        {
                             OptionSelected = (int)dev_val;
                         }
                     }
-                }   
+                }
             }
-            else {
+            else
+            {
                 IsComboCell = false;
             }
 
-            Write = () => {
-                if (IsComboCell)
+            Write = () =>
+            {
+
+                Dispatcher.UIThread.Post(() =>
                 {
-                    double val = 0;
-                    if (Double.TryParse(_optionsList[OptionSelected][1], out val))
+
+                    if (IsComboCell)
                     {
-                        Item.writeValue(val);
+                        double val = 0;
+                        if (Double.TryParse(_optionsList[OptionSelected][1], out val))
+                        {
+                            Item.writeValue(val);
+                            CellColor.Color = Colors.Red;
+                        }
+                        return;
                     }
-                    return;
-                }
-                //
-                double db = 0;
-                Value_edt = Value_edt.Replace(',', CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
-                Value_edt = Value_edt.Replace('.', CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
-                if (Double.TryParse(Value_edt, out db))
-                {
-                    Item.writeValue(db);
-                }
-                else {
-                    Value_edt = Value;
-                }
+                    //
+                    double db = 0;
+                    Value_edt = Value_edt.Replace(',', CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
+                    Value_edt = Value_edt.Replace('.', CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0]);
+                    if (Double.TryParse(Value_edt, out db))
+                    {
+                        Item.writeValue(db);
+                        CellColor.Color = Colors.Red;
+                    }
+                    else
+                    {
+                        Value_edt = Value;
+                    }
+
+                  
+                });
             };
 
             disposable = Item.Value.Subscribe((_) =>
             {
-                string new_val = _.ToString("#0.##");
-
-                if (IsComboCell)
+                Dispatcher.UIThread.Post(() =>
                 {
-                    foreach (var item in _optionsList) {
-                        if (item[1] == ((int)_).ToString()) {
-                            new_val = item[0]; 
+
+                    string new_val = _.ToString("#0.##");
+
+                    if (IsComboCell)
+                    {
+                        foreach (var item in _optionsList)
+                        {
+                            if (item[1] == ((int)_).ToString())
+                            {
+                                new_val = item[0];
+                            }
                         }
                     }
-                }
 
-                if (new_val != Value)
-                {
-                    Value = new_val;
-                    Value_edt = new_val;
-                }
+                    if (new_val != Value)
+                    {
+                        Value = new_val;
+                        Value_edt = new_val;
 
+                        CellColor.Color = Colors.Yellow;
+
+                     
+                    }
+
+                    CellColor.Color = Colors.Green;
+
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        Dispatcher.UIThread.Post(() => CellColor.Color = Colors.Black);
+                    });
+                });
             });
         }
 

@@ -22,7 +22,7 @@
 				<MenuItem Header="Load table from file" Command="{Binding OpenFileCommand}"/>
 			</ContextMenu>
 		</DataGrid.ContextMenu>
-		
+	
 		<DataGrid.Columns >
 			<DataGridTextColumn Header="ID" Width="0.2*" IsReadOnly="True"
 			   Binding="{Binding Id}" >
@@ -34,7 +34,7 @@
 			<DataGridTemplateColumn Header="Value" Width="0.3*">
 				<DataGridTemplateColumn.CellTemplate>
 					<DataTemplate DataType="vm:RowTemplate">
-						<Panel >
+						<Panel Background="{Binding CellColor}">
 							<TextBlock
 								Text="{Binding Value}"
 								TextAlignment="Center"
@@ -46,7 +46,7 @@
 
 				<DataGridTemplateColumn.CellEditingTemplate  >
 					<DataTemplate DataType="vm:RowTemplate">
-						<Panel  >
+						<Panel  Background="{Binding CellColor}">
 							<Grid >
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="0.65*"/>

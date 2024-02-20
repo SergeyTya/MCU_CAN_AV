@@ -1,7 +1,6 @@
 ﻿using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Properties;
 using Newtonsoft.Json;
-using ScottPlot.Drawing.Colormaps;
 using System;
 using System.Collections.Generic;
 using System.Linq;

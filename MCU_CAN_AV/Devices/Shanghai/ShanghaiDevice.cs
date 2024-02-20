@@ -177,8 +177,13 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             public void writeValue(double value)
             {
-                ICAN.LogUpdater.OnNext($"{ID} <- {value.ToString()} ");
-                Val.OnNext(value);
+                Task.Run(async () =>
+                {
+                    await Task.Delay(2000);
+                    ICAN.LogUpdater.OnNext($"{ID} <- {value.ToString()} ");
+                    Val.OnNext(value);
+                });
+               
             }
 
             internal BehaviorSubject<double> Val = new BehaviorSubject<double>(0);

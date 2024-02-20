@@ -7,7 +7,6 @@ using MCU_CAN_AV.Properties;
 using MCU_CAN_AV.utils;
 using Newtonsoft.Json;
 using ReactiveUI;
-using ScottPlot.Drawing.Colormaps;
 using System;
 using System.Collections;
 using System.Collections.Generic;
