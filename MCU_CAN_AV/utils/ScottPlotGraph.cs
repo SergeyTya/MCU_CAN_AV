@@ -1,9 +1,10 @@
-﻿using Avalonia.Rendering;
+﻿using Avalonia.Media;
+using Avalonia.Rendering;
 using Avalonia.Threading;
 using ScottPlot.Avalonia;
 using ScottPlot.Drawing.Colormaps;
 using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
@@ -50,7 +51,7 @@ namespace utils
             {
                 ScopeChannels[i].Capacity = data_lenght;
                 var tmp = ScopeChannels[i].Points;
-                var plt1 = ScopeView.Plot.AddSignal(tmp);
+                var plt1 = ScopeView.Plot.AddSignal(tmp, color: System.Drawing.Color.Yellow);
                 ScopeView.Plot.AxisAutoX(margin: 0);
                 ScopeView.Plot.SetAxisLimits(yMin: -2, yMax: 2);
                 ScopeView.Plot.Style(ScottPlot.Style.Black);

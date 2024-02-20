@@ -100,7 +100,13 @@ namespace MCU_CAN_AV.ViewModels
                     else
                     { IndicatorColor.Color = Avalonia.Media.Colors.Green; }
 
-                    Value = _.ToString("#0.##");
+                    if (Math.Abs(_) > 0.001 || _ == 0.0 )
+                    {
+                        Value = _.ToString("#0.0##");
+                    }
+                    else {
+                        Value = _.ToString("E2");
+                    }
                 });
             });
         }
