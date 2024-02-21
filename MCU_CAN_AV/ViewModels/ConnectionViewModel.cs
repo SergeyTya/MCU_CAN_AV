@@ -19,7 +19,8 @@ namespace MCU_CAN_AV.ViewModels
     public record class ConnectionState(State state) {
         public enum State { 
             Connected,
-            Disconnected
+            Disconnected,
+            Reset
         }
     };
 

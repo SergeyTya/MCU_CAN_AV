@@ -145,10 +145,10 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     if (bits[i] == true)
                     {
                         var res = FaultsList
-                            .Where(x => x.adr == (i + (data.id - 1) * 16))
-                            .Where(x => base.DeviceFaults.IndexOf((IDeviceFault)x) == -1);
+                            .Where(x => x.adr == (i + (data.id - 1) * 16));
+                           // .Where(x => base.DeviceFaults.IndexOf((IDeviceFault)x) == -1);
 
-                        foreach (var x in res) { base.DeviceFaults.Add(res); }
+                        foreach (var x in res) { base._DeviceFault = x ; }
                         if (data.id == 1) {
                             if (i == 0)
                             {
@@ -228,7 +228,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
       
         public override void Reset()
         {
-            base.DeviceFaults.Clear();
+           // base.DeviceFaults.Clear();
             ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
             IDevice.Log("Reset command sent");
 

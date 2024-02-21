@@ -24,7 +24,14 @@ namespace MCU_CAN_AV.ViewModels
 
         public void Receive(ConnectionState message)
         {
-            ConnectionDone = message.state == ConnectionState.State.Connected;
+            if (message.state == ConnectionState.State.Connected) {
+                ConnectionDone = true;
+            }
+
+            if (message.state == ConnectionState.State.Disconnected)
+            {
+                ConnectionDone = false;
+            }
         }
 
     }

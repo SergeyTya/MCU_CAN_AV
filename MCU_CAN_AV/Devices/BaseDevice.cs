@@ -17,7 +17,10 @@ namespace MCU_CAN_AV.Devices
 
         public ObservableCollection<IDeviceParameter> DeviceDescription => IDevice._DeviceDescription;
 
-        public ObservableCollection<IDeviceFault>  DeviceFaults => IDevice._DeviceFaults;
+        // public ObservableCollection<IDeviceFault>  DeviceFaults => IDevice._DeviceFaults;
+
+        public Subject<IDeviceFault> DeviceFaults => IDevice._DeviceFaults;
+        public IDeviceFault _DeviceFault { set { DeviceFaults.OnNext(value); } }
 
         public BehaviorSubject<string> State => IDevice._State;
         internal string _state { set { State.OnNext(value); } }

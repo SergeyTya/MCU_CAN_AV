@@ -71,13 +71,15 @@ namespace MCU_CAN_AV.Devices
         internal static Subject<string>                        _logUpdater            = new();
         internal static IDevice                                _Device                = new BaseDevice();
         internal static ObservableCollection<IDeviceParameter> _DeviceDescription     = new();
-        internal static ObservableCollection<IDeviceFault>     _DeviceFaults          = new();
+       // internal static ObservableCollection<IDeviceFault>     _DeviceFaults          = new();
         internal static BehaviorSubject<string>                _State                 = new("no state");
         internal static BehaviorSubject<bool>                  _Init_stage            = new(true);
         internal static BehaviorSubject<int>                   _Connection_errors_cnt = new(0);
+        internal static Subject<IDeviceFault>                   _DeviceFaults         = new();
 
         public ObservableCollection<IDeviceParameter>          DeviceDescription     { get; }
-        public ObservableCollection<IDeviceFault>              DeviceFaults          { get; }
+       // public ObservableCollection<IDeviceFault>              DeviceFaults          { get; }
+        public Subject<IDeviceFault>                           DeviceFaults          { get; }
         public BehaviorSubject<bool>                           Init_stage            { get; }
         public BehaviorSubject<string>                         State                 { get; }
         public BehaviorSubject<int>                            Connection_errors_cnt { get; }

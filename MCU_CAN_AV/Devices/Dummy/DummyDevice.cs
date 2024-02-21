@@ -17,10 +17,10 @@ namespace MCU_CAN_AV.Devices.Dummy
         bool start = false;
 
         int _err_cnt = 0;
- 
+
 
         public override string Name => "Dummy device";
-      
+
 
         List<ShanghaiDeviceFault> FaultsList = new();
 
@@ -53,9 +53,18 @@ namespace MCU_CAN_AV.Devices.Dummy
         int cnt = 0;
         int reg = 0;
 
+        void post_fault(ShanghaiDeviceFault fault) {
+
+            base._DeviceFault = fault;
+
+        }
+
         public override void Encode(ICAN.RxTxCanData data)
         {
-            
+            post_fault(new ShanghaiDeviceFault { code = 0, name = "DC ok"  });
+            post_fault(new ShanghaiDeviceFault { code = 0, name = "Fault1" });
+            post_fault(new ShanghaiDeviceFault { code = 0, name = "Fault2" });
+
             if (cnt < 5)
             {
 
@@ -69,22 +78,20 @@ namespace MCU_CAN_AV.Devices.Dummy
                     IDevice.Log(cnt.ToString());
                 }
             }
-            else {
+            else
+            {
 
                 if (!fault)
                 {
-                    base.DeviceFaults.Clear();
+                  
                     ((DummyCAN)ICAN.CAN).faultmode = false;
                     ((ShanghaiDeviceParameter)DeviceDescription[0]).Val.OnNext(reg++);
                     ((ShanghaiDeviceParameter)DeviceDescription[1]).Val.OnNext(reg++);
                     ((ShanghaiDeviceParameter)DeviceDescription[2]).Val.OnNext(reg++);
 
-                   if(!start) base._state = DeviceState.Ready;
-                   if(start) base._state = DeviceState.Run;
-                    if (base.DeviceFaults.Count == 0)
-                    {
-                        base.DeviceFaults.Add(new ShanghaiDeviceFault { code = 0, name = "DC ok" });
-                    }
+                    if (!start) base._state = DeviceState.Ready;
+                    if (start) base._state = DeviceState.Run;
+
                 }
                 else
                 {
@@ -93,9 +100,7 @@ namespace MCU_CAN_AV.Devices.Dummy
                     base._Connection_errors_cnt = _err_cnt++;
                     base._state = DeviceState.NoConnect;
 
-                    if (base.DeviceFaults.Count <2) {
-                        base.DeviceFaults.Add( new ShanghaiDeviceFault { code=0, name = "test fault"});
-                    }
+                    post_fault(new ShanghaiDeviceFault { code = 0, name = "fault" });
                 }
 
             }
@@ -103,7 +108,7 @@ namespace MCU_CAN_AV.Devices.Dummy
 
         public override void Close()
         {
-            FaultsList.Clear();   
+            FaultsList.Clear();
             DeviceDescription.Clear();
             FaultsList.Clear();
         }
@@ -112,6 +117,7 @@ namespace MCU_CAN_AV.Devices.Dummy
         {
             fault = !fault;
             start = false;
+           // base.DeviceFaults.Clear();
             IDevice.Log("Reset command");
         }
 
@@ -119,12 +125,14 @@ namespace MCU_CAN_AV.Devices.Dummy
         {
             start = true;
             IDevice.Log("Start command");
+            post_fault(new ShanghaiDeviceFault { code = 0, name = "Run" });
         }
 
         public override void Stop()
         {
-           start = false;
+            start = false;
             IDevice.Log("Stop command");
+            post_fault(new ShanghaiDeviceFault { code = 0, name = "Ready" });
         }
     }
 }

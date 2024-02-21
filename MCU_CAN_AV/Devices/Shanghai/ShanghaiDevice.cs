@@ -67,25 +67,26 @@ namespace MCU_CAN_AV.Devices.Shanghai
                     if (fault_new.code == mes.data[2])
                     {
                        
-                        bool new_fault = true;
-                        foreach (var fault_now in base.DeviceFaults)
-                        {
+                        //bool new_fault = true;
+                        //foreach (var fault_now in base.DeviceFaults)
+                        //{
 
-                            if (((ShanghaiDeviceFault)fault_now).code == fault_new.code)
-                            {
-                                new_fault = false;
-                                //fault_now.Cells[1].Style.BackColor = Color.LightGray;
-                                //isActive_error = true;
-                            }
-                            else
-                            {
-                                // fault_now.Cells[1].Style.BackColor = Color.White;
-                            }
-                        }
-                        if (new_fault)
-                        {
-                            base.DeviceFaults.Add(fault_new);
-                        }
+                        //    if (((ShanghaiDeviceFault)fault_now).code == fault_new.code)
+                        //    {
+                        //        new_fault = false;
+                        //        //fault_now.Cells[1].Style.BackColor = Color.LightGray;
+                        //        //isActive_error = true;
+                        //    }
+                        //    else
+                        //    {
+                        //        // fault_now.Cells[1].Style.BackColor = Color.White;
+                        //    }
+                        //}
+                        //if (new_fault)
+                        //{
+                        //    base.DeviceFaults.Add(fault_new);
+                        //}
+                        base._DeviceFault = fault_new;
 
                     }
                 }
@@ -107,12 +108,12 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
         public override void Close()
         {
-            base.DeviceFaults.Clear();
+          //  base.DeviceFaults.Clear();
         }
 
         public override void Reset()
         {
-            base.DeviceFaults.Clear();
+            //base.DeviceFaults.Clear();
         }
 
         public override void Start()

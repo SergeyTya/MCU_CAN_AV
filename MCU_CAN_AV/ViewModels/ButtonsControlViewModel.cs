@@ -14,7 +14,10 @@ namespace MCU_CAN_AV.ViewModels
     internal partial class ButtonsControlViewModel: ObservableRecipient, IRecipient<ConnectionState>
     {
         [RelayCommand]
-        public void onClickResetButton() => IDevice.GetInstnce()?.Reset();
+        public void onClickResetButton() {
+            Messenger.Send(new ConnectionState(ConnectionState.State.Reset));
+            IDevice.GetInstnce()?.Reset(); 
+        }
         [RelayCommand]
         public void onClickStartButton() => IDevice.GetInstnce()?.Start();
         [RelayCommand]

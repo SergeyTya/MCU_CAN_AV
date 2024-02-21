@@ -34,14 +34,26 @@
 			Margin="0"
 			AutoGenerateColumns="False" IsReadOnly="True"
 			GridLinesVisibility="All"
+			SelectionMode="Single"
+			IsHitTestVisible="False"	  
 			BorderThickness="1" BorderBrush="Gray">
 			<DataGrid.Columns>
-				<DataGridTextColumn
-					Header="Faults list"
-					Binding="{Binding Name}"
-					Width="1*"
-					Foreground="Red"
-						/>
+
+				<DataGridTemplateColumn Header="Faults" Width="0.3*" IsReadOnly="True">
+				<DataGridTemplateColumn.CellTemplate>
+					<DataTemplate DataType="vm:FaultRecord">
+						<Panel>
+							<TextBlock
+								Text="{Binding Name}"
+								TextAlignment="Center"
+								VerticalAlignment="Center"
+								Foreground="{Binding FaultColor}"
+								/>
+						</Panel>
+					</DataTemplate>
+				</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>
