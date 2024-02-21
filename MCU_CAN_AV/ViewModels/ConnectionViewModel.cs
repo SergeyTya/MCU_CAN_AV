@@ -26,16 +26,7 @@ namespace MCU_CAN_AV.ViewModels
     internal partial class ConnectionViewModel : ObservableRecipient
     {
         
-        public ConnectionViewModel() {
-          
-            foreach (var item in ParameterItems)
-            {
-                // Kostyli!
-                item.disposable?.Dispose();
-                item.disposable = item.Valid.Subscribe((_) => ClickConnectCommand.NotifyCanExecuteChanged());
-            }
-
-        }
+     
 
         public static CANInitStruct InitStruct = new CANInitStruct();
 
@@ -128,15 +119,29 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         private string _logText = " ";
 
+        [ObservableProperty]
+        private DeviceType _deviceSelected;
+
+        public ConnectionViewModel()
+        {
+
+            foreach (var item in ParameterItems)
+            {
+                item.disposable?.Dispose();
+                item.disposable = item.Valid.Subscribe((_) => ClickConnectCommand.NotifyCanExecuteChanged());
+            }
+
+            DeviceSelected = DeviceType.Dummy;
+            DeviceSelected = DeviceType.EVMModbus;
+        }
+
         partial void OnLogTextChanged(string? oldValue, string newValue)
         {
             // property changed event
             if (LogRowCount++ > 100) { LogRowCount = 0; _logText = "";  }
         }
 
-        [ObservableProperty]
-        private DeviceType _deviceSelected = DeviceType.EVMModbus;
-
+       
         partial void OnDeviceSelectedChanged(DeviceType value)
         {
             foreach (var item in ParameterItems)

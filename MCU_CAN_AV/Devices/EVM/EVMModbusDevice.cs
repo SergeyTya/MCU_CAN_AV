@@ -29,6 +29,15 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
     {
         static List<EVMModbusTCPDeviceFault> FaultsList = new();
 
+
+        public override void Close()
+        {
+
+            FaultsList.Clear();
+            DeviceDescription.Clear();
+            base._Init_stage = true;
+        }
+
         string _name = "no name";
         int _err_cnt = 0;
 
@@ -47,11 +56,53 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
 
             Task.Run(async () => {
+
+                await Task.Delay(500);
+
                 var ret_val = await ModbusTCP.getDevId(
                                server_name: InitStruct.server_name,
                                server_port: InitStruct.server_port,
                                modbus_id: InitStruct._devind
                     ).ConfigureAwait(false);
+
+                if (ret_val.IndexOf("Time out") != -1) {
+                    throw new Exception("Timeout");
+                }
+
+                //await Task.Delay(500);
+
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                Task.Run(async () =>
+                {
+
+                    var res = await ModbusTCP.ReadRegistersInfoAsync(
+                                       server_name: InitStruct.server_name,
+                                       server_port: InitStruct.server_port,
+                                       modbus_id: InitStruct._devind
+                                       ).ConfigureAwait(false);
+                    return res;
+                }).ToObservable().Take(1).Subscribe(
+                    (_) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            EncodeDeviceDescription(_);
+                        });
+                    },
+                    exeption => {
+                        ICAN.LogUpdater.OnNext(exeption.Message);
+
+                    },
+                    () => {
+                        stopwatch.Stop();
+                        IDevice.Log($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            base._Init_stage = false;
+                        });
+                    }
+                );
 
                 return ret_val;
 
@@ -59,40 +110,9 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                (value) => { 
                    _name = value.Trim('\0'); 
                },
-               exeption => { ICAN.LogUpdater.OnNext(exeption.Message); },
+               exeption => { ICAN.LogUpdater.OnNext(exeption.Message); base._Init_stage = true; },
                () => { }
             );
-
-
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            Task.Run(async () =>
-            {
-               
-                var res = await ModbusTCP.ReadRegistersInfoAsync(
-                                   server_name: InitStruct.server_name,
-                                   server_port: InitStruct.server_port,
-                                   modbus_id: InitStruct._devind
-                                   ).ConfigureAwait(false);
-                return res;
-            }).ToObservable().Take(1).Subscribe(
-                (_) =>
-                {
-                    Dispatcher.UIThread.Post(() =>
-                    {   
-                        EncodeDeviceDescription(_);
-                    });
-                },
-                exeption => { 
-                    ICAN.LogUpdater.OnNext(exeption.Message); 
-                },
-                () => {
-                    stopwatch.Stop();
-                    IDevice.Log($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
-                    base._Init_stage = false;
-                    }
-            );
-
 
             try
             {
@@ -104,6 +124,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             {
                 ICAN.LogUpdater.OnNext(e.Message);
             }
+
         }
         public override void Encode(ICAN.RxTxCanData data)
         {
@@ -190,6 +211,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                                     break;
                             }
 
+
                             if (item._val != ret_val)
                             {
                                 item.Val.OnNext(ret_val);
@@ -203,12 +225,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
         public override string Name { get{ return _name; } }
 
-        public override void Close()
-        {
-            FaultsList.Clear();
-        }
-
-
+      
         public override void Reset()
         {
             base.DeviceFaults.Clear();
@@ -232,16 +249,16 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         void EncodeDeviceDescription(List<byte[]> data)
         {
             // skip firs 3 items
-            for (uint i = 3; i < data.Count; i++)
+            for (uint i = 0; i < data.Count; i++)
             {
+                if (i == 1 || i == 2) continue; 
 
                 var RXbuf = data[(int)i];
 
                 if (RXbuf[7] != 27)
                 {
-
-                    ICAN.LogUpdater.OnNext($"Holding info response error FC = {RXbuf[7]}");
-                    return;
+                    //  IDevice.Log($"Holding info response error FC = {RXbuf[7]}");
+                    throw new Exception("Holding encode error");
                 }
                 UInt32 hl_adr = BitConverter.ToUInt16(RXbuf.ToArray(), 9);
                 UInt32 adr = BitConverter.ToUInt32(RXbuf.ToArray(), 10);
@@ -253,8 +270,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 var isRO = RXbuf[16];
 
                 string info = Encoding.UTF8.GetString(RXbuf.ToList().GetRange(17, RXbuf[5] - 11).ToArray());
-             //   ICAN.LogUpdater.OnNext(String.Format("HR Info = {0}", info) + " \n");
-
+             
                 var tmp = new EVMModbusTCPDeviceParametr(
                             _ID: i.ToString(),
                             _Name: info,
@@ -275,6 +291,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 }
 
                 base.DeviceDescription.Add(tmp);
+                IDevice.Log($"<- ID [{tmp.ID}] Info [ {tmp.Name}]" );
             }
         }
 
@@ -337,11 +354,10 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     .GroupBy(_ => count++ / 2)
                     .Select(v => new ICAN.RxTxCanData((_ids[id++]), v.ToArray()));
 
-                foreach (var item in buf)
+               foreach (var item in buf)
                 {
                     ICAN.TxUpdater.OnNext(item);
                 };
-                _val = 0;
             }
         }
 

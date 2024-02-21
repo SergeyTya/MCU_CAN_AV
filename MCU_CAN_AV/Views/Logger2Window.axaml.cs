@@ -32,7 +32,7 @@ namespace MCU_CAN_AV.Views
             this.Name = Name;
             InitializeComponent();
             this.Title = Name;
-
+          
             this.Closed += (_,__) => {
                 _Is_Alive = false;
                 this.Close();
@@ -44,7 +44,8 @@ namespace MCU_CAN_AV.Views
                 avaPlot_Scope, 
                 channel_cnt: 1, 
                 span:10.0, 
-                ts: time_step
+                ts: time_step,
+                name: Name
             );
 
             Observable.Interval(TimeSpan.FromSeconds(time_step)).Subscribe(x => {

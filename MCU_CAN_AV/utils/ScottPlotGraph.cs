@@ -6,10 +6,12 @@ using ScottPlot.Drawing.Colormaps;
 using System;
 
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace utils
 {
@@ -22,10 +24,18 @@ namespace utils
         private readonly DispatcherTimer _renderTimer;
         public ScopeChannels ScopeChannels;
         static double Ts = 0.001;
-    
-        public ScottPlotGraph(AvaPlot ScopeView, int channel_cnt=1, double span = 1.0, double ts = 0.001) {
+        string Name;
+
+        public ScottPlotGraph(
+            AvaPlot ScopeView,
+            int channel_cnt = 1,
+            double span = 1.0,
+            double ts = 0.001,
+            string? name = null
+            ) {
             Ts = ts;
             this.ScopeView = ScopeView;
+            Name = name;
 
             int data_lenght = (int) (span/ ts);
             ScopeChannels = new ScopeChannels(1);
@@ -36,11 +46,13 @@ namespace utils
             _renderTimer.Interval = TimeSpan.FromMilliseconds(300);
             _renderTimer.Tick += Render;
             _renderTimer.Start();
+           
         }
 
         private void Render(object sender, EventArgs e)
         {
             ScopeView.Refresh();
+            ScopeView.Plot.AxisAutoY(margin: 0.5);
         }
 
         private void RebuildScope(int channel_cnt, int data_lenght) {
@@ -59,7 +71,7 @@ namespace utils
                 plt1.LineWidth = 1;
             }
             ScopeView.Plot.XAxis.TickLabelFormat(customTickFormatter);
-            ScopeView.Plot.AxisAutoY(margin: 0);
+            ScopeView.Plot.Title(Name);
         }
 
         static string customTickFormatter(double position)

@@ -68,8 +68,9 @@ namespace MCU_CAN_AV.Can.ModbusTCP
         {
             Task.Run(async () => {
                 ServerModbusTCP tmp = new ServerModbusTCP(server_name, (int)server_port);
-                tmp.Timeout = 1000;
-                await tmp.WriteHoldingsAsync((int)modbus_id, (byte)data.id, new ushort[]{BitConverter.ToUInt16(data.data.ToArray(), 0) });
+                //     tmp.Timeout = 1000;
+                ushort[] tmp_us = new ushort[] { BitConverter.ToUInt16(data.data.ToArray(), 0) };
+                await tmp.WriteHoldingsAsync((int)modbus_id, (byte)data.id, tmp_us);
             });
         }
 
@@ -83,9 +84,10 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             
             if (RXbuf[7] != 26)
             {
-                var str = String.Format("Holding count response error FC = {0}", RXbuf[7]);
-                ICAN.LogUpdater.OnNext(str);
-                return 0;
+                //var str = String.Format("Holding count response error FC = {0}", RXbuf[7]);
+                //ICAN.LogUpdater.OnNext(str);
+                //return 0;
+                throw new Exception("Reading registers count - Timeout ");
             }
 
             int hreg_count = RXbuf[9] + (RXbuf[8] << 8);
@@ -96,7 +98,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         public static async Task<List<byte[]>> ReadRegistersInfoAsync(string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
         {
-
+            await Task.Delay(300);
             /**
             *   27 function - Get register info
 
@@ -139,6 +141,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                     ICAN.LogUpdater.OnNext($"   Register {i} info readed  - {stopwatch.ElapsedMilliseconds} ms");
                 }
                 tmp.close();
+
                 return deviceParameters;
             }
             finally
@@ -198,6 +201,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 try {
                     var res = await ReadHRsAsync(reg_count, server_name, server_port, modbus_id).ConfigureAwait(false);
                    // await Task.Delay(1000);
+
                     return res;
                 }
                 finally { 

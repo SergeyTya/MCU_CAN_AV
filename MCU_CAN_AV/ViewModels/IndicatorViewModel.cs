@@ -20,6 +20,7 @@ namespace MCU_CAN_AV.ViewModels
         public IndicatorViewModel()
         {
             Messenger.RegisterAll(this);
+            IndicatorsList = new();
         }
 
         [ObservableProperty]
@@ -30,8 +31,8 @@ namespace MCU_CAN_AV.ViewModels
            
             if (message.state == ConnectionState.State.Connected)
             {
-                IndicatorsList = new();
-                foreach (var item in IDevice.GetInstnce().DeviceDescription)
+                var tmp = IDevice.GetInstnce().DeviceDescription;
+                foreach (var item in tmp)
                 {
                     IndicatorsList.Add(new IndicatorTemplate(item));
                 }
@@ -45,9 +46,7 @@ namespace MCU_CAN_AV.ViewModels
                         item.Dispose();
                     }
                     IndicatorsList?.Clear();
-
-                }
-                
+                } 
             }
         }
     }
@@ -75,7 +74,7 @@ namespace MCU_CAN_AV.ViewModels
         public IndicatorTemplate(IDeviceParameter Item)
         {
             
-            string unit = Item.Unit is null ? "" : $", {Item.Unit}";
+            string unit = (Item.Unit == null) || (Item.Unit == string.Empty) ? "" : $", {Item.Unit}";
             Name = $"{Item.Name}{unit}";
             IsReadWrite = Item.IsReadWrite;
             Dispatcher.UIThread.Post(() => IndicatorColor = new(Avalonia.Media.Colors.Black, 0.2));

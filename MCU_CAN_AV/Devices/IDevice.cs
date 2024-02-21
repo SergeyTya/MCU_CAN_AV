@@ -150,8 +150,8 @@ namespace MCU_CAN_AV.Devices
                           IDevice._logUpdater.OnNext(_);
                       });
 
-            _DeviceDescription.Clear();
-            _DeviceFaults.Clear();
+            //_DeviceDescription.Clear();
+            //_DeviceFaults.Clear();
 
             switch (device)
             {
