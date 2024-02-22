@@ -2,12 +2,14 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using Avalonia.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.utils;
+using Splat;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -18,7 +20,10 @@ namespace MCU_CAN_AV.ViewModels
         {
             Messenger.RegisterAll(this);
             disposable_log?.Dispose();
-            disposable_log = StaticLogger.Subscribe((_) => LogText += _);
+            //  disposable_log = StaticLogger.Subscribe((_) => LogText += _);
+
+            var log = Locator.Current.GetService<ILogService>();
+            disposable_log = log?.GetObservable.Subscribe((_) => LogText += _);
         }
 
         [ObservableProperty]

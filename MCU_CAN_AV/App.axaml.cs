@@ -1,10 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Logging;
 using Avalonia.Markup.Xaml;
 using MCU_CAN_AV.utils;
 using MCU_CAN_AV.ViewModels;
 using MCU_CAN_AV.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Splat;
 using System;
 
 
@@ -29,9 +31,14 @@ public partial class App : Application
             var services = new ServiceCollection();
 
             services.AddSingleton<IFilesService>(x => new FilesService(desktop.MainWindow));
-           
 
-            Services = services.BuildServiceProvider();
+            // https://jamilgeor.com/handling-errors-with-xamarin-forms-and-reactiveui/
+            // https://habr.com/ru/articles/457164/
+
+            var logger = new LogService() { Level = LogLevel.Debug };
+
+            Locator.CurrentMutable.RegisterConstant((ILogger)     logger, typeof(ILogger));
+            Locator.CurrentMutable.RegisterConstant((ILogService) logger, typeof(ILogService));
 
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)

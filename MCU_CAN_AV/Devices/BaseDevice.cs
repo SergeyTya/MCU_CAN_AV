@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reactive;
 using static MCU_CAN_AV.ViewModels.ConnectionState;
+using Splat;
 
 namespace MCU_CAN_AV.Devices
 {
@@ -55,7 +56,8 @@ namespace MCU_CAN_AV.Devices
             throw new NotImplementedException();
         }
 
-        public virtual void Close() {  
+        public virtual void Close() 
+        {  
             throw new NotImplementedException(); 
         }
 

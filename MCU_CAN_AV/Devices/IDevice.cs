@@ -4,6 +4,7 @@ using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices.Dummy;
 using MCU_CAN_AV.Devices.EVM_DIAG;
 using MCU_CAN_AV.Devices.Shanghai;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -230,6 +231,9 @@ namespace MCU_CAN_AV.Devices
         public static void Log(string message)
         {
             _logUpdater.OnNext(message);
+
+            var log = Locator.Current.GetService<ILogger>();
+            log?.Write(message, LogLevel.Debug);
         }
 
     }
