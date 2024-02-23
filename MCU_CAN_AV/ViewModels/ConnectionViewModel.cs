@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.utils;
 using ReactiveUI;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +26,7 @@ namespace MCU_CAN_AV.ViewModels
         }
     };
 
-    internal partial class ConnectionViewModel : ObservableRecipient
+    internal partial class ConnectionViewModel : ObservableRecipient, IEnableLogger
     {
         
      
@@ -212,8 +213,10 @@ namespace MCU_CAN_AV.ViewModels
 
             // Subscribe log window to logger eventualy
             disposable_log?.Dispose();
-            disposable_log = StaticLogger.Subscribe(
-            
+
+            var logProvider = Locator.Current.GetService<ILogProvider>();
+            disposable_log = logProvider?.GetObservable.Subscribe(
+
             (_) =>
             {
                LogText +=_;
@@ -223,26 +226,19 @@ namespace MCU_CAN_AV.ViewModels
             foreach (var item in ParameterItems)
             {
                 //  item.disposable?.Dispose();
-                StaticLogger.Log( $"  {item.Name}= {item.TextInput}" );
+               this.Log().Info( $"  {item.Name}= {item.TextInput}" );
             }
 
-            // One time Subscribe to device logger observable 
-            if(disposable_logDevice == null) disposable_logDevice = IDevice.SubscribeToLogger((_) => StaticLogger.Log(_));
-
-            // Create user reqested device
+            // Create user requested device
             IDevice.Create( DeviceSelected, InitStruct );
 
             // Wait for connection done    
-            disposable_init = IDevice.GetInstnce()?.Init_stage.Subscribe(
+            disposable_init = IDevice.Current?.Init_stage.Subscribe(
                (_) =>
                {
                    isConnectionDone = _;
                    if (!_) {
                        Messenger.Send(new ConnectionState(ConnectionState.State.Connected));
-                     
-
-                       disposable_init?.Dispose();
-                       disposable_log.Dispose();
                        disposable_init?.Dispose();
                    }
                    

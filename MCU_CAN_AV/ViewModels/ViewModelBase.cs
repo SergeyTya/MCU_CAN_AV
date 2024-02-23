@@ -11,7 +11,6 @@ public partial class ViewModelBase : ObservableObject
     public bool _isConnectionDone = true;
  
     public ViewModelBase() {
-        Debug.WriteLine("ViewModelBase ");
     }
 
 

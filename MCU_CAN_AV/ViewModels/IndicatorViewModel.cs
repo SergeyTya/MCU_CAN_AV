@@ -31,7 +31,7 @@ namespace MCU_CAN_AV.ViewModels
            
             if (message.state == ConnectionState.State.Connected)
             {
-                var tmp = IDevice.GetInstnce().DeviceDescription;
+                var tmp = IDevice.Current.DeviceDescription;
                 foreach (var item in tmp)
                 {
                     IndicatorsList.Add(new IndicatorTemplate(item));

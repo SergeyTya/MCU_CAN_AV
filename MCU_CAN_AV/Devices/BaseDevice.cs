@@ -10,32 +10,56 @@ using System.Threading.Tasks;
 using System.Reactive;
 using static MCU_CAN_AV.ViewModels.ConnectionState;
 using Splat;
+using ReactiveUI;
+using System.Reactive.Disposables;
 
 namespace MCU_CAN_AV.Devices
 {
-    internal class BaseDevice : IDevice
+    internal class BaseDevice : IDevice, IEnableLogger
     {
+        internal readonly ICAN _CAN;
 
-        public ObservableCollection<IDeviceParameter> DeviceDescription => IDevice._DeviceDescription;
+        internal ObservableCollection<IDeviceParameter> _DeviceDescription = new();
+        
+        internal BehaviorSubject<string> _State = new("no state");
+        
+        internal BehaviorSubject<bool> _init_stage = new(true);
+        
+        internal BehaviorSubject<int> _connection_errors_cnt = new(0);
+        
+        internal Subject<IDeviceFault> _DeviceFaults = new();
+
+        static IDisposable? Rxlistener;
+
+        public BaseDevice(ICAN CAN)
+        {
+
+            _CAN = CAN;
+            Rxlistener = CAN.RxObservable.Subscribe((_) => Encode(_));
+        }
+
+        public ObservableCollection<IDeviceParameter> DeviceDescription => _DeviceDescription;
 
         // public ObservableCollection<IDeviceFault>  DeviceFaults => IDevice._DeviceFaults;
 
-        public Subject<IDeviceFault> DeviceFaults => IDevice._DeviceFaults;
-        public IDeviceFault _DeviceFault { set { DeviceFaults.OnNext(value); } }
+        public IObservable<IDeviceFault> DeviceFaults => _DeviceFaults;
+        public IDeviceFault _DeviceFault { set { _DeviceFaults.OnNext(value); } }
 
-        public BehaviorSubject<string> State => IDevice._State;
-        internal string _state { set { State.OnNext(value); } }
+        public IObservable<string> State => _State;
+        internal string _state { set { _State.OnNext(value); } }
 
-        BehaviorSubject<bool> IDevice.Init_stage => IDevice._Init_stage;
-        internal bool _Init_stage { set { IDevice._Init_stage.OnNext(value); } }
+        IObservable<bool> IDevice.Init_stage => _init_stage;
+        internal bool _Init_stage { set { _init_stage.OnNext(value); } }
 
-        public BehaviorSubject<int> Connection_errors_cnt => IDevice._Connection_errors_cnt;
+        public IObservable<int> Connection_errors_cnt => _connection_errors_cnt;
 
-        public int _Connection_errors_cnt { set { Connection_errors_cnt.OnNext(value); } }
+        public int _Connection_errors_cnt { set { _connection_errors_cnt.OnNext(value); } }
+
+
 
         public virtual string Name => throw new NotImplementedException();
 
-      
+
         public virtual void Encode(ICAN.RxTxCanData data)
         {
             throw new NotImplementedException();
@@ -56,9 +80,17 @@ namespace MCU_CAN_AV.Devices
             throw new NotImplementedException();
         }
 
-        public virtual void Close() 
-        {  
-            throw new NotImplementedException(); 
+        public virtual void Close_instance()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void Close()
+        {
+            Close_instance();
+            Rxlistener?.Dispose();
+            _CAN.Close();
         }
 
     }

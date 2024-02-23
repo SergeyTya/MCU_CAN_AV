@@ -51,7 +51,7 @@ namespace MCU_CAN_AV.ViewModels
                 {
                     // _clear();
                     Rows = new();
-                    foreach (var item in IDevice.GetInstnce().DeviceDescription)
+                    foreach (var item in IDevice.Current.DeviceDescription)
                     {
                         if (item.IsReadWrite) Rows.Add(new RowTemplate(item));
                     }

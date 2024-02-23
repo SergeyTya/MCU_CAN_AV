@@ -16,12 +16,12 @@ namespace MCU_CAN_AV.ViewModels
         [RelayCommand]
         public void onClickResetButton() {
             Messenger.Send(new ConnectionState(ConnectionState.State.Reset));
-            IDevice.GetInstnce()?.Reset(); 
+            IDevice.Current?.Reset(); 
         }
         [RelayCommand]
-        public void onClickStartButton() => IDevice.GetInstnce()?.Start();
+        public void onClickStartButton() => IDevice.Current?.Start();
         [RelayCommand]
-        public void onClickStopButton() => IDevice.GetInstnce()?.Stop();
+        public void onClickStopButton() => IDevice.Current?.Stop();
 
 
         public ButtonsControlViewModel()

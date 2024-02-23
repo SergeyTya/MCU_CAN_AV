@@ -13,11 +13,6 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
-  
-  <ItemGroup>
-    <None Remove="Models\bqh0h2vv.epo~" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
@@ -30,6 +25,9 @@
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ScottPlot.Avalonia" Version="4.1.70" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Sinks.Observable" Version="2.0.3-dev-00712" />
+    <PackageReference Include="Splat.Serilog" Version="14.8.12" />
     <PackageReference Include="System.Reactive" Version="6.0.1-preview.1" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   </ItemGroup>

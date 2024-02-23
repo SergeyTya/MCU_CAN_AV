@@ -3,9 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
 using MCU_CAN_AV.Can;
+using MCU_CAN_AV.Devices.EVM_DIAG;
 using MCU_CAN_AV.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Splat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,11 +21,12 @@ using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.Devices.Shanghai
 {
-    internal class ShanghaiDevice : BaseDevice
+    internal class ShanghaiDevice : BaseDevice, IEnableLogger
     {
         static List<ShanghaiDeviceFault> FaultsList = new();
 
-        public ShanghaiDevice() {
+        public ShanghaiDevice(ICAN CAN):base(CAN) {
+            this.Log().Info($"New {nameof(ShanghaiDevice)} connection ");
             InitDeviceDescription();
         }
 
@@ -106,7 +109,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             return ret;
         }
 
-        public override void Close()
+        public override void Close_instance()
         {
           //  base.DeviceFaults.Clear();
         }
@@ -156,7 +159,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             }
         }
 
-        internal class ShanghaiDeviceFault : IDeviceFault
+        internal class ShanghaiDeviceFault : IDeviceFault, IEnableLogger
         {
             public string ID => code.ToString();
 
@@ -169,7 +172,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             internal string name;
         }
 
-        internal class ShanghaiDeviceParameter : IDeviceParameter
+        internal class ShanghaiDeviceParameter : IDeviceParameter, IEnableLogger
         {
 
             public ShanghaiDeviceParameter() {
@@ -178,12 +181,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             public void writeValue(double value)
             {
-                Task.Run(async () =>
-                {
-                    await Task.Delay(2000);
-                    ICAN.LogUpdater.OnNext($"{ID} <- {value.ToString()} ");
-                    Val.OnNext(value);
-                });
+               
                
             }
 

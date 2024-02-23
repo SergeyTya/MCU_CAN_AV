@@ -44,32 +44,39 @@ namespace MCU_CAN_AV.ViewModels
                 {
                     //DeviceFaults = IDevice.GetInstnce().DeviceFaults;
 
-                    _disposed = IDevice.GetInstnce().State.Subscribe((_) => {
-                        State = _;
-                        if (_ == DeviceState.Run) { IndicatorColor.Color = Colors.Green; }
-                        if (_ == DeviceState.Fault) { IndicatorColor.Color = Colors.Red; }
-                        if (_ == DeviceState.Ready) { IndicatorColor.Color = Colors.Blue; }
-                        if (_ == DeviceState.NoConnect) { IndicatorColor.Color = Colors.DimGray; }
+                    _disposed = IDevice.Current.State.Subscribe((_) => {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            State = _;
+                            if (_ == DeviceState.Run) { IndicatorColor.Color = Colors.Green; }
+                            if (_ == DeviceState.Fault) { IndicatorColor.Color = Colors.Red; }
+                            if (_ == DeviceState.Ready) { IndicatorColor.Color = Colors.Blue; }
+                            if (_ == DeviceState.NoConnect) { IndicatorColor.Color = Colors.DimGray; }
+                        });
                     });
 
                     disposable?.Dispose();
-                    disposable = IDevice.GetInstnce().DeviceFaults.Subscribe((_) =>
+                    disposable = IDevice.Current.DeviceFaults.Subscribe((_) =>
                     {
-                        bool new_fault = true;
-                        foreach (var el in DeviceFaults)
+                        Dispatcher.UIThread.Post(() =>
                         {
-                            if (el.Name == _.Name)
+                            bool new_fault = true;
+                            foreach (var el in DeviceFaults)
                             {
-                                el.FaultColor.Color = Colors.Red;
-                                new_fault = false;
-                          
-                            }
-                        }
+                                if (el == null) continue;
+                                if (el.Name == _.Name)
+                                {
+                                    el.FaultColor.Color = Colors.Red;
+                                    new_fault = false;
 
-                        if (new_fault)
-                        {
-                            DeviceFaults.Insert(0, new FaultRecord(_.Name));
-                        }
+                                }
+                            }
+
+                            if (new_fault)
+                            {
+                                DeviceFaults.Insert(0, new FaultRecord(_.Name));
+                            }
+                        });
 
                     });
 
@@ -99,7 +106,6 @@ namespace MCU_CAN_AV.ViewModels
         bool disposed = false;
         public FaultRecord(string Name) {
 
-            FaultColor = new SolidColorBrush(Colors.Red);
             this.Name = Name;
 
             Task.Run(async () =>
@@ -109,7 +115,8 @@ namespace MCU_CAN_AV.ViewModels
                     await Task.Delay(1000);
                     Dispatcher.UIThread.Post(() =>
                     {
-                        if(expired++ == 3)
+                        FaultColor = new SolidColorBrush(Colors.Red);
+                        if (expired++ == 3)
                         {
                             if(FaultColor!=null) FaultColor.Color = Colors.Gray;
                         }   
@@ -127,7 +134,7 @@ namespace MCU_CAN_AV.ViewModels
         string _name;
 
         [ObservableProperty]
-        SolidColorBrush _faultColor;
+        SolidColorBrush _faultColor = new SolidColorBrush(Colors.Red);
 
         partial void OnFaultColorChanged(SolidColorBrush value)
         {

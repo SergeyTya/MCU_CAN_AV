@@ -7,35 +7,28 @@ using static MCU_CAN_AV.Can.ICAN;
 
 namespace MCU_CAN_AV.Can
 {
-    internal class DummyCAN : ICAN
+    internal class DummyCAN : BaseCAN
     {
         public bool faultmode = false;
-        CANInitStruct _initStructure;
-
-        public DummyCAN(CANInitStruct InitStructure) {
-            this._initStructure = InitStructure;
-        }  
-
-        public ICAN.CANInitStruct InitStructure => _initStructure;
+      
+        public DummyCAN(CANInitStruct InitStructure) : base(InitStructure) { }
 
         public void CloseConnection()
         {
             throw new NotImplementedException();
         }
 
-        public bool isOpen()
-        {
-            return true;
-        }
+        public override bool isOpen { get => true; }
+        
 
-        public void Receive()
+        public override RxTxCanData[]? Receive()
         {
             if (!faultmode)
             {
-                ICAN.RxUpdater.OnNext(new ICAN.RxTxCanData(2, new byte[1] { 0 }));
+                return new RxTxCanData[] { new RxTxCanData(2, new byte[1] { 0 }) };
             }
             else {
-                ICAN.RxUpdater.OnNext((new ICAN.RxTxCanData{Timeout = true}));
+                return new RxTxCanData[] { new ICAN.RxTxCanData { Timeout = true } };
             }
         }
 
@@ -44,7 +37,7 @@ namespace MCU_CAN_AV.Can
             throw new NotImplementedException();
         }
 
-        public void Close()
+        public override void Close_instance()
         {
             
         }

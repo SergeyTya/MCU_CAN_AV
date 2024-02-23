@@ -8,7 +8,11 @@ using MCU_CAN_AV.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Splat;
 using System;
-
+using Splat.Serilog;
+using Serilog;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Globalization;
 
 namespace MCU_CAN_AV;
 
@@ -32,13 +36,24 @@ public partial class App : Application
 
             services.AddSingleton<IFilesService>(x => new FilesService(desktop.MainWindow));
 
-            // https://jamilgeor.com/handling-errors-with-xamarin-forms-and-reactiveui/
+
+            //// https://jamilgeor.com/handling-errors-with-xamarin-forms-and-reactiveui/
+            //// https://www.codeproject.com/Articles/5357417/LogViewer-Control-for-WinForms-WPF-and-Avalonia-in#solution-setup
+            //https://libraries.io/nuget/Splat.Microsoft.Extensions.Logging/8.2.4
+            //https://www.youtube.com/watch?v=nVAkSBpsuTk
             // https://habr.com/ru/articles/457164/
 
-            var logger = new LogService() { Level = LogLevel.Debug };
+            Locator.CurrentMutable.RegisterConstant(new LogProvider(), typeof(ILogProvider));
 
-            Locator.CurrentMutable.RegisterConstant((ILogger)     logger, typeof(ILogger));
-            Locator.CurrentMutable.RegisterConstant((ILogService) logger, typeof(ILogService));
+            Log.Logger = new LoggerConfiguration()
+                 .WriteTo.Observers(events => events.Do(evt =>{
+                     Locator.Current.GetService<ILogProvider>()?.Post(
+                     $"   {evt.Timestamp.LocalDateTime} :   [ {evt.Level} ]  {evt.MessageTemplate.Text} \n"
+                         );
+                 }).Subscribe())
+            .CreateLogger();
+
+            Locator.CurrentMutable.UseSerilogFullLogger();
 
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)

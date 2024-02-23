@@ -12,7 +12,6 @@ using MCU_CAN_AV.ViewModels;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System;
-using MCU_CAN_AV.Models;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Collections.Generic;

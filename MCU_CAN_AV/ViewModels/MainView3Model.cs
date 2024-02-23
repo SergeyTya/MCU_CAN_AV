@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Avalonia.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -11,6 +12,7 @@ using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.utils;
 using Splat;
 
+
 namespace MCU_CAN_AV.ViewModels
 {
     public partial class MainView3Model : ObservableRecipient, IRecipient<ConnectionState>
@@ -19,11 +21,9 @@ namespace MCU_CAN_AV.ViewModels
         public MainView3Model()
         {
             Messenger.RegisterAll(this);
-            disposable_log?.Dispose();
-            //  disposable_log = StaticLogger.Subscribe((_) => LogText += _);
 
-            var log = Locator.Current.GetService<ILogService>();
-            disposable_log = log?.GetObservable.Subscribe((_) => LogText += _);
+            //  disposable_log = StaticLogger.Subscribe((_) => LogText += _);
+   
         }
 
         [ObservableProperty]
@@ -45,18 +45,35 @@ namespace MCU_CAN_AV.ViewModels
         {
             if (message.state == ConnectionState.State.Connected)
             {
-                DeviceName = IDevice.GetInstnce().Name;
+                disposable_log?.Dispose();
+                var logProvider = Locator.Current.GetService<ILogProvider>();
+                disposable_log = logProvider?.GetObservable.Subscribe((_) => LogText += _);
+
+
+                DeviceName = IDevice.Current.Name;
 
                 disposable_errcnt?.Dispose();
-                disposable_errcnt = IDevice.GetInstnce().Connection_errors_cnt.Subscribe((_) => Error_cnt = _ );
+                disposable_errcnt = IDevice.Current.Connection_errors_cnt.Subscribe((_) => Error_cnt = _ );
 
                 connected();
             }
         }
 
         void connected() {
-            IDevice? inst = IDevice.GetInstnce();
+            IDevice? inst = IDevice.Current;
             DeviceParameters = inst.DeviceDescription;
+        }
+
+
+        private static IObservable<string?> ConsoleInput()
+        {
+            return
+                Observable
+                    .FromAsync(() => Console.In.ReadLineAsync())
+                    .Repeat()
+                    .Publish()
+                    .RefCount()
+                    .SubscribeOn(Scheduler.Default);
         }
     }
 

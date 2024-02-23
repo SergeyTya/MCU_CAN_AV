@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.utils
 {
-    public interface ILogService
+    public interface ILogProvider
     {
-       IObservable<string> GetObservable { get; }
+        public IObservable<string> GetObservable { get; }
+
+        public void Post(string ? message);
 
     }
 }

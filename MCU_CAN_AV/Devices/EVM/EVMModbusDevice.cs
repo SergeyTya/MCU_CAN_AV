@@ -6,31 +6,30 @@ using MCU_CAN_AV.Can.ModbusTCP;
 using MCU_CAN_AV.Properties;
 using MCU_CAN_AV.utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ReactiveUI;
+using Splat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using static AsyncSocketTest.ServerModbusTCP;
-using static MCU_CAN_AV.Devices.Shanghai.ShanghaiDevice;
-using static SkiaSharp.HarfBuzz.SKShaper;
+
 
 namespace MCU_CAN_AV.Devices.EVM_DIAG
 {
-    internal class EVMModbusDevice : BaseDevice
+    internal class EVMModbusDevice : BaseDevice, IEnableLogger
     {
         static List<EVMModbusTCPDeviceFault> FaultsList = new();
+        static Subject<ICAN.RxTxCanData> TxObservable = new();
 
-
-        public override void Close()
+        public override void Close_instance()
         {
 
             FaultsList.Clear();
@@ -40,19 +39,18 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
         string _name = "no name";
         int _err_cnt = 0;
+        IDisposable? TxDisposable;
 
-        ICAN.CANInitStruct InitStruct;
-
-        public EVMModbusDevice(ICAN.CANInitStruct InitStruct)
+        public EVMModbusDevice(ICAN CAN):base(CAN)
         {
+            this.Log().Info($"New {nameof(EVMModbusDevice)} connection ");
             _err_cnt = 0;
-            this.InitStruct = InitStruct;
-            Init(InitStruct);
+            Init(_CAN.InitStructure);
         }
 
         void Init(ICAN.CANInitStruct InitStruct)
         {
-            IDevice.Log($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
+            this.Log().Info($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
 
 
             Task.Run(async () => {
@@ -90,13 +88,13 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                             EncodeDeviceDescription(_);
                         });
                     },
-                    exeption => {
-                        ICAN.LogUpdater.OnNext(exeption.Message);
+                    exception => {
+                        this.Log().Error(exception.Message);
 
                     },
                     () => {
                         stopwatch.Stop();
-                        IDevice.Log($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
+                        this.Log().Info($"Elapsed {stopwatch.ElapsedMilliseconds} ms");
                         Dispatcher.UIThread.Post(() =>
                         {
                             base._Init_stage = false;
@@ -110,7 +108,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                (value) => { 
                    _name = value.Trim('\0'); 
                },
-               exeption => { ICAN.LogUpdater.OnNext(exeption.Message); base._Init_stage = true; },
+               exeption => { this.Log().Error(exeption.Message); base._Init_stage = true; },
                () => { }
             );
 
@@ -122,7 +120,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             }
             catch (JsonReaderException e)
             {
-                ICAN.LogUpdater.OnNext(e.Message);
+                this.Log().Error(e.Message);
             }
 
         }
@@ -229,21 +227,21 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         public override void Reset()
         {
            // base.DeviceFaults.Clear();
-            ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
-            IDevice.Log("Reset command sent");
+            _CAN.Transmit(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
+            this.Log().Info("Reset command sent");
 
         }
 
         public override void Start()
         {
-            ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
-            IDevice.Log("Start command sent");
+            _CAN.Transmit(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
+            this.Log().Info("Start command sent");
         }
 
         public override void Stop()
         {
-            ICAN.TxUpdater.OnNext(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
-            IDevice.Log("Stop command sent");
+            _CAN.Transmit(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
+            this.Log().Info("Stop command sent");
         }
 
         void EncodeDeviceDescription(List<byte[]> data)
@@ -290,12 +288,29 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     tmp._ids = new uint[] { i };
                 }
 
+                tmp.valDisposable = tmp.Val.Subscribe((value) => double_to_can(value, tmp._Type, tmp._ids));
                 base.DeviceDescription.Add(tmp);
-                IDevice.Log($"<- ID [{tmp.ID}] Info [ {tmp.Name}]" );
+                this.Log().Info($"<- ID [{tmp.ID}] Info [ {tmp.Name}]" );
             }
         }
 
-        public class EVMModbusTCPDeviceParametr : IDeviceParameter
+        void double_to_can(double value, HoldingType _Type, uint[] _ids) {
+
+            byte[] bval = GetByteFromString(value.ToString(), _Type);
+            if (bval == null) return;
+            int count = 0;
+            int id = 0;
+            var buf = bval.ToList()
+                .GroupBy(_ => count++ / 2)
+                .Select(v => new ICAN.RxTxCanData((_ids[id++]), v.ToArray()));
+
+            foreach (var item in buf)
+            {
+                _CAN.Transmit(item);
+            };
+        }
+
+        public class EVMModbusTCPDeviceParametr : IDeviceParameter, IEnableLogger, IDisposable
         {
             string _ID;
             string _Name;
@@ -310,7 +325,15 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             internal uint[] _ids;
             internal double _val;
 
-            public EVMModbusTCPDeviceParametr(string _ID, string _Name, bool _IsReadWrite, HoldingType _Type, string _Unit = "", double _Min = 0, double _Max = 0)
+            public EVMModbusTCPDeviceParametr(
+                string _ID, 
+                string _Name, 
+                bool _IsReadWrite, 
+                HoldingType _Type, 
+                string _Unit = "",
+                double _Min = 0, 
+                double _Max = 0
+            )
             {
                 this._ID = _ID;
                 this._Name = _Name;
@@ -322,6 +345,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             }
 
             public BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
+            public IDisposable valDisposable;
 
             public IObservable<double> Value { get => Val; }
 
@@ -339,25 +363,20 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             public bool IsReadWrite => _IsReadWrite;
 
-            public List<List<string>> Options => null;
+            public List<List<string>>? Options => null;
 
          
 
             void IDeviceParameter.writeValue(double value)
             {
-                byte[] bval = GetByteFromString(value.ToString(), _Type);
-                if (bval == null) return;
-                IDevice.Log($"reg#{_ID} <- {value}");
-                int count = 0;
-                int id = 0;
-                var buf = bval.ToList()
-                    .GroupBy(_ => count++ / 2)
-                    .Select(v => new ICAN.RxTxCanData((_ids[id++]), v.ToArray()));
+                this.Log().Info($"{ID} <- {value} ");
+                Val.OnNext(value);
+            }
 
-               foreach (var item in buf)
-                {
-                    ICAN.TxUpdater.OnNext(item);
-                };
+            public void Dispose()
+            {
+                valDisposable?.Dispose();
+                Val?.Dispose();
             }
         }
 

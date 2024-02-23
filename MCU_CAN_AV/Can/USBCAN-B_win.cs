@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Splat;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -92,7 +93,7 @@ namespace MCU_CAN_AV.Can
         }
     }
 
-    internal class USBCAN_B_win : ICAN
+    internal class USBCAN_B_win : BaseCAN, IEnableLogger
     {
         [DllImport("controlcan.dll")]
         static extern UInt32 VCI_OpenDevice(UInt32 DeviceType, UInt32 DeviceInd, UInt32 Reserved);
@@ -132,17 +133,17 @@ namespace MCU_CAN_AV.Can
 
         VCI_CAN_OBJ[] m_recobj = new VCI_CAN_OBJ[1000];
 
-        ICAN.CANInitStruct _initStructure;
 
-        bool _isOpen = false;
 
         UInt32 m_devtype = 4; //USBCAN2
 
-        IObservable<ICAN.RxTxCanData> updater;
 
-        public USBCAN_B_win(ICAN.CANInitStruct init) {
-            _initStructure = init;
-            InitCAN(init);
+        bool _isOpen = false;
+
+
+        public USBCAN_B_win(ICAN.CANInitStruct init) : base(init)
+        {
+            InitCAN(InitStructure);
         }
        
         //************************************************************************************/
@@ -151,8 +152,8 @@ namespace MCU_CAN_AV.Can
         public void InitCAN(ICAN.CANInitStruct init)
         {
           
-            UInt32 m_devind = _initStructure._devind;
-            UInt32 m_canind = _initStructure._canind;
+            UInt32 m_devind = InitStructure._devind;
+            UInt32 m_canind = InitStructure._canind;
             
 
             if (_isOpen)
@@ -191,30 +192,32 @@ namespace MCU_CAN_AV.Can
             VCI_InitCAN(m_devtype, m_devind, m_canind, ref config);
             VCI_StartCAN(m_devtype, InitStructure._devind, InitStructure._canind);
             _isOpen = true;
+            this.Log().Info($"{nameof(USBCAN_B_win)} connection open");
         }
         int TimeOut_counter = 0;
 
-        public ICAN.CANInitStruct InitStructure => _initStructure;
-
-        unsafe void ICAN.Receive()
+    
+        public unsafe override ICAN.RxTxCanData[]? Receive()
         {
           
             UInt32 res = VCI_Receive(m_devtype, InitStructure._devind, InitStructure._canind, ref m_recobj[0], 1000, 100);
 
             if (res == 0xffffffff)
             {
-                ICAN.LogUpdater.OnNext("USBCAN Recieve Error");
-                return;
+                this.Log().Error("USBCAN Recieve Error");
+                return null;
             }
 
             if(res == 0) {
                 TimeOut_counter++;
                 if (TimeOut_counter > 100) {
-                    ICAN.LogUpdater.OnNext("USBCAN_B Recieve Timeout");
+                    this.Log().Error("USBCAN_B Recieve Timeout");
                     TimeOut_counter = 0;
                 }
                 
             }
+
+            List<ICAN.RxTxCanData> ret_val = new();
 
             for (UInt32 i = 0; i < res; i++)
             {
@@ -227,31 +230,25 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                    ICAN.RxUpdater.OnNext(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
+                    ret_val.Add(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
                 }
             }
+
+            return ret_val.ToArray();
         }
 
-
-        public void Transmit(ICAN.RxTxCanData data)
-        {
-            throw new NotImplementedException();
-        }
-
-        void ICAN.Close()
+        public override void Close_instance()
         {
             VCI_ResetCAN(m_devtype, InitStructure._devind, InitStructure._canind);
-            var tmp = updater.Subscribe();
-            tmp.Dispose();
             _isOpen = false;
+            this.Log().Info($"{nameof(USBCAN_B_win)} connection closed");
+            base.Dispose();
         }
 
-        bool ICAN.isOpen()
-        {
-            return _isOpen;
-        }
+        public override bool isOpen { get => _isOpen; }
 
-        void ICAN.Transmit(ICAN.RxTxCanData data)
+
+        public override void Transmit(ICAN.RxTxCanData data)
         {
             throw new NotImplementedException();
         }
