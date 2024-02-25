@@ -206,12 +206,14 @@
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
 						</TabItem>
 						<TabItem Header="Log">
-							<ScrollViewer Name="ScrollLog">
-								<TextBlock Name="Tb_log" Text="{Binding LogText}" FontSize="12" FontWeight="Light"/>
+							<ScrollViewer Name="ScrollLog" Margin="0, 20">
+								<TextBlock Name="Tb_log" Text="{Binding LogText}" FontSize="12" FontWeight="Light" />
 							</ScrollViewer>
 						</TabItem>
-						<TabItem Header="Testing">
-							<TextBlock Margin="5">This is tab 3 content</TextBlock>
+						<TabItem Header="RxTxDiag">
+							<v:RXTXDiagView
+								
+								/>
 						</TabItem>
 						<TabItem Header="Calibration">
 							<TextBlock Margin="5">This is tab 3 content</TextBlock>

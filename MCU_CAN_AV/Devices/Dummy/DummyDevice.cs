@@ -64,8 +64,10 @@ namespace MCU_CAN_AV.Devices.Dummy
 
         }
 
-        public override void Encode(ICAN.RxTxCanData data)
+        protected override void Encode(ICAN.RxTxCanData data)
         {
+           
+
             post_fault(new ShanghaiDeviceFault { code = 0, name = "DC ok"  });
             post_fault(new ShanghaiDeviceFault { code = 0, name = "Fault1" });
             post_fault(new ShanghaiDeviceFault { code = 0, name = "Fault2" });
@@ -90,7 +92,7 @@ namespace MCU_CAN_AV.Devices.Dummy
                 {
                     if (DeviceDescription == null) return;
                     if (DeviceDescription.Count <= 0) return;
-                    ((DummyCAN) _CAN).faultmode = false;
+                
                     ((DummyDeviceParameter)DeviceDescription[0]).Val?.OnNext(reg++);
                     ((DummyDeviceParameter)DeviceDescription[1]).Val?.OnNext(reg++);
                     ((DummyDeviceParameter)DeviceDescription[2]).Val?.OnNext(reg++);
@@ -102,12 +104,13 @@ namespace MCU_CAN_AV.Devices.Dummy
                 else
                 {
                     this.Log().Error("Time out");
-                    ((DummyCAN) _CAN).faultmode = true;
                     base._Connection_errors_cnt = _err_cnt++;
                     base._state = DeviceState.NoConnect;
 
                     post_fault(new ShanghaiDeviceFault { code = 0, name = "fault" });
                 }
+
+               TransmitToHardware(new ICAN.RxTxCanData(1, new byte[] { 213, 157 }));
 
             }
         }

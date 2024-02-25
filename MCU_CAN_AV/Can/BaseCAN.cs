@@ -23,15 +23,18 @@ namespace MCU_CAN_AV.Can
 
             _InitStructure = InitStructure;
 
+            // Start hardware polling timer  
             timer = new System.Timers.Timer(_InitStructure._PollInterval_ms);
             timer.Elapsed += (_, __) =>
             {
+                // polling hardware
                 var mes = Receive();
 
                 if(mes == null) { return; }
 
                 foreach (var item in mes)
                 {
+                    // publish hardware data
                     RxUpdater.OnNext(item);
                     if (item.Timeout)
                     {

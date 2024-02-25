@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MCU_CAN_AV.Views.RXTXDiagView">
+
+
+	<UserControl.DataContext>
+		<vm:RXTXDiagViewModel/>
+	</UserControl.DataContext>
+
+	<Grid RowDefinitions =" *,3,* " >
+
+		<GridSplitter Grid.Row="1" Background="Gray" ResizeDirection="Rows" />
+		
+		<Panel Grid.Row="0" >
+			<Border Classes ="h2" Margin="2" />
+			<Grid  RowDefinitions =" 20 , * " Margin="10" >
+				<TextBlock Grid.Row="0"> Input data </TextBlock>
+			<DataGrid  Grid.Row="1"   GridLinesVisibility="All"
+			  ItemsSource="{Binding RxData}"
+			  CanUserResizeColumns="True" >
+
+				<DataGrid.Columns >
+					<DataGridTextColumn  Header="ID" Width="0.3*" IsReadOnly="True"
+					   Binding="{Binding Id}" >
+					</DataGridTextColumn>
+					<DataGridTextColumn Header="Value" Width="0.5*" IsReadOnly="True"
+					   Binding="{Binding Value}" >
+					</DataGridTextColumn>
+					<DataGridTextColumn Header="Counter" Width="0.2*" IsReadOnly="True"
+					Binding="{Binding Counter}" >
+					</DataGridTextColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+			</Grid>
+		</Panel>
+
+		<Panel  Grid.Row="2">
+			<Border Classes ="h2"  Margin="2"/>
+			<Grid  RowDefinitions =" 20 , * "  Margin="10">
+				<TextBlock Grid.Row="0"> Output data </TextBlock>
+				<DataGrid
+				  GridLinesVisibility="All"
+				  Grid.Row="1"
+				  ItemsSource="{Binding TxData}"
+				  CanUserResizeColumns="True">
+
+					<DataGrid.Columns >
+						<DataGridTextColumn Header="ID" Width="0.3*" IsReadOnly="True"
+						   Binding="{Binding Id}" >
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Value" Width="0.5*" IsReadOnly="True"
+						   Binding="{Binding Value}" >
+						</DataGridTextColumn>
+						<DataGridTextColumn Header="Counter" Width="0.2*" IsReadOnly="True"
+						Binding="{Binding Counter}" >
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</Grid>
+		</Panel>
+	</Grid>
+
+</UserControl>

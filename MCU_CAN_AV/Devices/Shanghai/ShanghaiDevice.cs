@@ -129,7 +129,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             throw new NotImplementedException();
         }
 
-        public override void Encode(ICAN.RxTxCanData data)
+        protected override void Encode(ICAN.RxTxCanData data)
         {
             EncodeData(data);
             EncodeFaults(data);

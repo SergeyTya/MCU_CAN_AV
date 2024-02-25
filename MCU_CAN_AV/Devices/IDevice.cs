@@ -46,7 +46,18 @@ namespace MCU_CAN_AV.Devices
         /// </summary>
         public string                                        Name                  { get; }
 
-        
+
+        /// <summary>
+        ///     Observable to read Rx data from hardware
+        /// </summary>
+        public IObservable<ICAN.RxTxCanData>                 RxData                { get; }
+
+        /// <summary>
+        ///     Observable to read Tx data from hardware
+        /// </summary>
+        public IObservable<ICAN.RxTxCanData>                 TxData                { get; }
+
+
         /// <summary>
         /// Close connection
         /// </summary>

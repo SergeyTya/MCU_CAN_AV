@@ -19,22 +19,26 @@ namespace MCU_CAN_AV.Can
         }
 
         public override bool isOpen { get => true; }
-        
 
+        uint id = 0;
         public override RxTxCanData[]? Receive()
         {
+            if (id++ > 5) id = 0;   
             if (!faultmode)
             {
-                return new RxTxCanData[] { new RxTxCanData(2, new byte[1] { 0 }) };
+                Random rnd = new Random();
+                byte[] data = { 0, 0, 0, 0, 0, 0 };
+                rnd.NextBytes(data);
+                return new RxTxCanData[] { new RxTxCanData(id, data)};
             }
             else {
                 return new RxTxCanData[] { new ICAN.RxTxCanData { Timeout = true } };
             }
         }
 
-        public void Transmit(ICAN.RxTxCanData data)
+        public override void Transmit(ICAN.RxTxCanData data)
         {
-            throw new NotImplementedException();
+            
         }
 
         public override void Close_instance()

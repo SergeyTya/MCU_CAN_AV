@@ -45,7 +45,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         {
             this.Log().Info($"New {nameof(EVMModbusDevice)} connection ");
             _err_cnt = 0;
-            Init(_CAN.InitStructure);
+            Init(CANInitStruct);
         }
 
         void Init(ICAN.CANInitStruct InitStruct)
@@ -124,7 +124,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             }
 
         }
-        public override void Encode(ICAN.RxTxCanData data)
+        protected override void Encode(ICAN.RxTxCanData data)
         {
             if (data.Timeout == true) {
 
@@ -227,20 +227,20 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         public override void Reset()
         {
            // base.DeviceFaults.Clear();
-            _CAN.Transmit(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
+            TransmitToHardware(new ICAN.RxTxCanData(0, new byte[] { 4, 0 }));
             this.Log().Info("Reset command sent");
 
         }
 
         public override void Start()
         {
-            _CAN.Transmit(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
+            TransmitToHardware(new ICAN.RxTxCanData(0, new byte[] { 1, 0 }));
             this.Log().Info("Start command sent");
         }
 
         public override void Stop()
         {
-            _CAN.Transmit(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
+            TransmitToHardware(new ICAN.RxTxCanData(0, new byte[] { 2, 0 }));
             this.Log().Info("Stop command sent");
         }
 
@@ -306,7 +306,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             foreach (var item in buf)
             {
-                _CAN.Transmit(item);
+                TransmitToHardware(item);
             };
         }
 
