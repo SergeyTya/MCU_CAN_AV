@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static MCU_CAN_AV.Can.ICAN;
 
@@ -21,7 +22,7 @@ namespace MCU_CAN_AV.Can
         public override bool isOpen { get => true; }
 
         uint id = 0;
-        public override RxTxCanData[]? Receive()
+        public override void Receive()
         {
             if (id++ > 5) id = 0;   
             if (!faultmode)
@@ -29,10 +30,12 @@ namespace MCU_CAN_AV.Can
                 Random rnd = new Random();
                 byte[] data = { 0, 0, 0, 0, 0, 0 };
                 rnd.NextBytes(data);
-                return new RxTxCanData[] { new RxTxCanData(id, data)};
+                post(new RxTxCanData(id, data));
+                return;
             }
             else {
-                return new RxTxCanData[] { new ICAN.RxTxCanData { Timeout = true } };
+                post (new ICAN.RxTxCanData { Timeout = true } );
+                return;
             }
         }
 

@@ -197,7 +197,7 @@ namespace MCU_CAN_AV.Can
         int TimeOut_counter = 0;
 
     
-        public unsafe override ICAN.RxTxCanData[]? Receive()
+        public unsafe override void Receive()
         {
           
             UInt32 res = VCI_Receive(m_devtype, InitStructure._devind, InitStructure._canind, ref m_recobj[0], 1000, 100);
@@ -205,19 +205,20 @@ namespace MCU_CAN_AV.Can
             if (res == 0xffffffff)
             {
                 this.Log().Error("USBCAN Recieve Error");
-                return null;
+                post(new ICAN.RxTxCanData() { Timeout = true });
+                return;
             }
 
             if(res == 0) {
                 TimeOut_counter++;
                 if (TimeOut_counter > 100) {
                     this.Log().Error("USBCAN_B Recieve Timeout");
+                    post(new ICAN.RxTxCanData() { Timeout = true });
                     TimeOut_counter = 0;
+                    return;
                 }
                 
             }
-
-            List<ICAN.RxTxCanData> ret_val = new();
 
             for (UInt32 i = 0; i < res; i++)
             {
@@ -230,11 +231,9 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                    ret_val.Add(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
+                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
                 }
             }
-
-            return ret_val.ToArray();
         }
 
         public override void Close_instance()

@@ -15,6 +15,8 @@ namespace MCU_CAN_AV.Can
     {
         internal Subject<RxTxCanData> RxUpdater = new();
 
+        IDisposable? disp;
+
         System.Timers.Timer? timer ;
 
         ICAN.CANInitStruct _InitStructure;
@@ -28,26 +30,28 @@ namespace MCU_CAN_AV.Can
             timer.Elapsed += (_, __) =>
             {
                 // polling hardware
-                var mes = Receive();
+                Receive();
 
-                if(mes == null) { return; }
-
-                foreach (var item in mes)
-                {
-                    // publish hardware data
-                    RxUpdater.OnNext(item);
-                    if (item.Timeout)
-                    {
-                        timer.Interval = 1000;
-                    }
-                    else
-                    {
-                        timer.Interval = _InitStructure._PollInterval_ms;
-                    }
-                }
             };
 
             timer?.Start();
+
+            disp = RxUpdater.Subscribe((_)=>{
+
+                if (timer == null) return;
+                if (_.Timeout)
+                {
+                    timer.Interval = 1000;
+                }
+                else
+                {
+                    timer.Interval = _InitStructure._PollInterval_ms;
+                }
+            });
+        }
+
+        internal void post(ICAN.RxTxCanData data) {
+            RxUpdater.OnNext( data );
         }
 
         public void Close()
@@ -58,6 +62,7 @@ namespace MCU_CAN_AV.Can
 
         public void Dispose()
         {
+            disp?.Dispose();
             RxUpdater.Dispose();
             timer?.Stop();
             timer?.Dispose();
@@ -83,7 +88,7 @@ namespace MCU_CAN_AV.Can
         }
         
 
-        public virtual RxTxCanData[]? Receive()
+        public virtual void Receive()
         {
             throw new NotImplementedException();
         }

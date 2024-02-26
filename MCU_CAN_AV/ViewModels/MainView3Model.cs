@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Security.Cryptography;
 using Avalonia.Logging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,15 +16,15 @@ using Splat;
 
 namespace MCU_CAN_AV.ViewModels
 {
-    public partial class MainView3Model : ObservableRecipient, IRecipient<ConnectionState>
+    public partial class MainView3Model : ObservableRecipient, IRecipient<ConnectionState>, IEnableLogger
     {
         IDisposable? disposable_log;
         public MainView3Model()
         {
             Messenger.RegisterAll(this);
 
-            //  disposable_log = StaticLogger.Subscribe((_) => LogText += _);
-   
+          
+
         }
 
         [ObservableProperty]
@@ -45,17 +46,20 @@ namespace MCU_CAN_AV.ViewModels
         {
             if (message.state == ConnectionState.State.Connected)
             {
-                disposable_log?.Dispose();
-                var logProvider = Locator.Current.GetService<ILogProvider>();
-                disposable_log = logProvider?.GetObservable.Subscribe((_) => LogText += _);
-
 
                 DeviceName = IDevice.Current.Name;
 
                 disposable_errcnt?.Dispose();
-                disposable_errcnt = IDevice.Current.Connection_errors_cnt.Subscribe((_) => Error_cnt = _ );
+                disposable_errcnt = IDevice.Current.Connection_errors_cnt.Subscribe((_) => Error_cnt = _);
 
                 connected();
+            }
+
+            if (message.state == ConnectionState.State.Init)
+            {
+                disposable_log?.Dispose();
+                var logProvider = Locator.Current.GetService<ILogProvider>();
+                disposable_log = logProvider?.GetObservable.Subscribe((_) => LogText += _);
             }
         }
 

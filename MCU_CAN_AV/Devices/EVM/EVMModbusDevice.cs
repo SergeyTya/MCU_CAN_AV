@@ -67,8 +67,6 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     throw new Exception("Timeout");
                 }
 
-                //await Task.Delay(500);
-
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
                 Task.Run(async () =>
@@ -209,10 +207,9 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                                     break;
                             }
 
-
                             if (item._val != ret_val)
                             {
-                                item.Val.OnNext(ret_val);
+                                item.RxVal.OnNext(ret_val);
                                 item._val = ret_val;
                             }
                         }
@@ -249,7 +246,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             // skip firs 3 items
             for (uint i = 0; i < data.Count; i++)
             {
-                if (i == 1 || i == 2) continue; 
+                if (i == 1 || i == 2) continue;
 
                 var RXbuf = data[(int)i];
 
@@ -262,13 +259,13 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 UInt32 adr = BitConverter.ToUInt32(RXbuf.ToArray(), 10);
                 //Debug.WriteLine(String.Format("HR location = {0}", adr));
                 var type = RXbuf[14];
-              //  ICAN.LogUpdater.OnNext(String.Format("HR type = {0}", type));
+                //  ICAN.LogUpdater.OnNext(String.Format("HR type = {0}", type));
                 var index = RXbuf[15];
                 //Debug.WriteLine(String.Format("HR index = {0}", index));
                 var isRO = RXbuf[16];
 
                 string info = Encoding.UTF8.GetString(RXbuf.ToList().GetRange(17, RXbuf[5] - 11).ToArray());
-             
+
                 var tmp = new EVMModbusTCPDeviceParametr(
                             _ID: i.ToString(),
                             _Name: info,
@@ -288,7 +285,14 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     tmp._ids = new uint[] { i };
                 }
 
-                tmp.valDisposable = tmp.Val.Subscribe((value) => double_to_can(value, tmp._Type, tmp._ids));
+                tmp.valDisposable = tmp.TxVal.Subscribe((value) =>
+                {
+                    if (tmp.IsReadWrite != true) return; ;
+                    if (tmp._val != value)
+                    {
+                        double_to_can(value, tmp._Type, tmp._ids);
+                    }
+                });
                 base.DeviceDescription.Add(tmp);
                 this.Log().Info($"<- ID [{tmp.ID}] Info [ {tmp.Name}]" );
             }
@@ -344,10 +348,13 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 this._Type = _Type;
             }
 
-            public BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
+            // need to tranfer from CAN to register
+            public IObservable<double> Value { get => RxVal; }
+            internal BehaviorSubject<double> RxVal = new BehaviorSubject<double>(0);
             public IDisposable valDisposable;
-
-            public IObservable<double> Value { get => Val; }
+          
+            //need to tranfer from register to CAN
+            internal Subject<double> TxVal = new Subject<double>();
 
             public string ID => _ID;
 
@@ -370,13 +377,14 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             void IDeviceParameter.writeValue(double value)
             {
                 this.Log().Info($"{ID} <- {value} ");
-                Val.OnNext(value);
+                TxVal.OnNext(value);
             }
 
             public void Dispose()
             {
                 valDisposable?.Dispose();
-                Val?.Dispose();
+                RxVal?.Dispose();
+                TxVal?.Dispose();
             }
         }
 

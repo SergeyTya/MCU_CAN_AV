@@ -187,13 +187,12 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             Dispose();
         }
 
-        public override RxTxCanData[]? Receive()
+        public override void Receive()
         {
-            if (!_isOpen) return null;
-            if (semaphoreSlim.CurrentCount == 0) return null;
+            if (!_isOpen) return;
+            if (semaphoreSlim.CurrentCount == 0) return;
 
-            ICAN.RxTxCanData[] ret_val = new RxTxCanData[] { new() { Timeout = true } };
-        
+             
             Task.Run(async () =>
             {
                 await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);
@@ -217,15 +216,15 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
                         Buffer.BlockCopy(_, i*2, data, 0, 2);
 
-                       ret_val = new RxTxCanData[] { new ICAN.RxTxCanData((uint)i, data) };
+                        post(new ICAN.RxTxCanData((uint)i, data));
                     }
                 },
                 exception => { 
                    this.Log().Error(exception.Message);
+                    post(new ICAN.RxTxCanData { Timeout = true });
                 }
             );
 
-            return ret_val;
         }
     }
 }

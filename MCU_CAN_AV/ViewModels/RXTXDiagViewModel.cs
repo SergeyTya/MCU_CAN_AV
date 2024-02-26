@@ -39,6 +39,8 @@ namespace MCU_CAN_AV.ViewModels
                 {
                     Dispatcher.UIThread.Post(() => {
 
+                        if (data.Timeout) return;
+
                         string hex = BitConverter.ToString(data.data);
                         var tmp_row = new RxTxRowTemplate { Id = data.id, Value = hex };
 

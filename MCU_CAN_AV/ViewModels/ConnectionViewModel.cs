@@ -20,6 +20,7 @@ namespace MCU_CAN_AV.ViewModels
 {
     public record class ConnectionState(State state) {
         public enum State { 
+            Init,
             Connected,
             Disconnected,
             Reset
@@ -206,6 +207,9 @@ namespace MCU_CAN_AV.ViewModels
         [RelayCommand(CanExecute = nameof(CanConnect))]
         private async Task ClickConnect()
         {
+
+            Messenger.Send(new ConnectionState(ConnectionState.State.Init));
+
             LogText = "";
            
             // Relay command blocking button until it executing
@@ -240,6 +244,7 @@ namespace MCU_CAN_AV.ViewModels
                    if (!_) {
                        Messenger.Send(new ConnectionState(ConnectionState.State.Connected));
                        disposable_init?.Dispose();
+                       disposable_log?.Dispose();  
                    }
                    
                });
