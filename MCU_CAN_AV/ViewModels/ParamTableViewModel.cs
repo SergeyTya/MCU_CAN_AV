@@ -15,10 +15,18 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MCU_CAN_AV.utils;
 using Avalonia.Media;
+using Newtonsoft.Json;
+using System.Text;
+using Splat;
+using Avalonia.Controls.Shapes;
+using DynamicData;
+using MCU_CAN_AV.Can.ModbusTCP;
+using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Http;
 
 namespace MCU_CAN_AV.ViewModels
 {
-    public partial class ParamTableViewModel : ObservableRecipient, IRecipient<ConnectionState>
+    public partial class ParamTableViewModel : ObservableRecipient, IRecipient<ConnectionState>, IEnableLogger
     {
         [ObservableProperty]
         public ObservableCollection<RowTemplate>? _rows;
@@ -70,11 +78,13 @@ namespace MCU_CAN_AV.ViewModels
             // ErrorMessages?.Clear();
             try
             {
-                var filesService = App.Current?.Services?.GetService<IFilesService>();
+                var filesService = Locator.Current.GetService<IFilesService>(); ;
                 if (filesService is null) throw new NullReferenceException("Missing File Service instance.");
 
                 var file = await filesService.OpenFileAsync();
                 if (file is null) return;
+
+                this.Log().Info($"Open file {file.Name}");
 
                 // Limit the text file to 1MB so that the demo wont lag.
                 if ((await file.GetBasicPropertiesAsync()).Size <= 1024 * 1024 * 1)
@@ -82,15 +92,52 @@ namespace MCU_CAN_AV.ViewModels
                     await using var readStream = await file.OpenReadAsync();
                     using var reader = new StreamReader(readStream);
                     var FileText = await reader.ReadToEndAsync();
+
+                    List<string[]>? tmp = new();
+                    tmp = JsonConvert.DeserializeObject<List<string[]>>(FileText);
+
+                    if (tmp == null) { this.Log().Error("Parameter read: File deserialize fail"); return; }
+
+                    var dd_now = IDevice.Current.DeviceDescription;
+
+                    foreach (var x in dd_now.Where(x => x.IsReadWrite))
+                    {
+                        int ind = tmp.Select(x => x[1]).IndexOf(x.Name);
+                        if (ind >= tmp.Count || ind < 0) {
+                            this.Log().Error($"Parameter read: File structure don't match 1");
+                            return;
+                        }
+                        if (tmp[ind][0] != x.ID) {
+                            this.Log().Error($"Parameter read: File structure don't match 2");
+                            return;
+                        }
+                    }
+
+                    this.Log().Info("Parameter read: Done!!!");
+
+                    int i = 0;
+                    foreach (var item in dd_now.Where(x => x.IsReadWrite))
+                    {
+                        double val = 0;
+                        if (Double.TryParse(tmp[i++][2], out val))
+                        {
+                            item.writeValue(val);
+                        }
+                        else {
+                            this.Log().Error($"Parameter read: Double parse failed");
+                        } 
+                    }
                 }
                 else
                 {
-                    throw new Exception("File exceeded 1MB limit.");
+                    this.Log().Error("File exceeded 1MB limit.");
                 }
+
             }
             catch (Exception e)
             {
-                //ErrorMessages?.Add(e.Message);
+                this.Log().Error(e.Message);
+                return;
             }
         }
 
@@ -101,28 +148,41 @@ namespace MCU_CAN_AV.ViewModels
             // ErrorMessages?.Clear();
             try
             {
-                var filesService = App.Current?.Services?.GetService<IFilesService>();
+                var filesService = Locator.Current.GetService<IFilesService>();
                 if (filesService is null) throw new NullReferenceException("Missing File Service instance.");
 
-                var file = await filesService.SaveFileAsync();
+                DateTime thisDay = DateTime.Today;
+                string name = IDevice.Current.Name.Replace(" ", "").Replace(":","");
+               
+
+                string suggested_name = $"[{name}]_{thisDay.ToShortDateString()}";
+
+                var file = await filesService.SaveFileAsync(suggested_name);
                 if (file is null) return;
 
+                List<string[]> tmp = new();
 
-                //// Limit the text file to 1MB so that the demo wont lag.
-                //if (FileText?.Length <= 1024 * 1024 * 1)
-                //{
-                //    var stream = new MemoryStream(Encoding.Default.GetBytes((string)FileText));
-                //    await using var writeStream = await file.OpenWriteAsync();
-                //    await stream.CopyToAsync(writeStream);
-                //}
-                //else
-                //{
-                //    throw new Exception("File exceeded 1MB limit.");
-                //}
+                foreach (var el in IDevice.Current.DeviceDescription) {
+
+                    if (el.IsReadWrite)
+                    {
+                        double val = 0;
+                        el.Value.Take(1).Subscribe((_) => val = _);
+                        tmp.Add(new string[] { el.ID, el.Name, val.ToString() });
+                    }
+                }
+
+                string jsonString = JsonConvert.SerializeObject(tmp);
+                var stream = new MemoryStream(Encoding.Default.GetBytes(jsonString));
+
+                await using var writeStream = await file.OpenWriteAsync();
+                await stream.CopyToAsync(writeStream);
+
+
             }
             catch (Exception e)
             {
-                // ErrorMessages?.Add(e.Message);
+                this.Log().Error(e.Message);
             }
         }
 

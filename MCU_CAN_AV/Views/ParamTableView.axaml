@@ -18,8 +18,8 @@
 			  CanUserResizeColumns="True">
 		<DataGrid.ContextMenu>
 			<ContextMenu>
-				<MenuItem Header="Save table to file" Command="{Binding SaveFileCommand}"/>
-				<MenuItem Header="Load table from file" Command="{Binding OpenFileCommand}"/>
+				<MenuItem Header="Save to file" Command="{Binding SaveFileCommand}"/>
+				<MenuItem Header="Read from file" Command="{Binding OpenFileCommand}"/>
 			</ContextMenu>
 		</DataGrid.ContextMenu>
 

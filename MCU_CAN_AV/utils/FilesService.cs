@@ -22,18 +22,36 @@ namespace MCU_CAN_AV.utils
             var files = await _target.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
                 Title = "Open Text File",
-                AllowMultiple = false
+                AllowMultiple = false,
+                FileTypeFilter = new[] {
+                    new FilePickerFileType("Parameter file") { Patterns = new[] { "*.prm" } },
+                    new FilePickerFileType("JSON") { Patterns = new[] { "*.prm" } },
+                    new FilePickerFileType("Text") { Patterns = new[] { "*.txt" } },
+                    new FilePickerFileType("All") { Patterns = new[] { "*.*" } },
+                }
             });
 
             return files.Count >= 1 ? files[0] : null;
         }
 
-        public async Task<IStorageFile?> SaveFileAsync()
+        public async Task<IStorageFile?> SaveFileAsync(string name)
         {
             return await _target.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
             {
-                Title = "Save Text File"
+                Title = "Save Text File",
+                
+                FileTypeChoices = new[] {
+                    new FilePickerFileType("Parameter file") { Patterns = new[] { "*.prm" } },
+                    new FilePickerFileType("JSON") { Patterns = new[] { "*.prm" } },
+                    new FilePickerFileType("Text") { Patterns = new[] { "*.txt" } },
+                    new FilePickerFileType("All") { Patterns = new[] { "*.*" } },
+                },
+
+                SuggestedFileName = $"{name}.prm"
+
+
             });
+
         }
     }
 }

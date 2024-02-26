@@ -32,10 +32,11 @@ public partial class App : Application
                 DataContext = new MainViewModel()
             };
 
-            var services = new ServiceCollection();
+            //var services = new ServiceCollection();
 
-            services.AddSingleton<IFilesService>(x => new FilesService(desktop.MainWindow));
+            //services.AddSingleton<IFilesService>(x => new FilesService(desktop.MainWindow));
 
+            Locator.CurrentMutable.RegisterConstant(new FilesService(desktop.MainWindow), typeof(IFilesService) );
 
             //// https://jamilgeor.com/handling-errors-with-xamarin-forms-and-reactiveui/
             //// https://www.codeproject.com/Articles/5357417/LogViewer-Control-for-WinForms-WPF-and-Avalonia-in#solution-setup

@@ -204,7 +204,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             public double Max { get => max; }
 
-            public string Type { get => throw new NotImplementedException(); }
+            public string Type { get => null; }
 
             [JsonProperty("CANID")]
             internal string CANID;

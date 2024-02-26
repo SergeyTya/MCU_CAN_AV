@@ -22,6 +22,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 
+
+/***
+ * 
+ *       ***ViewModel***  | ********************************************** IDevice ************************************************  |   *************************************** ICAN **************************************** 
+ *   
+ *   Tx  IDevice->Description  -> IDeviceParameter.writeValue -> this.txval.OnNext() -> double_to_can() -> Base.TransmitToHardware() -> ICAN.Transmit() -> WriteHoldingsAsync()
+ *     
+ *   Rx  IDevice->Description  <- IDeviceParameter.Value                  <- this.IDeviceParametr.RxVal.OnNext()    <- base.Encode() <- ICAN.RxObservable <- RxUpdater.onNext() <- base.post() <- ReadHRsAsync() <- ICAN.Recieve() <-TimerCallBack
+ *
+ */
+
 namespace MCU_CAN_AV.Devices.EVM_DIAG
 {
     internal class EVMModbusDevice : BaseDevice, IEnableLogger
