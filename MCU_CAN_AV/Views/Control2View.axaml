@@ -1,0 +1,200 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MCU_CAN_AV.Views.Control2View"
+			 xmlns:lv="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
+			 xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
+			 xmlns:cc="using:MCU_CAN_AV.CustomControls"
+			 >
+	
+	<UserControl.DataContext>
+		<vm:Control2ViewModel/>
+	</UserControl.DataContext>
+	
+	<Panel>
+		<Border Grid.Column="0" BorderBrush="DimGray" BorderThickness="1" Margin="0"/>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="70"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="70"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Column="0" Grid.Row="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="40"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+				<TextBlock Name="Cartesian1_Label" Grid.Row="0" Text="Current, A" TextAlignment="Center" VerticalAlignment="Center"/>
+
+				<lvc:CartesianChart
+					Grid.Row="1"
+					Name="CartesianChart1"
+					VerticalAlignment="Stretch"
+					IsVisible="True"
+					Series="{Binding Series3}"
+					ZoomMode="None"
+					YAxes="{Binding YAxes1, Mode=OneWay}"
+					
+				/>
+			</Grid>
+
+			<Grid Grid.Column="2" Grid.Row="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="40"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+				<TextBlock  Name="Cartesian2_Label" Grid.Row="0" Text="Voltage, %" TextAlignment="Center" VerticalAlignment="Center"/>
+				<lvc:CartesianChart
+					Grid.Row="1"
+					Name="CartesianChart2"
+					VerticalAlignment="Stretch"
+					Series="{Binding Series4}"
+					ZoomMode="None"
+					YAxes="{Binding YAxes2, Mode=OneWay}"
+				/>
+			</Grid>
+
+			<Grid Grid.Column="1" VerticalAlignment="Center">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="200"/>
+					<RowDefinition Height="60"/>
+					<RowDefinition Height="60"/>
+				</Grid.RowDefinitions>
+
+				<Border Grid.Row="1" Classes="h2" Margin="3"/>
+				<cc:CustomSlider
+				
+					Grid.Row="1"
+					Name="Slider1"/>
+				<Border Grid.Row="2" Classes="h2" Margin="3"/>
+				<cc:CustomSlider
+					Grid.Row="2"
+					Name="Slider2"/>
+
+				<Grid Grid.Row="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.50*"/>
+						<ColumnDefinition Width="0.50*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="200"/>
+					</Grid.RowDefinitions>
+					<Border Grid.Column="0" Classes="h2" Margin="3"/>
+
+
+					<lvc:PieChart
+					Name="PieChart2"
+					Grid.Column="0"
+					Grid.Row="0"
+					InitialRotation="-225"
+					MaxAngle="270"
+					MaxValue="{Binding DP_Torque.Max}"
+					MinValue="{Binding DP_Torque.Min}"
+					VerticalAlignment="Stretch"
+					HorizontalAlignment="Stretch"
+					Series="{Binding Series1}"
+					VisualElements="{Binding VisualElements1}"
+					/>
+
+					<Grid Grid.Column="0" Grid.Row="0" Margin="0,0,0,5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.5*"/>
+							<ColumnDefinition Width="40"/>
+							<ColumnDefinition Width="0.5*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+
+						<TextBlock
+							Name="LabelNamePieChart2"
+							Grid.Column="0"
+							Grid.Row="0"
+							Classes="h1"
+							HorizontalAlignment="Right"
+							Text="Torque"
+					/>
+						<TextBlock
+							Name="LabelValPieChart2"
+							Grid.Column="1"
+							Grid.Row="0"
+							Classes="h1"
+							HorizontalAlignment="Center"
+							Text="{Binding #PieChart2.VisualElements[1].Value}"
+					/>
+						<TextBlock
+							Name="LabelUniPieChart2"
+							Grid.Column="2"
+							Grid.Row="0"
+							Classes="h1"
+							HorizontalAlignment="Left"
+							Text="Hm"
+					/>
+					</Grid>
+
+
+					<Border Grid.Column="1" Classes="h2" Margin="3"/>
+					<lvc:PieChart
+						Name="PieChart3"
+						Grid.Column="1"
+						Grid.Row="0"
+						InitialRotation="-225"
+						MaxAngle="270"
+					
+						Series="{Binding Series2}"
+						VisualElements="{Binding VisualElements2}"
+						MaxValue="{Binding DP_Speed.Max}"
+						MinValue="{Binding DP_Speed.Min}"
+						/>
+					<Grid Grid.Column="1" Grid.Row="0" Margin="0,0,0,5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.5*"/>
+							<ColumnDefinition Width="40"/>
+							<ColumnDefinition Width="0.5*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="1*"/>
+						</Grid.RowDefinitions>
+
+						<TextBlock
+							Name="LabelNamePieChart3"
+							Grid.Column="0"
+							Grid.Row="0"
+							Classes="h1"
+							HorizontalAlignment="Right"
+							Text="Speed"
+					/>
+						<TextBlock
+							Name="LabelValPieChart3"
+							Grid.Column="1"
+							Grid.Row="0"
+							Classes="h1"
+							HorizontalAlignment="Center"
+							Text="{Binding #PieChart3.VisualElements[1].Value}"
+					/>
+						<TextBlock
+							Name="LabelUniPieChart3"
+							Grid.Column="2"
+							Grid.Row="0"
+							Classes="h1"
+							HorizontalAlignment="Left"
+							Text="krpm"
+					/>
+					</Grid>
+
+				</Grid>
+			</Grid>
+		</Grid>
+
+	</Panel>
+</UserControl>

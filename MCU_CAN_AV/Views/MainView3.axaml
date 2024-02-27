@@ -221,16 +221,7 @@
 							<v:ParamTableView/>
 						</TabItem>
 						<TabItem   Header="Controls">
-							<v:ControlView
-								Name="Angular"
-								ControlSource = "{Binding Device.DeviceDescription} "
-								IsEnabled="{Binding #ControlLocker.IsChecked}"
-								VerticalAlignment="Center"
-								Height="350"
-								MaxWidth="700"
-								Foreground="White"
-								Margin="5"
-								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
+							<v:Control2View/>
 						</TabItem>
 						<TabItem Header="Log">
 

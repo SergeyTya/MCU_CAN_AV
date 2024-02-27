@@ -52,6 +52,35 @@ namespace MCU_CAN_AV.Devices.Dummy
             {
                 throw new NotImplementedException();
             }
+
+
+            DeviceDescription[0].Value.Subscribe((_) =>
+            {
+                base._outSpeed._val.OnNext(_/1000.0);
+            });
+            base._outSpeed._Min = 0;
+            base._outSpeed._Max = 12;
+
+            DeviceDescription[1].Value.Subscribe((_) =>
+            {
+                base._outTorque._val.OnNext(_);
+            });
+            base._outTorque._Min = -100;
+            base._outTorque._Max = 100;
+
+            DeviceDescription[2].Value.Subscribe((_) =>
+            {
+                base._outCurrent._val.OnNext(_);
+            });
+            base._outCurrent._Min = 0;
+            base._outCurrent._Max = 300;
+
+            DeviceDescription[3].Value.Subscribe((_) =>
+            {
+                base._outVoltage._val.OnNext(_);
+            });
+            base._outVoltage._Min = 0;
+            base._outVoltage._Max = 100;
         }
 
 
@@ -88,17 +117,20 @@ namespace MCU_CAN_AV.Devices.Dummy
             else
             {
 
+
                 if (!fault)
                 {
                     if (DeviceDescription == null) return;
                     if (DeviceDescription.Count <= 0) return;
                 
-                    ((DummyDeviceParameter)DeviceDescription[0]).Val?.OnNext(reg++);
+                    ((DummyDeviceParameter)DeviceDescription[0]).Val?.OnNext( reg++);
                     ((DummyDeviceParameter)DeviceDescription[1]).Val?.OnNext(reg++);
                     ((DummyDeviceParameter)DeviceDescription[2]).Val?.OnNext(reg++);
 
                     if (!start) base._state = DeviceState.Ready;
                     if (start ) base._state = DeviceState.Run;
+
+
 
                 }
                 else

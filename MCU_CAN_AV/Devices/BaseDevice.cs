@@ -41,6 +41,21 @@ namespace MCU_CAN_AV.Devices
 
         // ***************************************************************************
 
+        internal BaseParametr _outVoltage = new();
+        public IDeviceParameter OutVoltage => _outVoltage;
+        internal BaseParametr _outCurrent = new();
+        public IDeviceParameter OutCurrent => _outCurrent;
+        internal BaseParametr _outTorque = new();
+        public IDeviceParameter OutTorque  => _outTorque;
+        internal BaseParametr _outSpeed = new();
+        public IDeviceParameter OutSpeed   => _outSpeed;
+        internal BaseParametr _inTorque = new();
+        public IDeviceParameter InTorque   => _inTorque;
+        internal BaseParametr _inSpeed = new();
+        public IDeviceParameter InSpeed    => _inSpeed;
+
+        // ***************************************************************************
+
         private ObservableCollection<IDeviceParameter> _DeviceDescription = new();
         private BehaviorSubject<string> _State = new("no state");
         private BehaviorSubject<bool> _init_stage = new(true);
@@ -96,6 +111,39 @@ namespace MCU_CAN_AV.Devices
         }
 
         public virtual void Close_instance()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class BaseParametr : IDeviceParameter
+    {
+        public string _ID = "";
+        public string _Name = "";
+        public string _Unit = "";
+        public double _Min = 0;
+        public double _Max= 0;
+        public Subject<double> _val = new();
+
+        public IObservable<double> Value => _val;
+
+        public string ID => _ID;
+
+        public string Name => _Name;
+
+        public string Unit => _Unit;
+
+        public double Min => _Min;
+
+        public double Max => _Max;
+
+        public string Type => null;
+
+        public List<List<string>> Options => null;
+
+        public bool IsReadWrite => false;
+
+        public void writeValue(double value)
         {
             throw new NotImplementedException();
         }

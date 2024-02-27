@@ -58,6 +58,19 @@ namespace MCU_CAN_AV.Devices
         public IObservable<ICAN.RxTxCanData>                 TxData                { get; }
 
 
+        //******************************* Controls ***********************************
+
+        IDeviceParameter OutVoltage { get; }
+        IDeviceParameter OutCurrent { get; }
+        IDeviceParameter OutTorque  { get; }
+        IDeviceParameter OutSpeed   { get; }
+
+        IDeviceParameter InTorque   { get; }
+        IDeviceParameter InSpeed    { get; }
+
+        //****************************************************************************
+
+
         /// <summary>
         /// Close connection
         /// </summary>
