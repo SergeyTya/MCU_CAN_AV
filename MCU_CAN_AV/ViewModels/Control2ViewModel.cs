@@ -43,7 +43,7 @@ namespace MCU_CAN_AV.ViewModels
                     DataLabelsFormatter = point  => $"{point.Coordinate.PrimaryValue}"
                 }
             };
-        public Axis[] YAxes1 { get; } = new[] { new Axis() };
+        public Axis[] YAxes1 { get; } = new[] { new Axis { TextSize=0, MinLimit = 0 } };
 
         public ISeries[] Series4 { get; set; } = new ISeries[]{
 
@@ -55,7 +55,7 @@ namespace MCU_CAN_AV.ViewModels
                 }
             };
 
-        public Axis[] YAxes2 { get; } = new[] { new Axis() };
+        public Axis[] YAxes2 { get; } = new[] { new Axis { TextSize = 0, MinLimit = 0 } };
 
         public IEnumerable<VisualElement<SkiaSharpDrawingContext>> VisualElements1 { get; set; }
         public NeedleVisual Needle1 { get; set; }
@@ -94,20 +94,21 @@ namespace MCU_CAN_AV.ViewModels
                     new GaugeItem(3, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
             );
 
-            Needle1 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColor.Parse("#64576b")) };
-            Needle2 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColor.Parse("#64576b")) };
+            //Needle1 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColor.Parse("#64576b")) };
+            //Needle2 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColor.Parse("#64576b")) };
 
-
+            Needle1 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColors.LightGray) };
+            Needle2 = new NeedleVisual { Value = 3, Fill = new SolidColorPaint(SKColors.LightGray) };
 
             VisualElements1 = new VisualElement<SkiaSharpDrawingContext>[]
 {
                         new AngularTicksVisual{
-                            LabelsSize = 16,
+                            LabelsSize = 20,
                             LabelsOuterOffset = 15,
-                            OuterOffset = 65,
+                            OuterOffset = 70,
                             TicksLength = 20,
-                            LabelsPaint = new SolidColorPaint(SKColors.Gray),
-                            Stroke =  new SolidColorPaint(SKColors.Gray)
+                            LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                            Stroke =  new SolidColorPaint(SKColors.LightGray)
                             
                         },
                         Needle2
@@ -118,12 +119,12 @@ namespace MCU_CAN_AV.ViewModels
             VisualElements2 = new VisualElement<SkiaSharpDrawingContext>[]
 {
                         new AngularTicksVisual{
-                            LabelsSize = 16,
+                            LabelsSize = 20,
                             LabelsOuterOffset = 15,
-                            OuterOffset = 65,
+                            OuterOffset = 70,
                             TicksLength = 20,
-                            LabelsPaint = new SolidColorPaint(SKColors.Gray),
-                            Stroke =  new SolidColorPaint(SKColors.Gray)
+                            LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                            Stroke =  new SolidColorPaint(SKColors.LightGray)
                         },
                         Needle1
             };

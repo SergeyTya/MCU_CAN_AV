@@ -65,15 +65,15 @@ namespace MCU_CAN_AV.Devices.Dummy
             {
                 base._outTorque._val.OnNext(_);
             });
-            base._outTorque._Min = -100;
-            base._outTorque._Max = 100;
+            base._outTorque._Min = 0;
+            base._outTorque._Max = 200;
 
             DeviceDescription[2].Value.Subscribe((_) =>
             {
                 base._outCurrent._val.OnNext(_);
             });
             base._outCurrent._Min = 0;
-            base._outCurrent._Max = 300;
+            base._outCurrent._Max = 3000;
 
             DeviceDescription[3].Value.Subscribe((_) =>
             {
