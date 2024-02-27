@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Security.Cryptography;
 using Avalonia.Logging;
+using Avalonia.Media;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -18,13 +21,13 @@ namespace MCU_CAN_AV.ViewModels
 {
     public partial class MainView3Model : ObservableRecipient, IRecipient<ConnectionState>, IEnableLogger
     {
+        [ObservableProperty]
+        public ObservableCollection<LogItem> _logs = new();
+
         IDisposable? disposable_log;
         public MainView3Model()
         {
             Messenger.RegisterAll(this);
-
-          
-
         }
 
         [ObservableProperty]
@@ -38,6 +41,17 @@ namespace MCU_CAN_AV.ViewModels
 
         [ObservableProperty]
         public ObservableCollection<IDeviceParameter> _deviceParameters;
+
+        [RelayCommand]
+        void LogClear() {
+            Logs.Clear();
+        }
+
+        [RelayCommand]
+        void LogSave()
+        {
+            //TODO
+        }
 
         IDisposable disposable_errcnt;
 
@@ -59,7 +73,14 @@ namespace MCU_CAN_AV.ViewModels
             {
                 disposable_log?.Dispose();
                 var logProvider = Locator.Current.GetService<ILogProvider>();
-                disposable_log = logProvider?.GetObservable.Subscribe((_) => LogText += _);
+                disposable_log = logProvider?.GetObservable.Subscribe(
+                    (_) => {
+                        Dispatcher.UIThread.Post(() => {
+                            var tmp = new LogItem { Text = _, TextColor = new SolidColorBrush(Colors.Gray) };
+                            if(_.Contains("Error")) tmp.TextColor.Color = Colors.Red;
+                            Logs.Add(tmp);
+                        });
+                    });
             }
         }
 
@@ -79,6 +100,14 @@ namespace MCU_CAN_AV.ViewModels
                     .RefCount()
                     .SubscribeOn(Scheduler.Default);
         }
+    }
+
+    public partial class LogItem : ObservableObject {
+        [ObservableProperty]
+        string _text;
+
+        [ObservableProperty]
+        public SolidColorBrush _textColor;
     }
 
 }

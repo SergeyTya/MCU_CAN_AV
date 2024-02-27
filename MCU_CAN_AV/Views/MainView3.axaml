@@ -12,11 +12,11 @@
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="700"
              x:Class="MCU_CAN_AV.Views.MainView3"
 			 >
-	
+
 	<UserControl.DataContext>
 		<vm:MainView3Model/>
 	</UserControl.DataContext>
-	
+
 	<UserControl.Styles>
 		<Style Selector="ToggleButton.Split:checked /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="#262738"/>
@@ -30,7 +30,7 @@
 		<Style Selector="ToggleButton.Split:pointerover /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Foreground" Value="#8961cc"/>
 		</Style>
-		
+
 		<Style Selector="TabControl">
 			<Setter Property="Background" Value="#1E1E1E"/>
 		</Style>
@@ -71,7 +71,7 @@
 		</Style>
 		<Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="#262738"/>
-			
+
 		</Style>
 
 
@@ -83,12 +83,13 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="25"/>
 			<RowDefinition Height="1*"/>
-			<RowDefinition Height="30"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="40" MinHeight="20"/>
 		</Grid.RowDefinitions>
 		<!--Menu Items-->
 		<DockPanel Grid.Row="0" HorizontalAlignment="Right">
 			<Menu DockPanel.Dock="Top" FontWeight="Light">
-				
+
 				<MenuItem Header="Commands">
 					<CheckBox Name="ControlLocker" Content="UnlockedControl" IsChecked="false"/>
 					<Separator/>
@@ -107,37 +108,63 @@
 			<TextBlock/>
 		</DockPanel>
 		<!--Low side status bar-->
-		<Panel Grid.Row="2"  Classes="Black3" >
-			<StackPanel Orientation="Horizontal" Spacing="10">
 
-				<TextBlock
-					Text="Connected:" 
-					VerticalAlignment="Center" 
-					TextAlignment="Left" 
-					Margin="5,0,0,0"/>
-				
-				<TextBlock
-					Text="{Binding DeviceName}"
-					VerticalAlignment="Center"
-					TextAlignment="Center"/>
-				
-				<TextBlock
-					Text="|"
-					Foreground="DimGray"
-					VerticalAlignment="Center"
-					TextAlignment="Center"/>
-				
-				<TextBlock
-					Text="Fault Counter: "
-					VerticalAlignment="Center"
-					TextAlignment="Center"/>
+		<GridSplitter Grid.Row="2" Background="Gray" ResizeDirection="Rows"/>
+		<Panel Grid.Row="3"  Classes="Black3" >
 
-				<TextBlock	
-					Text="{Binding Error_cnt}"
-					VerticalAlignment="Center"
-					TextAlignment="Center"/>
+			<Grid RowDefinitions="20,*" >
 
-			</StackPanel>
+				<StackPanel Orientation="Horizontal" Spacing="10" Height="20" Grid.Row="0">
+					<TextBlock
+						Text="Connected:"
+						VerticalAlignment="Center"
+						TextAlignment="Left"
+						Margin="5,0,0,0"/>
+
+					<TextBlock
+						Text="{Binding DeviceName}"
+						VerticalAlignment="Center"
+						TextAlignment="Center"/>
+
+					<TextBlock
+						Text="|"
+						Foreground="DimGray"
+						VerticalAlignment="Center"
+						TextAlignment="Center"/>
+
+					<TextBlock
+						Text="Fault Counter: "
+						VerticalAlignment="Center"
+						TextAlignment="Center"/>
+
+					<TextBlock
+						Text="{Binding Error_cnt}"
+						VerticalAlignment="Center"
+						TextAlignment="Center"/>
+
+				</StackPanel>
+				<!-- LOG -->
+				<Panel VerticalAlignment="Stretch" Grid.Row="1">
+					
+					<ScrollViewer Name="ScrollLog" Margin="2">
+						<ScrollViewer.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Clear"        Command="{Binding LogClearCommand}"/>
+							<MenuItem Header="Save to file" Command="{Binding LogSaveCommand}"/>
+						</ContextMenu>
+						</ScrollViewer.ContextMenu>
+						
+						<ItemsControl  ItemsSource="{Binding Logs}" Name="Log" Background="Black">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Text}" Foreground="{Binding TextColor}" Height="15"/>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl >
+					</ScrollViewer>
+
+				</Panel>
+			</Grid>
 		</Panel>
 		<!--Second grid-->
 		<Grid Grid.Row="1">
@@ -176,16 +203,16 @@
 									<TextBlock>x</TextBlock>
 								</Panel>
 							</ToggleButton>
-							
+
 							<!-- <cc:IdicatorsTable DataContext="vm:MainView3Model" TableSource="{x:Static dd:IDevice._DeviceDescription}-->
-							
+
 							<ScrollViewer Grid.Row="1" >
 								<v:IndicatorView/>
 							</ScrollViewer>
 
 						</Grid>
-						
-					
+
+
 
 					</SplitView.Pane>
 
@@ -196,7 +223,7 @@
 						<TabItem   Header="Controls">
 							<v:ControlView
 								Name="Angular"
-								ControlSource = "{Binding Device.DeviceDescription} "					
+								ControlSource = "{Binding Device.DeviceDescription} "
 								IsEnabled="{Binding #ControlLocker.IsChecked}"
 								VerticalAlignment="Center"
 								Height="350"
@@ -206,9 +233,7 @@
 								IsVisible="{Binding #SplitViewListItem_0.IsSelected}"/>
 						</TabItem>
 						<TabItem Header="Log">
-							<ScrollViewer Name="ScrollLog" Margin="0, 20">
-								<TextBlock Name="Tb_log" Text="{Binding LogText}" FontSize="12" FontWeight="Light" />
-							</ScrollViewer>
+
 						</TabItem>
 						<TabItem Header="RxTxDiag">
 							<v:RXTXDiagView

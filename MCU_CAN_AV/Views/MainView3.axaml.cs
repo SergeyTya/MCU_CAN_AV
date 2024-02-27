@@ -16,15 +16,16 @@ namespace MCU_CAN_AV.Views
         public MainView3()
         {
             InitializeComponent();
-            Tb_log.PropertyChanged += Tb_log_PropertyChanged;
+             Log.PropertyChanged += Log_PropertyChanged;
+          
         }
 
-        private void Tb_log_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        private void Log_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.Property == TextBlock.TextProperty) {
+            if(e.Property == ItemsControl.ItemCountProperty)
+            {
                 ScrollLog.ScrollToEnd();
             }
-            
         }
     }
 }
