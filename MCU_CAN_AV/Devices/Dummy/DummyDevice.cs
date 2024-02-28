@@ -53,34 +53,34 @@ namespace MCU_CAN_AV.Devices.Dummy
                 throw new NotImplementedException();
             }
 
+            _outSpeed = new BaseParameter   { _Min = -12.0f, _Max = 12.0f };
+            _outTorque = new BaseParameter  { _Min = -1.0f , _Max = 1.0f  };
+            _outCurrent = new BaseParameter { _Min = 0.0f  , _Max = 300.0 };
+            _outVoltage = new BaseParameter { _Min = 0 };
 
             DeviceDescription[0].Value.Subscribe((_) =>
             {
-                base._outSpeed._val.OnNext(_/1000.0);
+                ((BaseParameter)base._outSpeed)._val.OnNext(_/1000.0);
             });
-            base._outSpeed._Min = 0;
-            base._outSpeed._Max = 12;
+          
 
             DeviceDescription[1].Value.Subscribe((_) =>
             {
-                base._outTorque._val.OnNext(_);
+                ((BaseParameter)base._outTorque)._val.OnNext(_);
             });
-            base._outTorque._Min = 0;
-            base._outTorque._Max = 200;
+
 
             DeviceDescription[2].Value.Subscribe((_) =>
             {
-                base._outCurrent._val.OnNext(_);
+                ((BaseParameter)base._outCurrent)._val.OnNext(_);
             });
-            base._outCurrent._Min = 0;
-            base._outCurrent._Max = 3000;
 
             DeviceDescription[3].Value.Subscribe((_) =>
             {
-                base._outVoltage._val.OnNext(_);
+                ((BaseParameter)base._outVoltage)._val.OnNext(_);
             });
-            base._outVoltage._Min = 0;
-            base._outVoltage._Max = 100;
+            ((BaseParameter)base._outVoltage)._Min = 0;
+            ((BaseParameter)base._outVoltage)._Max = 100;
         }
 
 

@@ -53,7 +53,10 @@ namespace MCU_CAN_AV.ViewModels
 
     public partial class IndicatorTemplate : ObservableObject, IDisposable
     {
-        Logger2Window Logger;
+        Logger2Window? Logger;
+
+        [ObservableProperty]
+        string _info = "";
 
         [ObservableProperty]
         public string _name = "no name";
@@ -65,7 +68,7 @@ namespace MCU_CAN_AV.ViewModels
         public string _value = "0";
 
         [ObservableProperty]
-        public SolidColorBrush _indicatorColor;
+        public SolidColorBrush? _indicatorColor;
 
         public IDisposable? disposable;
 
@@ -73,12 +76,11 @@ namespace MCU_CAN_AV.ViewModels
 
         public IndicatorTemplate(IDeviceParameter Item)
         {
-            
+            Info = $"ID = {Item.ID}";
             string unit = (Item.Unit == null) || (Item.Unit == string.Empty) ? "" : $", {Item.Unit}";
             Name = $"{Item.Name}{unit}";
             IsReadWrite = Item.IsReadWrite;
             Dispatcher.UIThread.Post(() => IndicatorColor = new(Avalonia.Media.Colors.Black, 0.2));
-
 
             disposable = Item.Value.Subscribe((_) =>
             {
@@ -86,6 +88,8 @@ namespace MCU_CAN_AV.ViewModels
 
                 Dispatcher.UIThread.Post(() =>
                 {
+                    if (IndicatorColor == null) return;
+
                     if (Item.Options != null && Item.Options.Count > 0 && (int)_ < Item.Options.Count)
                     {
                         Value = Item.Options[(int)_][0];

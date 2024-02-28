@@ -19,7 +19,11 @@
 					VerticalAlignment="Stretch" 
 					HorizontalAlignment="Stretch"
 					Background="Black"
+					ToolTip.Placement="Top"
 					>
+					<ToolTip.Tip >
+						<TextBlock FontSize="10" Text="{Binding Info}" />
+					</ToolTip.Tip>
 					<Panel Background="{Binding IndicatorColor}">
 						<Border Classes="h2" Margin="0"/>
 						<StackPanel Orientation="Vertical" >

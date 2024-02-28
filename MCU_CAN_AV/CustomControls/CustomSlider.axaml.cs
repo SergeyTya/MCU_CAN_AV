@@ -16,11 +16,10 @@ namespace MCU_CAN_AV.CustomControls
 {
     public partial class CustomSlider : Panel
     {
-        BehaviorSubject<int> ValueSubject = new BehaviorSubject<int>(0);
-
-        public static readonly StyledProperty<IObservable<int>> ValueProperty =
-            AvaloniaProperty.Register<CustomSlider, IObservable<int>>("Value");
-        public IObservable<int> Value
+  
+        public static readonly StyledProperty<double> ValueProperty =
+            AvaloniaProperty.Register<CustomSlider, double>("Value");
+        public double Value
         {
             set => SetValue(ValueProperty, value); 
             get => GetValue(ValueProperty);
@@ -67,11 +66,9 @@ namespace MCU_CAN_AV.CustomControls
             textbox.TextChanged += Textbox_TextChanged;
             textbox.KeyUp += Textbox_KeyUp;
 
-            this.Value = ValueSubject; 
             slider.ValueChanged += (_,__) => {
-                /* Value.Add(slider.Value);*/
-                ValueSubject.OnNext((int) slider.Value); 
-               
+       
+                this.Value = slider.Value;
             };
         }
 

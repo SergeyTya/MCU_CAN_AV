@@ -204,16 +204,11 @@
 								</Panel>
 							</ToggleButton>
 
-							<!-- <cc:IdicatorsTable DataContext="vm:MainView3Model" TableSource="{x:Static dd:IDevice._DeviceDescription}-->
-
 							<ScrollViewer Grid.Row="1" >
 								<v:IndicatorView/>
 							</ScrollViewer>
 
 						</Grid>
-
-
-
 					</SplitView.Pane>
 
 					<TabControl Margin="5" TabStripPlacement="Top">
@@ -221,7 +216,7 @@
 							<v:ParamTableView/>
 						</TabItem>
 						<TabItem   Header="Controls">
-							<v:Control2View/>
+							<v:Control2View IsEnabled="{Binding #ControlLocker.IsChecked}"/>
 						</TabItem>
 						<TabItem Header="Log">
 

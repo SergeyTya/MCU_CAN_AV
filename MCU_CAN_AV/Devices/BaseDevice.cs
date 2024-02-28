@@ -41,17 +41,17 @@ namespace MCU_CAN_AV.Devices
 
         // ***************************************************************************
 
-        internal BaseParametr _outVoltage = new();
+        internal IDeviceParameter _outVoltage ;
         public IDeviceParameter OutVoltage => _outVoltage;
-        internal BaseParametr _outCurrent = new();
+        internal IDeviceParameter _outCurrent ;
         public IDeviceParameter OutCurrent => _outCurrent;
-        internal BaseParametr _outTorque = new();
+        internal IDeviceParameter _outTorque ;
         public IDeviceParameter OutTorque  => _outTorque;
-        internal BaseParametr _outSpeed = new();
+        internal IDeviceParameter _outSpeed ;
         public IDeviceParameter OutSpeed   => _outSpeed;
-        internal BaseParametr _inTorque = new();
+        internal IDeviceParameter _inTorque ;
         public IDeviceParameter InTorque   => _inTorque;
-        internal BaseParametr _inSpeed = new();
+        internal IDeviceParameter _inSpeed ;
         public IDeviceParameter InSpeed    => _inSpeed;
 
         // ***************************************************************************
@@ -116,7 +116,7 @@ namespace MCU_CAN_AV.Devices
         }
     }
 
-    internal class BaseParametr : IDeviceParameter
+    internal class BaseParameter : IDeviceParameter
     {
         public string _ID = "";
         public string _Name = "";

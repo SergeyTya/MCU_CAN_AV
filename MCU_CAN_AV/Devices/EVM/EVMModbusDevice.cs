@@ -57,6 +57,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             this.Log().Info($"New {nameof(EVMModbusDevice)} connection ");
             _err_cnt = 0;
             Init(CANInitStruct);
+
         }
 
         void Init(ICAN.CANInitStruct InitStruct)
@@ -95,7 +96,50 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                         Dispatcher.UIThread.Post(() =>
                         {
                             EncodeDeviceDescription(_);
+
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Min = -9;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Max =  9;
+                            _outSpeed = base.DeviceDescription[5];
+
+
+                            ((EVMModbusTCPDeviceParametr) base.DeviceDescription[1])._Min = 0;
+                            ((EVMModbusTCPDeviceParametr) base.DeviceDescription[1])._Max = 300;
+                            _outCurrent  = base.DeviceDescription[1];
+
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[6])._Min = -1.99;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[6])._Max = 1.99;
+                            _outTorque   = base.DeviceDescription[6];
+
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[3])._Min = 0;
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[3])._Max = 1.0;
+                            _outVoltage = base.DeviceDescription[3];
+
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[23])._Min = -9000;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[23])._Max = 9000;
+                            _inSpeed     = base.DeviceDescription[23];
+
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[24])._Min = -1.0;
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[24])._Max = 1.0;
+                            _inTorque = base.DeviceDescription[24];
+
                         });
+
+
+                        //
+                        //OutCurrent = base.DeviceDescription[];
+                        //OutTorque = base.DeviceDescription[];
+                        //OutVoltage = base.DeviceDescription[];
+
+                        //InSpeed = base.DeviceDescription[];
+                        //InTorque = base.DeviceDescription[];
+
+
+                        //_outSpeed = new BaseParameter();
+                        //_outCurrent = new BaseParameter();
+                        //_outTorque = new BaseParameter();
+                        //_outVoltage = new BaseParameter();
+                        //_inSpeed = new BaseParameter();
+                        //_inTorque   = new BaseParameter();
                     },
                     exception => {
                         this.Log().Error(exception.Message);
@@ -329,9 +373,9 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
         {
             string _ID;
             string _Name;
-            string _Unit;
-            double _Min;
-            double _Max;
+            internal string _Unit;
+            internal double _Min;
+            internal double _Max;
             bool _IsReadWrite;
 
 

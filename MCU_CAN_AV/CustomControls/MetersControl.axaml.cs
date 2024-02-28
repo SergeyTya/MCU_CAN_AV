@@ -160,8 +160,8 @@ namespace MCU_CAN_AV.CustomControls
         {
             InitializeComponent();
 
-            Slider1Value = Slider1.Value;
-            Slider2Value = Slider2.Value;
+          //  Slider1Value = Slider1.Value;
+          //  Slider2Value = Slider2.Value;
 
             Init_angular();
 
