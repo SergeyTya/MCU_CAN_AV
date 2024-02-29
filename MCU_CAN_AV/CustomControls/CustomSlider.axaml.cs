@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
+using Avalonia.Threading;
+using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.CustomControls
 {
@@ -31,7 +34,6 @@ namespace MCU_CAN_AV.CustomControls
         {
             set
             {
-                slider.Minimum = value;
                 SetValue(MinProperty, value);
             }
             get => GetValue(MinProperty);
@@ -43,7 +45,6 @@ namespace MCU_CAN_AV.CustomControls
         {
             set
             {
-                slider.Maximum = value;
                 SetValue(MaxProperty, value);
             }
             get => GetValue(MaxProperty);
@@ -58,6 +59,9 @@ namespace MCU_CAN_AV.CustomControls
         }
 
 
+        int cntr = 0;
+        IAsyncResult? SliderMoveFinished;
+
         public CustomSlider()
         {
             
@@ -67,13 +71,24 @@ namespace MCU_CAN_AV.CustomControls
             textbox.KeyUp += Textbox_KeyUp;
 
             slider.ValueChanged += (_,__) => {
-       
-                this.Value = slider.Value;
+
+                if (SliderMoveFinished == null || SliderMoveFinished.IsCompleted)
+                {
+                    SliderMoveFinished = Task.Run(async () => { 
+                        await Task.Delay(100);
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            this.Value = slider.Value;
+                        });
+                    });
+                }
             };
         }
 
         private void Textbox_KeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
         {
+            if (sender == null) return;
+
             if (e.Key == Avalonia.Input.Key.Escape)
             {
                 for (int i = 0; i < ((TextBox)sender).UndoLimit; i++)
@@ -93,6 +108,7 @@ namespace MCU_CAN_AV.CustomControls
 
         private void Textbox_TextChanged(object? sender, TextChangedEventArgs e)
         {
+            if (sender == null) return;
             var str = ((TextBox)sender).Text;
             if (str == "") return;
             ((TextBox)sender).Text = check_value(str).ToString("0");
@@ -118,6 +134,17 @@ namespace MCU_CAN_AV.CustomControls
             if (change.Property.Name == "LabelText")
             {
                 label.Text = LabelText;
+            }
+
+            if (change.Property.Name == "Min")
+            {
+                slider.Minimum = Min;
+            }
+
+
+            if (change.Property.Name == "Max")
+            {
+                slider.Maximum = Max;
             }
 
             base.OnPropertyChanged(change);

@@ -96,7 +96,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                         Dispatcher.UIThread.Post(() =>
                         {
                             EncodeDeviceDescription(_);
-
+                            // Need tobe in kRPM!
                             ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Min = -9;
                             ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Max =  9;
                             _outSpeed = base.DeviceDescription[5];
@@ -124,22 +124,6 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
                         });
 
-
-                        //
-                        //OutCurrent = base.DeviceDescription[];
-                        //OutTorque = base.DeviceDescription[];
-                        //OutVoltage = base.DeviceDescription[];
-
-                        //InSpeed = base.DeviceDescription[];
-                        //InTorque = base.DeviceDescription[];
-
-
-                        //_outSpeed = new BaseParameter();
-                        //_outCurrent = new BaseParameter();
-                        //_outTorque = new BaseParameter();
-                        //_outVoltage = new BaseParameter();
-                        //_inSpeed = new BaseParameter();
-                        //_inTorque   = new BaseParameter();
                     },
                     exception => {
                         this.Log().Error(exception.Message);

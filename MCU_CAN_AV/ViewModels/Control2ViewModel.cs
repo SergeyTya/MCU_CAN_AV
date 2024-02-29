@@ -24,6 +24,7 @@ using System.Collections;
 using LiveChartsCore.Measure;
 using LiveChartsCore.ConditionalDraw;
 using DynamicData.Kernel;
+using ScottPlot.Drawing.Colormaps;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -34,7 +35,7 @@ namespace MCU_CAN_AV.ViewModels
 
         partial void OnSlider1_valueChanged(double value)
         {
-            IDevice.Current.InSpeed.writeValue(value);
+           DP_InSpeed?.writeValue(value);
         }
 
         [ObservableProperty]
@@ -43,7 +44,7 @@ namespace MCU_CAN_AV.ViewModels
 
         partial void OnSlider2_valueChanged(double value)
         {
-            IDevice.Current.InTorque.writeValue(value);
+            DP_InTorque?.writeValue(value);
         }
 
         [ObservableProperty]
@@ -56,8 +57,8 @@ namespace MCU_CAN_AV.ViewModels
                 new ColumnSeries<double>(){
                     Values = new double[] { 98.0 },
                     DataLabelsPaint = new SolidColorPaint(new SKColor(245, 245, 245)),
-                    DataLabelsPosition = DataLabelsPosition.Middle,
-                    DataLabelsFormatter = point  => $"{point.Coordinate.PrimaryValue}"
+                    DataLabelsPosition = DataLabelsPosition.Top,
+                    DataLabelsFormatter = point  => $"{point.Coordinate.PrimaryValue}",
                 }
             };
         public Axis[] YAxes1 { get; } = new[] { new Axis { TextSize = 0, MinLimit = 0 } };
@@ -67,7 +68,7 @@ namespace MCU_CAN_AV.ViewModels
                 new ColumnSeries<double>(){
                     Values = new double[] { 1.1 },
                     DataLabelsPaint = new SolidColorPaint(new SKColor(245, 245, 245)),
-                    DataLabelsPosition = DataLabelsPosition.Middle,
+                    DataLabelsPosition = DataLabelsPosition.Top,
                     DataLabelsFormatter = point  => $"{point.Coordinate.PrimaryValue}"
                 }
             };
@@ -92,10 +93,15 @@ namespace MCU_CAN_AV.ViewModels
         IDeviceParameter _dP_Current;
         [ObservableProperty]
         IDeviceParameter _dP_Torque;
+        [ObservableProperty]
+        IDeviceParameter _dP_InSpeed;
+        [ObservableProperty]
+        IDeviceParameter _dP_InTorque;
 
         public Control2ViewModel()
         {
-
+            DP_InSpeed = new BaseParameter();
+            DP_InTorque = new BaseParameter();
 
             Messenger.RegisterAll(this);
 
@@ -156,55 +162,106 @@ namespace MCU_CAN_AV.ViewModels
             {
 
 
-                DP_Speed = IDevice.Current.OutSpeed;
-                DP_Volage = IDevice.Current.OutVoltage;
-                DP_Current = IDevice.Current.OutCurrent;
-                DP_Torque = IDevice.Current.OutTorque;
+                DP_Speed     = IDevice.Current.OutSpeed;
+                DP_Volage    = IDevice.Current.OutVoltage;
+                DP_Current   = IDevice.Current.OutCurrent;
+                DP_Torque    = IDevice.Current.OutTorque; 
+                DP_InSpeed   = IDevice.Current.InSpeed;
+                DP_InTorque  = IDevice.Current.InTorque;
 
                 if (DP_Torque != null)
                 {
 
                     double gauge1_step = (DP_Torque.Max - DP_Torque.Min) / 4;
 
-                    Series1 = GaugeGenerator.BuildAngularGaugeSections(
+                   var tmp1  = GaugeGenerator.BuildAngularGaugeSections(
                        new GaugeItem(gauge1_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); }),
                        new GaugeItem(gauge1_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
                        new GaugeItem(gauge1_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
                        new GaugeItem(gauge1_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
                     );
 
+                    var tmp2  = GaugeGenerator.BuildAngularGaugeSections(
+                       new GaugeItem(gauge1_step*2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
+                       new GaugeItem(gauge1_step*2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
+                    );
+
+                    if (DP_Torque.Min == -DP_Torque.Max)
+                    {
+                        Series1 = tmp1;
+                    }
+                    else 
+                    {
+                        Series1 = tmp2;
+                    }
+
+                    disp2 = DP_Torque.Value.Subscribe((_) =>
+                    {
+                        Needle2.Value = double.Parse(_.ToString("0.0#"));
+                    });
                 }
 
 
-                Series2 = GaugeGenerator.BuildAngularGaugeSections(
-                    new GaugeItem(2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Blue); }),
-                    new GaugeItem(3, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
-                    new GaugeItem(3, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
-                );
-
-                disp1 = DP_Speed.Value.Subscribe((_) =>
+                if (DP_Speed != null)
                 {
-                    Needle1.Value = double.Parse(_.ToString("0.0##"));
-                });
+                    double gauge2_step = (DP_Speed.Max - DP_Speed.Min) / 6;
+
+                    var tmp1 = GaugeGenerator.BuildAngularGaugeSections(
+                    new GaugeItem(gauge2_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); }),
+                    new GaugeItem(gauge2_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
+                    new GaugeItem(gauge2_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Blue); }),
+                    new GaugeItem(gauge2_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Blue); }),
+                    new GaugeItem(gauge2_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
+                    new GaugeItem(gauge2_step, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
+                    );
+
+                    var tmp2 = GaugeGenerator.BuildAngularGaugeSections(
+                    new GaugeItem(gauge2_step*2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Blue); }),
+                    new GaugeItem(gauge2_step*2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Green); }),
+                    new GaugeItem(gauge2_step*2, s => { s.OuterRadiusOffset = 120; s.MaxRadialColumnWidth = 10; s.Fill = new SolidColorPaint(SKColors.Red); })
+                    );
+
+                    if (DP_Speed.Min == -DP_Speed.Max)
+                    {
+                        Series2 = tmp1;
+                    }
+                    else
+                    {
+                        Series2 = tmp2;
+                    }
+
+                    disp1 = DP_Speed.Value.Subscribe((_) =>
+                    {
+                        Needle1.Value = double.Parse((_/1000).ToString("0.0#"));
+                    });
+                }
 
 
-                disp2 = DP_Torque.Value.Subscribe((_) =>
-                {
-                    Needle2.Value = double.Parse(_.ToString("0.0##"));
-                });
+                if (DP_Current != null) {
+                    disp4 = DP_Current.Value.Subscribe((_) =>
+                    {
 
-                disp4 = DP_Current.Value.Subscribe((_) =>
-                {
+                        if (DP_Current.Max > _) { YAxes1[0].MaxLimit = DP_Current.Max * 1.05; } else { YAxes1[0].MaxLimit = _; }
+                        Series3[0].Values = new double[] { double.Parse(_.ToString("0.#")) };
+                    });
+                }
 
-                    if (DP_Current.Max > _) { YAxes1[0].MaxLimit = DP_Current.Max; } else { YAxes1[0].MaxLimit = _; }
-                    Series3[0].Values = new double[] { _ };
-                });
 
-                disp3 = DP_Volage.Value.Subscribe((_) =>
-                {
-                    if (DP_Volage.Max > _) { YAxes1[0].MaxLimit = DP_Volage.Max; } else { YAxes1[0].MaxLimit = _; }
-                    Series4[0].Values = new double[] { _ };
-                });
+                if (DP_Volage != null) {
+                    disp3 = DP_Volage.Value.Subscribe((_) =>
+                    {
+                        if (DP_Volage.Max > _)
+                        {
+                            YAxes2[0].MaxLimit = DP_Volage.Max * 1.05;
+                        }
+                        else
+                        {
+                            YAxes2[0].MaxLimit = _;
+                        }
+                        Series4[0].Values = new double[] { double.Parse(_.ToString("0.0#")) };
+                    });
+                }
+
 
             }
 

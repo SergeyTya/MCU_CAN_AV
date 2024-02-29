@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MCU_CAN_AV.Devices.Shanghai
 {
@@ -28,6 +29,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
         public ShanghaiDevice(ICAN CAN):base(CAN) {
             this.Log().Info($"New {nameof(ShanghaiDevice)} connection ");
             InitDeviceDescription();
+            base._Init_stage = false;
         }
 
 
@@ -135,6 +137,8 @@ namespace MCU_CAN_AV.Devices.Shanghai
             EncodeFaults(data);
         }
 
+        public override string Name { get { return "Shanghai"; } }
+
         void InitDeviceDescription()
         {
             List<ShanghaiDeviceParameter> tmp = new();
@@ -155,7 +159,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             }
             catch (JsonReaderException e)
             {
-                throw new NotImplementedException();
+                this.Log().Error(e.Message);
             }
         }
 

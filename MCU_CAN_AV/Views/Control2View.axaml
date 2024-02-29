@@ -77,6 +77,8 @@
 					Grid.Row="1"
 					Name="Slider1"
 					Value="{Binding Slider1_value, Mode=TwoWay}"
+					Max  ="{Binding  DP_InSpeed.Max }"
+					Min  ="{Binding  DP_InSpeed.Min }"
 					/>
 				
 				<Border Grid.Row="2" Classes="h2" Margin="3"/>
@@ -84,6 +86,8 @@
 					Grid.Row="2"
 					Name="Slider2"
 					Value="{Binding Slider2_value, Mode=TwoWay}"
+					Max  ="{Binding  DP_InTorque.Max }"
+					Min  ="{Binding  DP_InTorque.Min }"
 					/>
 
 				<Grid Grid.Row="0">

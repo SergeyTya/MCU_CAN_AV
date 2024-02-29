@@ -165,7 +165,8 @@ namespace MCU_CAN_AV.Can
             if (VCI_OpenDevice(m_devtype, m_devind, 0) == 0)
             {
 
-                throw new ICAN.ICANException(String.Format("Unable connect to USBCAN-B adapter DevType={0}, DevInd={1}", m_devtype, m_devind));
+                this.Log().Error(String.Format("Unable connect to USBCAN-B adapter DevType={0}, DevInd={1}", m_devtype, m_devind));
+                return;
             }
 
          

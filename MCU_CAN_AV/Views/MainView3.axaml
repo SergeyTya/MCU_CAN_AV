@@ -77,7 +77,7 @@
 
 	</UserControl.Styles>
 
-
+	<Panel>		
 	<Grid>
 		<!--Main grid-->
 		<Grid.RowDefinitions>
@@ -113,8 +113,8 @@
 		<Panel Grid.Row="3">
 
 			<Grid RowDefinitions="20,*" >
-
-				<Panel Background="{Binding IndicatorColor}">
+				<Panel Background="Black" Opacity="0.7">
+					<Border Background="{Binding IndicatorColor}" CornerRadius="0,0,5,5"/>
 					<Panel.DataContext>
 						<vm:FaultTableViewModel/>
 					</Panel.DataContext>
@@ -211,8 +211,10 @@
 						<ColumnDefinition Width="150"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
-				
-				<v:IndicatorView Grid.Column="0"/>
+
+					<ScrollViewer Grid.Column="0">
+						<v:IndicatorView />
+					</ScrollViewer>
 
 				<TabControl Margin="5" TabStripPlacement="Top" Grid.Column="1">
 					<TabItem Header="Tables">
@@ -221,13 +223,8 @@
 					<TabItem   Header="Controls">
 						<v:Control2View IsEnabled="{Binding #ControlLocker.IsChecked}"/>
 					</TabItem>
-					<TabItem Header="Log">
-
-					</TabItem>
 					<TabItem Header="RxTxDiag">
-						<v:RXTXDiagView
-								
-								/>
+						<v:RXTXDiagView />
 					</TabItem>
 					<TabItem Header="Calibration">
 						<TextBlock Margin="5">This is tab 3 content</TextBlock>
@@ -267,5 +264,7 @@
 		</Grid>
 		<!--Main grid-->
 	</Grid>
+
+	</Panel>
 
 </UserControl>
