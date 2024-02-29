@@ -110,31 +110,49 @@
 		<!--Low side status bar-->
 
 		<GridSplitter Grid.Row="2" Background="Gray" ResizeDirection="Rows"/>
-		<Panel Grid.Row="3"  Classes="Black3" >
+		<Panel Grid.Row="3">
 
 			<Grid RowDefinitions="20,*" >
 
-				<StackPanel Orientation="Horizontal" Spacing="10" Height="20" Grid.Row="0">
+				<Panel Background="{Binding IndicatorColor}">
+					<Panel.DataContext>
+						<vm:FaultTableViewModel/>
+					</Panel.DataContext>
+					
+				<StackPanel 
+					Orientation="Horizontal" 
+					Spacing="10" Height="15" 
+					Grid.Row="0" 
+				>
+
+					<StackPanel.DataContext>
+						<vm:MainView3Model/>
+					</StackPanel.DataContext>
+					
 					<TextBlock
 						Text="Connected:"
 						VerticalAlignment="Center"
 						TextAlignment="Left"
+						FontWeight="Light"
 						Margin="5,0,0,0"/>
 
 					<TextBlock
 						Text="{Binding DeviceName}"
 						VerticalAlignment="Center"
+						FontWeight="Bold"
 						TextAlignment="Center"/>
 
 					<TextBlock
 						Text="|"
 						Foreground="DimGray"
 						VerticalAlignment="Center"
+						FontWeight="Light"
 						TextAlignment="Center"/>
 
 					<TextBlock
 						Text="Fault Counter: "
 						VerticalAlignment="Center"
+						FontWeight="Light"
 						TextAlignment="Center"/>
 
 					<TextBlock
@@ -143,6 +161,7 @@
 						TextAlignment="Center"/>
 
 				</StackPanel>
+				</Panel>
 				<!-- LOG -->
 				<Panel VerticalAlignment="Stretch" Grid.Row="1">
 					
@@ -157,7 +176,13 @@
 						<ItemsControl  ItemsSource="{Binding Logs}" Name="Log" Background="Black">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding Text}" Foreground="{Binding TextColor}" Height="15"/>
+									<TextBlock 
+										Text="{Binding Text}" 
+										Foreground="{Binding TextColor}" 
+										Height="15"
+										FontWeight="Light"
+										FontSize="12"
+										/>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl >

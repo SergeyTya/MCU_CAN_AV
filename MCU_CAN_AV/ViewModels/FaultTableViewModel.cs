@@ -49,8 +49,8 @@ namespace MCU_CAN_AV.ViewModels
                         {
                             State = _;
                             if (_ == DeviceState.Run) { IndicatorColor.Color = Colors.Green; }
-                            if (_ == DeviceState.Fault) { IndicatorColor.Color = Colors.Red; }
-                            if (_ == DeviceState.Ready) { IndicatorColor.Color = Colors.Blue; }
+                            if (_ == DeviceState.Fault) { IndicatorColor.Color = Colors.DarkRed; }
+                            if (_ == DeviceState.Ready) { IndicatorColor.Color = Colors.DarkBlue; }
                             if (_ == DeviceState.NoConnect) { IndicatorColor.Color = Colors.DimGray; }
                         });
                     });

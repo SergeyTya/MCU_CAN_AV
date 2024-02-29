@@ -15,64 +15,86 @@
 		<vm:ButtonsControlViewModel/>
 	</UserControl.DataContext>
 
+	<UserControl.Styles>
+		<Style Selector="Button /template/ ContentPresenter">
+			<Setter Property="BorderBrush" Value="Blue" />
+		</Style>
+		<Style Selector="#Btn_run:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="DarkGreen" />
+		</Style>
+		<Style Selector="#Btn_reset:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="DarkBlue" />
+		</Style>
+		<Style Selector="#Btn_stop:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="Red" />
+		</Style>
+	</UserControl.Styles>
 
-		<Grid Grid.Column="0" Grid.Row="0" Margin="5">
+	<Grid Grid.Column="0" Grid.Row="0" Margin="5">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="60"/>
+		</Grid.RowDefinitions>
+
+
+
+		<Panel Grid.Row="0"   Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+			<TextBlock
+					   Name="label"
+					   Text="Controls"
+					   TextAlignment="Left"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Stretch"
+					   Margin="10,0,0,0"
+					   Foreground="Gray"
+					   FontSize="11"
+					   FontWeight="SemiBold"
+						   />
+		</Panel>
+
+		<Grid Grid.Column="0" Grid.Row="2">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*"></ColumnDefinition>
+				<ColumnDefinition Width="0.5*"></ColumnDefinition>
+				<ColumnDefinition Width="0.5*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="30"/>
 				<RowDefinition Height="1*"/>
-				<RowDefinition Height="60"/>
-				<RowDefinition Height="60"/>
 			</Grid.RowDefinitions>
-			<Panel Grid.Row="0"   Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-				<TextBlock
-						   Name="label"
-						   Text="Controls"
-						   TextAlignment="Left"
-						   VerticalAlignment="Center"
-						   HorizontalAlignment="Stretch"
-						   Margin="10,0,0,0"
-						   Foreground="Gray"
-						   FontSize="11"
-						   FontWeight="SemiBold"
-						   />
-			</Panel>
-
-			<Grid Grid.Column="0" Grid.Row="2">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="0.5*"></ColumnDefinition>
-					<ColumnDefinition Width="0.5*"></ColumnDefinition>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="1*"/>
-				</Grid.RowDefinitions>
-				<Button
-					Grid.Column="0"
-					Content="Start" 
-					Margin="2"  
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch"
-					 Command="{Binding onClickStartButtonCommand}"
+			<Button Name="Btn_run"
+				Grid.Column="0"
+				Content="Start"
+				Margin="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Command="{Binding onClickStartButtonCommand}"
 					/>
-				<Button
-					Grid.Column="1"
-					Content="Reset"
-					Margin="2"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-					Command="{Binding onClickResetButtonCommand}"
-						/>
-			</Grid>
-			<Button Grid.Row="3"
-					Content="Stop"
-					Background="Red"
-					Margin="2"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Stretch"
-				    Command="{Binding onClickStopButtonCommand}"
+			<Button Name="Btn_reset"
+				Grid.Column="1"
+				Content="Reset"
+				Margin="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Command="{Binding onClickResetButtonCommand}"
 						/>
 		</Grid>
+		<Button Name="Btn_stop"
+				Grid.Row="3"
+				Content="Stop"
+				Margin="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Command="{Binding onClickStopButtonCommand}"
+				Background="DarkRed"
+				>
+		</Button>
 
-	</UserControl>
+
+
+	</Grid>
+
+</UserControl>
