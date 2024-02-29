@@ -88,47 +88,24 @@
 		</Grid.RowDefinitions>
 		<!--Menu Items-->
 		<DockPanel Grid.Row="0" HorizontalAlignment="Right">
-			<Menu DockPanel.Dock="Top" FontWeight="Light">
+			
+			<Panel Background="Black" Opacity="0.7"  HorizontalAlignment="Stretch">
+				<!--Info line-->
+				<Border Background="{Binding IndicatorColor}" CornerRadius="0,0,5,5"/>
+				<Panel.DataContext>
+					<vm:FaultTableViewModel/>
+				</Panel.DataContext>
 
-				<MenuItem Header="Commands">
-					<CheckBox Name="ControlLocker" Content="UnlockedControl" IsChecked="false"/>
-					<Separator/>
-					<MenuItem Header="Load from file"/>
-					<MenuItem Header="Save to file "/>
-					<Separator/>
-					<MenuItem Header="Scope"/>
-					<Separator/>
-					<MenuItem Header="Disconnect" Command="{Binding ClickDisconnectCommand}" >
-						<MenuItem.DataContext>
-							<vm:ConnectionViewModel/>
-						</MenuItem.DataContext>
-					</MenuItem>
-				</MenuItem>
-			</Menu>
-			<TextBlock/>
-		</DockPanel>
-		<!--Low side status bar-->
-
-		<GridSplitter Grid.Row="2" Background="Gray" ResizeDirection="Rows"/>
-		<Panel Grid.Row="3">
-
-			<Grid RowDefinitions="20,*" >
-				<Panel Background="Black" Opacity="0.7">
-					<Border Background="{Binding IndicatorColor}" CornerRadius="0,0,5,5"/>
-					<Panel.DataContext>
-						<vm:FaultTableViewModel/>
-					</Panel.DataContext>
-					
-				<StackPanel 
-					Orientation="Horizontal" 
-					Spacing="10" Height="15" 
-					Grid.Row="0" 
+				<StackPanel
+					Orientation="Horizontal"
+					Spacing="10" Height="15"
+					Grid.Row="0"
 				>
 
 					<StackPanel.DataContext>
 						<vm:MainView3Model/>
 					</StackPanel.DataContext>
-					
+
 					<TextBlock
 						Text="Connected:"
 						VerticalAlignment="Center"
@@ -161,7 +138,34 @@
 						TextAlignment="Center"/>
 
 				</StackPanel>
-				</Panel>
+			</Panel>
+			
+			<Menu DockPanel.Dock="Top" FontWeight="Light">
+				<MenuItem Header="Commands" HorizontalAlignment="Left">
+					<CheckBox Name="ControlLocker" Content="UnlockedControl" IsChecked="false"/>
+					<Separator/>
+					<MenuItem Header="Load from file"/>
+					<MenuItem Header="Save to file "/>
+					<Separator/>
+					<MenuItem Header="Scope"/>
+					<Separator/>
+					<MenuItem Header="Disconnect" Command="{Binding ClickDisconnectCommand}" >
+						<MenuItem.DataContext>
+							<vm:ConnectionViewModel/>
+						</MenuItem.DataContext>
+					</MenuItem>
+				</MenuItem>
+
+			</Menu>
+			<TextBlock/>
+		</DockPanel>
+		<!--Low side status bar-->
+
+		<GridSplitter Grid.Row="2" Background="Gray" ResizeDirection="Rows"/>
+		<Panel Grid.Row="3">
+
+			<Grid RowDefinitions="20,*" >
+
 				<!-- LOG -->
 				<Panel VerticalAlignment="Stretch" Grid.Row="1">
 					
