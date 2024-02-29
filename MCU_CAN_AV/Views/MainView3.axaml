@@ -202,63 +202,40 @@
 			</Grid.RowDefinitions>
 			<!--Tabcontrol panel-->
 			<Panel Grid.Column="0" Classes="Black1">
-				<SplitView
-				Classes="Black1"
-				CompactPaneLength="28"
-				DisplayMode="CompactInline"
-				OpenPaneLength="150"
-				IsPaneOpen="{Binding #SplitViewToggleButton.IsChecked}"
-				>
-					<!--Split view-->
-					<SplitView.Pane>
 
-						<Grid ShowGridLines="False">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="30"/>
-								<RowDefinition Height="1*"/>
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="1*"/>
-							</Grid.ColumnDefinitions>
+				<Grid ShowGridLines="False">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="150"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+				
+				<v:IndicatorView Grid.Column="0"/>
 
+				<TabControl Margin="5" TabStripPlacement="Top" Grid.Column="1">
+					<TabItem Header="Tables">
+						<v:ParamTableView/>
+					</TabItem>
+					<TabItem   Header="Controls">
+						<v:Control2View IsEnabled="{Binding #ControlLocker.IsChecked}"/>
+					</TabItem>
+					<TabItem Header="Log">
 
-							<ToggleButton Grid.Row="0" Name="SplitViewToggleButton" IsChecked="True" Classes="Split" HorizontalAlignment="Right">
-								<Panel>
-									<Border />
-									<TextBlock>x</TextBlock>
-								</Panel>
-							</ToggleButton>
-
-							<ScrollViewer Grid.Row="1" >
-								<v:IndicatorView/>
-							</ScrollViewer>
-
-						</Grid>
-					</SplitView.Pane>
-
-					<TabControl Margin="5" TabStripPlacement="Top">
-						<TabItem Header="Tables">
-							<v:ParamTableView/>
-						</TabItem>
-						<TabItem   Header="Controls">
-							<v:Control2View IsEnabled="{Binding #ControlLocker.IsChecked}"/>
-						</TabItem>
-						<TabItem Header="Log">
-
-						</TabItem>
-						<TabItem Header="RxTxDiag">
-							<v:RXTXDiagView
+					</TabItem>
+					<TabItem Header="RxTxDiag">
+						<v:RXTXDiagView
 								
 								/>
-						</TabItem>
-						<TabItem Header="Calibration">
-							<TextBlock Margin="5">This is tab 3 content</TextBlock>
-						</TabItem>
-					</TabControl>
-
-				</SplitView>
+					</TabItem>
+					<TabItem Header="Calibration">
+						<TextBlock Margin="5">This is tab 3 content</TextBlock>
+					</TabItem>
+				</TabControl>
 
 				<!--Tabcontrol panel-->
+				</Grid>
 			</Panel>
 
 			<!--Fault view panel-->
