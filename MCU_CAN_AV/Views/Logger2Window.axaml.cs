@@ -15,7 +15,7 @@ namespace MCU_CAN_AV.Views
     public partial class Logger2Window : Window
     {
         public static readonly StyledProperty<string> InputValueProperty =
-          AvaloniaProperty.Register<MetersControl, string>("InputValue");
+          AvaloniaProperty.Register<Logger2Window, string>("InputValue");
 
         public string InputValue
         {
