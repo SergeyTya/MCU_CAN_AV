@@ -42,12 +42,13 @@ namespace MCU_CAN_AV.ViewModels
                         if (data.Timeout) return;
 
                         string hex = BitConverter.ToString(data.data);
-                        var tmp_row = new RxTxRowTemplate { Id = data.id, Value = hex };
+                        string ID  = $"0x{data.id.ToString("X4")}";
+                        var tmp_row = new RxTxRowTemplate { Id = ID, Value = hex, id = data.id };
 
                         bool new_item = true;
                         foreach (var item in tbl)
                         {
-                            if (item.Id == data.id)
+                            if (item.id == data.id)
                             {
                                 item.Value = hex;
                                 item.Counter++;
@@ -86,8 +87,10 @@ namespace MCU_CAN_AV.ViewModels
 
     internal partial class RxTxRowTemplate:ObservableObject {
 
+        public uint id;
+
         [ObservableProperty]
-        uint _id;
+        string? _id;
 
         [ObservableProperty]
         string? _value;

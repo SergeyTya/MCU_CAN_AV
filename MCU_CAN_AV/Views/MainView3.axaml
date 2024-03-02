@@ -81,17 +81,17 @@
 	<Grid>
 		<!--Main grid-->
 		<Grid.RowDefinitions>
-			<RowDefinition Height="25"/>
+			<RowDefinition Height="30"/>
 			<RowDefinition Height="1*"/>
 			<RowDefinition Height="4"/>
-			<RowDefinition Height="40" MinHeight="20"/>
+			<RowDefinition Height="20" />
 		</Grid.RowDefinitions>
 		<!--Menu Items-->
-		<DockPanel Grid.Row="0" HorizontalAlignment="Right">
+		<DockPanel Grid.Row="0" Margin="5">
 			
-			<Panel Background="Black" Opacity="0.7"  HorizontalAlignment="Stretch">
+			<Panel Background="Black" Opacity="0.7"  HorizontalAlignment="Stretch" DockPanel.Dock="Left" Margin="5,0,0,0">
 				<!--Info line-->
-				<Border Background="{Binding IndicatorColor}" CornerRadius="0,0,5,5"/>
+				<Border Background="{Binding IndicatorColor}" CornerRadius="5,5,5,5"/>
 				<Panel.DataContext>
 					<vm:FaultTableViewModel/>
 				</Panel.DataContext>
@@ -100,6 +100,7 @@
 					Orientation="Horizontal"
 					Spacing="10" Height="15"
 					Grid.Row="0"
+					Margin="5"
 				>
 
 					<StackPanel.DataContext>
@@ -140,7 +141,7 @@
 				</StackPanel>
 			</Panel>
 			
-			<Menu DockPanel.Dock="Top" FontWeight="Light">
+			<Menu DockPanel.Dock="Right" FontWeight="Light">
 				<MenuItem Header="Commands" HorizontalAlignment="Left">
 					<CheckBox Name="ControlLocker" Content="UnlockedControl" IsChecked="false"/>
 					<Separator/>
@@ -161,10 +162,12 @@
 		</DockPanel>
 		<!--Low side status bar-->
 
-		<GridSplitter Grid.Row="2" Background="Gray" ResizeDirection="Rows"/>
+
+		<GridSplitter Grid.Row="2" Background="Gray" ResizeDirection="Rows" CornerRadius="3"/>
+		
 		<Panel Grid.Row="3">
 
-			<Grid RowDefinitions="20,*" >
+			<Grid RowDefinitions="0,*" >
 
 				<!-- LOG -->
 				<Panel VerticalAlignment="Stretch" Grid.Row="1">

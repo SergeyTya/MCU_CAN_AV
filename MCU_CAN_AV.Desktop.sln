@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCU_CAN_AV.Desktop", "MCU_C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCU_CAN_AV", "MCU_CAN_AV\MCU_CAN_AV.csproj", "{1800E2B7-6DAF-478F-90D0-D73F678B9CED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialToSocket", "SerialToSocket\SerialToSocket.csproj", "{176DD31F-8906-4777-BB4B-0C5B2620C633}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1800E2B7-6DAF-478F-90D0-D73F678B9CED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{176DD31F-8906-4777-BB4B-0C5B2620C633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{176DD31F-8906-4777-BB4B-0C5B2620C633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{176DD31F-8906-4777-BB4B-0C5B2620C633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{176DD31F-8906-4777-BB4B-0C5B2620C633}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
