@@ -24,12 +24,21 @@ namespace SerialToSocket
             return res.ToArray();
         }
 
-
         static public byte[]? ConvertToTCP(byte[] rtu_frame)
         {
             if (rtu_frame == null) return null;
 
-            return rtu_frame;
+            List<byte> tcpFrame = new List<byte> {0,0,0,0};
+            UInt16 len = (ushort) (rtu_frame.Length - 2 );
+            tcpFrame.Add( (byte) ( (0xFF00 & len) >> 8 ));
+            tcpFrame.Add( (byte) (0xFF & len)           );
+
+            byte[] body = new byte[len];
+            Array.Copy(rtu_frame, 0, body, 0, body.Length);
+
+            tcpFrame.AddRange(body);
+
+            return tcpFrame.ToArray();
         }
 
 
