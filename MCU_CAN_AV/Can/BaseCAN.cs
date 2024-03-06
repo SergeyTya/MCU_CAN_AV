@@ -51,7 +51,8 @@ namespace MCU_CAN_AV.Can
         }
 
         internal void post(ICAN.RxTxCanData data) {
-            RxUpdater.OnNext( data );
+            
+            if(!RxUpdater.IsDisposed) RxUpdater.OnNext( data );
         }
 
         public void Close()

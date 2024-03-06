@@ -39,6 +39,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
     {
         static List<EVMModbusTCPDeviceFault> FaultsList = new();
         static Subject<ICAN.RxTxCanData> TxObservable = new();
+        ICAN CAN_Instance;
 
         public override void Close_instance()
         {
@@ -57,6 +58,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             this.Log().Info($"New {nameof(EVMModbusDevice)} connection ");
             _err_cnt = 0;
             Init(CANInitStruct);
+            CAN_Instance = CAN;
 
         }
 
@@ -67,9 +69,11 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             Task.Run(async () => {
 
-                await Task.Delay(500);
+                await Task.Delay(4000);
 
-                var ret_val = await ModbusTCP.getDevId(
+
+
+                var ret_val = await ((ModbusTCP)CAN_Instance).getDevId(
                                server_name: InitStruct.server_name,
                                server_port: InitStruct.server_port,
                                modbus_id: InitStruct._devind
@@ -84,7 +88,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 Task.Run(async () =>
                 {
 
-                    var res = await ModbusTCP.ReadRegistersInfoAsync(
+                    var res = await ((ModbusTCP)CAN_Instance).ReadRegistersInfoAsync(
                                        server_name: InitStruct.server_name,
                                        server_port: InitStruct.server_port,
                                        modbus_id: InitStruct._devind

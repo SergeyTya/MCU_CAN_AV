@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -69,7 +70,7 @@ namespace AsyncSocketTest
 
         private void connect() {
             tcpClient = new TcpClient();
-            tcpClient.ReceiveTimeout = 10;
+            tcpClient.ReceiveTimeout = Timeout*2;
 
             try
             {
@@ -132,37 +133,81 @@ namespace AsyncSocketTest
             
         }
 
-        private async Task execute_request(IModbusFrame frame) {
+        //private async Task execute_request(IModbusFrame frame) {
+        //    if (!Connected) throw new ServerModbusTCPException("TCP connection failed");
+
+        //    BaseFrame request = (BaseFrame)frame;
+
+        //    var stream = tcpClient.GetStream();
+        //    var buf_tx = request.getTXbuf;
+        //    var task_write = stream.WriteAsync(buf_tx, 0, buf_tx.Length);
+        //    if (await Task.WhenAny(task_write, Task.Delay(Timeout)) != task_write)
+        //    {
+        //        // timeout logic
+        //      //  Debug.WriteLine("Write Timeout");
+        //        stream.Close();
+        //        close();
+        //        connect();
+        //        throw new ServerModbusTCPException("Write Timeout");
+
+        //    }
+        //    var buf_size = 2056;
+        //    var buf_rx = new byte[buf_size];
+        //    var task_read = stream.ReadAsync(buf_rx, 0, buf_size);
+        //    if (await Task.WhenAny(task_read, Task.Delay(Timeout)) != task_read)
+        //    {
+        //        // timeout logic
+        //     //   Debug.WriteLine("Read Timeout");
+        //        stream.Close();
+        //        close();
+        //        connect();
+        //        throw new ServerModbusTCPException("Read Timeout");
+        //    }
+
+
+        //    request.setRXbuf = buf_rx;
+        //}
+
+
+        private async Task execute_request(IModbusFrame frame)
+        {
             if (!Connected) throw new ServerModbusTCPException("TCP connection failed");
 
             BaseFrame request = (BaseFrame)frame;
 
             var stream = tcpClient.GetStream();
             var buf_tx = request.getTXbuf;
-            var task_write = stream.WriteAsync(buf_tx, 0, buf_tx.Length);
-            if (await Task.WhenAny(task_write, Task.Delay(Timeout)) != task_write)
+
+            CancellationTokenSource cts = new CancellationTokenSource(Timeout);
+            CancellationToken token = cts.Token;
+            try
             {
-                // timeout logic
-              //  Debug.WriteLine("Write Timeout");
+                await stream.WriteAsync(buf_tx, 0, buf_tx.Length, token);
+            }
+            catch (Exception) {
+
                 stream.Close();
                 close();
                 connect();
                 throw new ServerModbusTCPException("Write Timeout");
-
             }
+
             var buf_size = 2056;
             var buf_rx = new byte[buf_size];
-            var task_read = stream.ReadAsync(buf_rx, 0, buf_size);
-            if (await Task.WhenAny(task_read, Task.Delay(Timeout)) != task_read)
+
+            CancellationTokenSource cts1 = new CancellationTokenSource(Timeout/2);
+            CancellationToken token1 = cts1.Token;
+            try
             {
-                // timeout logic
-             //   Debug.WriteLine("Read Timeout");
+               await stream.ReadAsync(buf_rx, 0, buf_size, token1);
+            }
+            catch (Exception)
+            {
                 stream.Close();
                 close();
                 connect();
                 throw new ServerModbusTCPException("Read Timeout");
             }
-
 
             request.setRXbuf = buf_rx;
         }
@@ -203,11 +248,11 @@ namespace AsyncSocketTest
                         return ConvertFromByte(pld8);
                     }
                 }
-                throw new ServerModbusTCPException(req.getRXbuf);
+                throw new ServerModbusTCPException("ModbusTCP: Frame error");
             }
             else
             {
-                throw new ServerModbusTCPException("Not valid response: ReadRegsAsync");
+                throw new ServerModbusTCPException("ModbusTCP: Frame not valid");
             }
         }
 

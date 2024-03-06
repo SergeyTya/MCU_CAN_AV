@@ -13,3 +13,4 @@ ISerialToSocket server = new SerialToSocket.SerialToSocket();
 server.Start("COM2", 921600, "127.0.0.1", 8888);
 
 
+

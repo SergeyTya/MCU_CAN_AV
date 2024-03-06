@@ -119,6 +119,7 @@ namespace MCU_CAN_AV.Devices
             switch (device)
             {
                 case DeviceType.EVMModbus:
+
                     CAN = ICAN.Create(InitStruct, ICAN.CANType.ModbusTCP);
                     if(CAN!=null) ret_obj = new EVMModbusDevice(CAN);
                     break;

@@ -29,23 +29,29 @@ namespace SerialToSocket
             this.socket = new Socket(this.ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             this.max_conn = max_conn;
             Serial = serial;
+
+
+            var tcpListener = new TcpListener(IPAddress.Any, 8888);
         }
 
         public void Init()
         {
             this.socket.Bind(this.ip);
-            this.socket.Listen(this.max_conn);
-            StartListening();
-        }
-
-        private void StartListening()
-        {
+            this.socket.Listen(3);
+           
             this.Log().Info("Server starting...");
+
             while (true)
             {
+
                 this.socket.BeginAccept(new AsyncCallback(AcceptCallBack), this.socket);
             }
+
+
+
+
         }
+
 
         private void AcceptCallBack(IAsyncResult ar)
         {
@@ -65,18 +71,19 @@ namespace SerialToSocket
 
 
             Receive(accept_socket);
+
         }
 
-        private async void  Receive(Socket accept_socket)
+        private void Receive(Socket accept_socket)
         {
             this.Log().Info("Await new connection");
             ObjectState state = new ObjectState();
             state.socket = accept_socket;
             accept_socket?.BeginReceive(state.buf, 0, ObjectState.buf_sz, 0, new AsyncCallback(RecieveCallBack), state);
+
         }
 
-        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
-
+  
         int cnt = 0;
 
 
@@ -95,7 +102,7 @@ namespace SerialToSocket
             catch (Exception ex)
             {
                 this.Log().Error(ex.Message);
-                closeSocket(socket);
+             //   closeSocket(socket);
                 return;
             }
 
@@ -118,7 +125,7 @@ namespace SerialToSocket
 
                     if(token.IsCancellationRequested) {
                         string str = $"ID:{id} Error: Serial await timeout 0";
-                        closeSocket(socket);
+                      //  closeSocket(socket);
                        return; 
                     }
 
@@ -139,16 +146,16 @@ namespace SerialToSocket
                             var mes = Encoding.ASCII.GetBytes(str);
                            // Send(socket, mes);
                             this.Log().Error(str);
-                            closeSocket(socket);
+                          //  closeSocket(socket);
                         }
                     }
                     else
                     {
                         string str = $"ID:{id} Error: Serial await timeout";
                         var mes = Encoding.ASCII.GetBytes(str);
-                    //  Send(socket, mes);
-                    //    this.Log().Error(str);
-                        closeSocket(socket);
+                        Send(socket, mes);
+                        this.Log().Error(str);
+                      //  closeSocket(socket);
                         return;
                     }
 
@@ -156,9 +163,9 @@ namespace SerialToSocket
                 else
                 {
                     var mes = Encoding.ASCII.GetBytes("Error: TCP frame error");
-                 //   Send(socket, mes);
+                    Send(socket, mes);
                     this.Log().Error(mes);
-                    closeSocket(socket);
+                  //  closeSocket(socket);
                 }
             }
         }
@@ -178,12 +185,14 @@ namespace SerialToSocket
                 this.Log().Info($"Sent: {byteSent} to client");
                 //socket.Shutdown(SocketShutdown.Both);
                 //socket.Close(); 
-               Task.Run(() => Receive(socket));
+                Receive(socket);
+
+               
             } 
             catch (Exception e)
             {
-                Socket socket = (Socket)ar.AsyncState;
-                closeSocket(socket);
+             //   Socket socket = (Socket)ar.AsyncState;
+             //   closeSocket(socket);
                 this.Log().Error(e.ToString());
             }
         }

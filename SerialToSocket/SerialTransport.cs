@@ -43,11 +43,11 @@ namespace SerialToSocket
                 {
                     _serial.Write(data, 0, data.Length);
 
-                    this.Log().Info($"ID:{ID} Write to serial: " + BitConverter.ToString(data));
+                  //  this.Log().Info($"ID:{ID} Write to serial: " + BitConverter.ToString(data));
 
                     int BytesToRead = 0;
                     int timeout = 0;
-                    while (timeout++ < 3)
+                    while (timeout++ < 10)
                     {
                         int BytesToReadNow = _serial.BytesToRead;
                         if (BytesToRead > 0)
@@ -56,7 +56,7 @@ namespace SerialToSocket
                             {
                                 byte[] buff = new byte[BytesToReadNow];
                                 _serial.Read(buff, 0, _serial.BytesToRead);
-                                this.Log().Info($"ID:{ID} Read from serial: " + BitConverter.ToString(buff));
+                      //          this.Log().Info($"ID:{ID} Read from serial: " + BitConverter.ToString(buff));
                                 return buff;
                             }
                         }
@@ -64,7 +64,7 @@ namespace SerialToSocket
                         await Task.Delay(5, token); ;
                     }
                     _serial.Read(new byte[_serial.BytesToRead], 0, _serial.BytesToRead);
-                    this.Log().Error($"ID:{ID} Serial Timeout");
+                 //   this.Log().Error($"ID:{ID} Serial Timeout");
                     return null;
 
                 }

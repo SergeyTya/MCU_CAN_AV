@@ -2,14 +2,18 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
 using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.utils;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO.Ports;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -107,7 +111,7 @@ namespace MCU_CAN_AV.ViewModels
                  Label = "COM Port Name",
                  Name = nameof(InitStruct.com_name),
                  TextInput = "COM1",
-                  Validate = false,
+                  Validate = true,
                  onNext_string = (_) => {
                     InitStruct.com_name=_;
                  }
@@ -153,11 +157,18 @@ namespace MCU_CAN_AV.ViewModels
                 // Grabli
                 if (item.Name is nameof(InitStruct._Baudrate))
                 {
-                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy;
+                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy;
                 }
                 if (item.Name is nameof(InitStruct.com_name))
                 {
-                    item.IsVisible = value == DeviceType.Dummy; 
+                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
+
+                    if (value == DeviceType.EVMModbus)
+                    {
+                       
+                        item.Options = SerialPort.GetPortNames(); 
+
+                    }
                 }
                 if (item.Name is nameof(InitStruct._canind))
                 {
@@ -176,6 +187,8 @@ namespace MCU_CAN_AV.ViewModels
                     item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
                 }
             }
+
+        
         }
 
 
@@ -273,9 +286,13 @@ namespace MCU_CAN_AV.ViewModels
     {
         public ParameterField() {
            OnTextInputChanged(_textInput);
+            
         }
 
         public string? Name { get; set; }
+
+        [ObservableProperty]
+        public string[]? _options = null;
 
         [ObservableProperty]
         public bool _validate = true;
@@ -284,7 +301,7 @@ namespace MCU_CAN_AV.ViewModels
         string _label = "no name";
 
         [ObservableProperty]
-        [ValidateUint(nameof(IsValid), nameof(Validate))]
+        [ValidateUint(nameof(IsValid), nameof(Validate), check_lim: false, max :0, min :0)]
         string _textInput = "";
 
         [ObservableProperty]
@@ -325,28 +342,36 @@ namespace MCU_CAN_AV.ViewModels
 
         public Action<string> onNext_string = (_) => { };
 
+
+
     }
 
 
     public sealed class ValidateUintAttribute : ValidationAttribute
     {
-        public ValidateUintAttribute(string propertyName, string EnableFieldName, bool check_lim = false, uint max = 0, uint min = 0)
+        public ValidateUintAttribute(
+            string propertyName,
+            string EnableFieldName,
+            bool check_lim = false,
+            uint max = 0,
+            uint min = 0
+         
+        )
         {
             PropertyName = propertyName;
             this.EnableFieldName = EnableFieldName;
             this.min = min;
             this.max = max;
             this.check_lim = check_lim;
-            
+           
         }
 
         public string PropertyName { get; }
         public string EnableFieldName { get;  }
-
-        public uint max, min;
-        public bool check_lim;
+        public uint   max, min;
+        public bool   check_lim;
+      
        
-
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             uint res = 0;
@@ -362,6 +387,22 @@ namespace MCU_CAN_AV.ViewModels
                     return ValidationResult.Success;
                 }
 
+            }
+
+            if (instance.Options != null) {
+
+                var tmp = value?.ToString();
+                if (tmp != null)
+                {
+                    if (instance.Options.IndexOf(tmp) != -1)
+                    {
+                        return ValidationResult.Success;
+                    }
+                    else {
+
+                        return new( $"Avalible ports: {string.Join(" ",instance.Options)}");
+                    }
+                }
             }
 
             instance.GetType().GetProperty(PropertyName)?.SetValue(instance, false);
