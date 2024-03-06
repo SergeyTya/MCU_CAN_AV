@@ -82,7 +82,9 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 try {
                     ushort[] tmp_us = new ushort[] { BitConverter.ToUInt16(data.data.ToArray(), 0) };
                     await TxConnection.WriteHoldingsAsync((int)modbus_id, (byte)data.id, tmp_us);
-                }finally { semaphoreSlim2.Release(); }
+                }finally { 
+                    semaphoreSlim2.Release(); 
+                }
 
             });
         }

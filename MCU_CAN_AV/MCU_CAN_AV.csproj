@@ -24,7 +24,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="ScottPlot.Avalonia" Version="4.1.70" />
+    <PackageReference Include="ScottPlot.Avalonia" Version="5.0.21" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageReference Include="Serilog.Sinks.Observable" Version="2.0.3-dev-00712" />
     <PackageReference Include="Splat.Serilog" Version="14.8.12" />

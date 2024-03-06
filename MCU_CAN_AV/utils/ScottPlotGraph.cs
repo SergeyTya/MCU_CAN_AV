@@ -1,22 +1,11 @@
-﻿using Avalonia.Media;
-using Avalonia.Rendering;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
+using ScottPlot;
 using ScottPlot.Avalonia;
-using ScottPlot.Drawing.Colormaps;
 using System;
-
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace utils
 {
 
- 
     internal class ScottPlotGraph
     {
 
@@ -51,35 +40,49 @@ namespace utils
 
         private void Render(object sender, EventArgs e)
         {
+            ScopeView.Plot.Axes.AutoScaleY();
             ScopeView.Refresh();
-            ScopeView.Plot.AxisAutoY(margin: 0.5);
+         
         }
 
         private void RebuildScope(int channel_cnt, int data_lenght) {
             ScopeChannels.Capacity = channel_cnt;
             ScopeView.Plot.Clear();
+         //  ScopeView.Plot.Add.Palette = new ScottPlot.Palettes.Dark();
+
+            ScopeView.Plot.Style.ColorAxes(Color.FromHex("#d7d7d7"));
+            ScopeView.Plot.Style.ColorGrids(Color.FromHex("#404040"));
+            ScopeView.Plot.Style.Background(
+            //    figure: Color.FromHex("#181818"),
+                figure: Colors.Black,
+                data:   Color.FromHex("#1f1f1f"));
+            ScopeView.Plot.Style.ColorLegend(
+                background: Color.FromHex("#404040"),
+                foreground: Color.FromHex("#d7d7d7"),
+                border: Color.FromHex("#d7d7d7"));
+
+
 
             for (int i = 0; i < channel_cnt; i++)
             {
                 ScopeChannels[i].Capacity = data_lenght;
                 var tmp = ScopeChannels[i].Points;
-                var plt1 = ScopeView.Plot.AddSignal(tmp, color: System.Drawing.Color.Yellow);
-                ScopeView.Plot.AxisAutoX(margin: 0);
-                ScopeView.Plot.SetAxisLimits(yMin: -2, yMax: 2);
-                ScopeView.Plot.Style(ScottPlot.Style.Black);
-                plt1.YAxisIndex = 0;
-                plt1.LineWidth = 1;
+                var plt1 = ScopeView.Plot.Add.Signal(tmp);
+                plt1.LineStyle.Color = Colors.Yellow;
+                plt1.LineStyle.Pattern = LinePattern.Solid;
+                plt1.LineWidth = 2;
+                plt1.Data.Period = Ts;
+
+                DateTime start = new(2024, 1, 1);
+                
+
             }
-            ScopeView.Plot.XAxis.TickLabelFormat(customTickFormatter);
-            ScopeView.Plot.Title(Name);
+            //ScopeView.Plot.Title(Name);
+            ScopeView.Plot.Axes.Title.Label.Text = Name;
+           // ScopeView.Plot.Axes.Title.Label.
+
         }
 
-        static string customTickFormatter(double position)
-        {
-            position *= Ts;
-            return position.ToString("#0.0##");
-        }
-
-      
+       
     }
 }

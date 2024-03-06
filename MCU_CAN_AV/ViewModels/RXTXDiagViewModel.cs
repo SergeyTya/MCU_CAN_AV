@@ -3,13 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices;
-using ScottPlot.Drawing.Colormaps;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MCU_CAN_AV.ViewModels
 {

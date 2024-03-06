@@ -3,12 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-
 using LiveChartsCore.SkiaSharpView.Drawing;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using LiveChartsCore.VisualElements;
@@ -18,13 +14,9 @@ using LiveChartsCore.SkiaSharpView.VisualElements;
 using SkiaSharp;
 using MCU_CAN_AV.Devices;
 using Splat;
-using MCU_CAN_AV.utils;
 using LiveChartsCore.SkiaSharpView;
-using System.Collections;
 using LiveChartsCore.Measure;
-using LiveChartsCore.ConditionalDraw;
-using DynamicData.Kernel;
-using ScottPlot.Drawing.Colormaps;
+
 
 namespace MCU_CAN_AV.ViewModels
 {
