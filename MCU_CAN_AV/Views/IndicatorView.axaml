@@ -25,8 +25,8 @@
 						<TextBlock FontSize="10" Text="{Binding Info}" />
 					</ToolTip.Tip>
 					<Panel Background="{Binding IndicatorColor}">
-						<Border Classes="h2" Margin="0"/>
-						<StackPanel Orientation="Vertical" >
+						<Border Classes="h2" Margin="0" BorderBrush="{Binding IndicatorColor}" CornerRadius="5"/>
+						<StackPanel Orientation="Vertical" Spacing="0">
 							<TextBlock Text="{Binding Name}"
 									   Margin="5,5,0,5"
 									   FontSize="14"
