@@ -14,8 +14,6 @@ public partial class MainWindow : Window
         
         this.Width = 800;
 
-        LoggerWimdow loggerWimdow = new LoggerWimdow();
-        loggerWimdow.Show();    
-
+    
     }
 }
