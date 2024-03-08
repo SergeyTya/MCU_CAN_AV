@@ -16,7 +16,6 @@ namespace MCU_CAN_AV.ViewModels
 {
     public partial class IndicatorViewModel : ObservableRecipient, IRecipient<ConnectionState>
     {
-      
         public IndicatorViewModel()
         {
             Messenger.RegisterAll(this);
@@ -34,7 +33,7 @@ namespace MCU_CAN_AV.ViewModels
                 var tmp = IDevice.Current.DeviceDescription;
                 foreach (var item in tmp)
                 {
-                    IndicatorsList.Add(new IndicatorTemplate(item));
+                    IndicatorsList?.Add(new IndicatorTemplate(item));
                 }
             };
 
@@ -53,53 +52,53 @@ namespace MCU_CAN_AV.ViewModels
 
     public partial class IndicatorTemplate : ObservableObject, IDisposable
     {
-        Logger2Window? Logger;
+        private LoggerWindow? _logger;
 
         [ObservableProperty]
         string _info = "";
 
         [ObservableProperty]
-        public string _name = "no name";
+        private string _name = "no name";
 
         [ObservableProperty]
-        public bool _isReadWrite = true;
+        private bool _isReadWrite = true;
 
         [ObservableProperty]
-        public string _value = "0";
+        private string _value = "0";
 
         [ObservableProperty]
-        public SolidColorBrush? _indicatorColor;
+        private SolidColorBrush? _indicatorColor;
 
-        public IDisposable? disposable;
+        private readonly IDisposable? _disposable;
 
-        bool _isCombo = false;
+        private bool _isCombo = false;
 
-        public IndicatorTemplate(IDeviceParameter Item)
+        public IndicatorTemplate(IDeviceParameter item)
         {
-            Info = $"ID = {Item.ID}";
-            string unit = (Item.Unit == null) || (Item.Unit == string.Empty) ? "" : $", {Item.Unit}";
-            Name = $"{Item.Name}{unit}";
-            IsReadWrite = Item.IsReadWrite;
+            Info = $"ID = {item.ID}";
+            var unit = (item.Unit == string.Empty) ? "" : $", {item.Unit}";
+            Name = $"{item.Name}{unit}";
+            IsReadWrite = item.IsReadWrite;
             Dispatcher.UIThread.Post(() => IndicatorColor = new(Avalonia.Media.Colors.Black, 0.2));
 
-            disposable = Item.Value.Subscribe((_) =>
+            _disposable = item.Value.Subscribe((_) =>
             {
-                if (Item.IsReadWrite) return;
+                if (item.IsReadWrite) return;
 
                 Dispatcher.UIThread.Post(() =>
                 {
                     if (IndicatorColor == null) return;
 
-                    if (Item.Options != null && Item.Options.Count > 0 && (int)_ < Item.Options.Count)
+                    if (item.Options != null && item.Options.Count > 0 && (int)_ < item.Options.Count)
                     {
-                        Value = Item.Options[(int)_][0];
+                        Value = item.Options[(int)_][0];
                         _isCombo = true;
                         return;
                     }
 
-                    if (Item.Max != 0 && _ > Item.Max) { IndicatorColor.Color = Avalonia.Media.Colors.Red; }
+                    if (item.Max != 0 && _ > item.Max) { IndicatorColor.Color = Avalonia.Media.Colors.Red; }
                     else
-                    if (Item.Min != 0 && _ < Item.Min) { IndicatorColor.Color = Avalonia.Media.Colors.Blue; }
+                    if (item.Min != 0 && _ < item.Min) { IndicatorColor.Color = Avalonia.Media.Colors.Blue; }
                     else
                     { IndicatorColor.Color = Avalonia.Media.Colors.Green; }
 
@@ -116,13 +115,13 @@ namespace MCU_CAN_AV.ViewModels
 
 
         [RelayCommand]
-        public void ClickItem()
+        private void ClickItem()
         {
             if (_isCombo) return;
-            if (Logger!=null && Logger.Is_Alive)
+            if (_logger!=null)
             {
-                Logger.WindowState = WindowState.Minimized;
-                Logger.WindowState = WindowState.Normal;
+                _logger.WindowState = WindowState.Minimized;
+                _logger.WindowState = WindowState.Normal;
                 return;
             }
 
@@ -132,16 +131,16 @@ namespace MCU_CAN_AV.ViewModels
             
             };
 
-            Logger = new Logger2Window(Name)
+            _logger = new LoggerWindow(Name)
             {
-                [!Logger2Window.InputValueProperty] = binding
+                [!LoggerWindow.InputValueProperty] = binding
                
             };
 
-            Logger.Show();
+            _logger.Show();
         }
 
-        private bool disposed = false;
+        private bool _disposed = false;
         public void Dispose()
         {
            
@@ -151,15 +150,15 @@ namespace MCU_CAN_AV.ViewModels
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed) return;
+            if (_disposed) return;
             if (disposing)
             {
-                disposable?.Dispose();
-                Logger?.Close();
+                _disposable?.Dispose();
+                _logger?.Close();
                 // Освобождаем управляемые ресурсы
             }
             // освобождаем неуправляемые объекты
-            disposed = true;
+            _disposed = true;
         }
 
         ~IndicatorTemplate() {

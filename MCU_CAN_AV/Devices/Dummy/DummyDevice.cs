@@ -16,6 +16,10 @@ namespace MCU_CAN_AV.Devices.Dummy
 {
     internal class DummyDevice : BaseDevice, IEnableLogger
     {
+        
+        private readonly Random _random = new();
+        private double _time = 0;
+        
         bool fault = false;
         bool start = false;
 
@@ -122,10 +126,15 @@ namespace MCU_CAN_AV.Devices.Dummy
                 {
                     if (DeviceDescription == null) return;
                     if (DeviceDescription.Count <= 0) return;
-                
-                    ((DummyDeviceParameter)DeviceDescription[0]).Val?.OnNext( reg++);
-                    ((DummyDeviceParameter)DeviceDescription[1]).Val?.OnNext(reg++);
-                    ((DummyDeviceParameter)DeviceDescription[2]).Val?.OnNext(reg++);
+
+                    _time += 0.1;
+
+                    double val = 10 * Math.Sin(0.1*_time) + _random.Next(-1, 1);
+                    
+                    
+                    ((DummyDeviceParameter)DeviceDescription[0]).Val?.OnNext( _random.Next(50, 60) );
+                    ((DummyDeviceParameter)DeviceDescription[1]).Val?.OnNext( _random.Next(50, 80) );
+                    ((DummyDeviceParameter)DeviceDescription[2]).Val?.OnNext( val );
 
                     if (!start) base._state = DeviceState.Ready;
                     if (start ) base._state = DeviceState.Run;
