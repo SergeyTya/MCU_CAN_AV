@@ -10,29 +10,18 @@ using Avalonia.Threading;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using LiveChartsCore.SkiaSharpView.VisualElements;
-using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using LiveChartsCore;
 using LiveChartsCore.Drawing;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
-
-using System;
-using System.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using LiveChartsCore;
-using LiveChartsCore.Measure;
-using LiveChartsCore.SkiaSharpView;
-
+using System.Collections.Generic;
+using LiveChartsCore.Defaults;
+using System.Linq;
 
 namespace MCU_CAN_AV.Views
 {
     public partial class LoggerWindow : Window
     {
 
-   
+
         public static readonly StyledProperty<string> InputValueProperty =
             AvaloniaProperty.Register<LoggerWindow, string>("InputValue");
 
@@ -41,20 +30,25 @@ namespace MCU_CAN_AV.Views
             get => GetValue(InputValueProperty);
         }
 
-        private readonly ObservableCollection<int> _values = new();
+        private static int s_current;
+        private readonly List<DateTimePoint> _values = new();
 
         public LoggerWindow(string name)
         {
             InitializeComponent();
 
             const double timeStep = 0.1;
-            
+
+           
+
+
+
             MainChart.Series = new ISeries[]
             {
-                new LineSeries<int>
-                { 
+                new LineSeries<DateTimePoint>
+                {
                     Values = _values,
-                    LineSmoothness = 1,
+                    LineSmoothness = 0,
                     Fill = null,
                     GeometryFill = null,
                     GeometryStroke = null,
@@ -69,57 +63,40 @@ namespace MCU_CAN_AV.Views
                 Padding = new LiveChartsCore.Drawing.Padding(15),
                 Paint = new SolidColorPaint(SKColors.Azure)
             };
-            
-           // MainChart.DrawMargin = new(70, LiveChartsCore.Measure.Margin.Auto, LiveChartsCore.Measure.Margin.Auto, LiveChartsCore.Measure.Margin.Auto);
 
-            MainChart.XAxes = new[]
+            _customAxis = new DateTimeAxis(TimeSpan.FromSeconds(1), Formatter)
             {
-                new Axis
+                Name = "Time, s",
+                CustomSeparators = GetSeparators(),
+                AnimationsSpeed = TimeSpan.FromMilliseconds(0),
+                NamePaint = new SolidColorPaint(SKColors.Gray),
+                TextSize = 12,
+                Padding = new Padding(5, 5, 5, 5),
+                LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                SeparatorsPaint = new SolidColorPaint
                 {
-                   // MaxLimit = 10,
-                   // MinLimit = 0,
-                   
-                    Name = "Time, s",
-                    NamePaint = new SolidColorPaint(SKColors.Gray),
-                    TextSize = 12,
-                    Padding = new Padding(5, 5, 5, 5),
-                    LabelsPaint = new SolidColorPaint(SKColors.Gray),
-                    SeparatorsPaint = new SolidColorPaint
-                    {
-                        Color = SKColors.Gray,
-                        StrokeThickness = 0,
-                        PathEffect = new DashEffect(new float[] { 3, 3 })
-                    },
-                    SubseparatorsPaint = new SolidColorPaint
-                    {
-                        Color = SKColors.Black,
-                        StrokeThickness = 0.5f
-                    },
-                    SubseparatorsCount = 9,
-                    ZeroPaint = new SolidColorPaint
-                    {
-                        Color = SKColors.Gray,
-                        StrokeThickness = 2
-                    },
-                    TicksPaint = new SolidColorPaint
-                    {
-                        Color = SKColors.Gray,
-                        StrokeThickness = 1.5f
-                    },
-                    SubticksPaint = new SolidColorPaint
-                    {
-                        Color = SKColors.Gray,
-                        StrokeThickness = 0
-                    }
-                }
+                    Color = SKColors.Gray,
+                    StrokeThickness = 0,
+                    PathEffect = new DashEffect(new float[] { 3, 3 })
+                },
+                ZeroPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 2
+                },
+                TicksPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 1.5f
+                },
             };
+
+            MainChart.XAxes = new Axis[] { _customAxis };
 
             MainChart.YAxes = new[]
             {
                 new Axis
                 {
-                   // MaxLimit = 10,
-                   // MinLimit = 0,
                     NamePaint = new SolidColorPaint(SKColors.Gray),
                     TextSize = 18,
                     Padding = new Padding(5, 0, 15, 0),
@@ -156,24 +133,44 @@ namespace MCU_CAN_AV.Views
 
             var disposable = Observable.Interval(TimeSpan.FromSeconds(timeStep)).Subscribe(x =>
             {
-               
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        if (InputValue == null) return;
-                        if (_values.Count > 50) _values.RemoveAt(0);
-                        //var tmp = Double.Parse(InputValue);
-                        int tmp = r.Next(-100, 100);
-                        _values.Add(tmp);
-                        
-                    });
-                    
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (InputValue == null) return;
+
+                    var tmp = Double.Parse(InputValue);
+                    _values.Add(new DateTimePoint(DateTime.Now, tmp));
+                     if(_values.Count>250) _values.RemoveAt(0);
+
+                    _customAxis.CustomSeparators = GetSeparators();
+                });
             });
-            
-            
-            
+
             this.Closing += (_, __) => { disposable.Dispose(); };
         }
 
         private Random r = new Random();
+        private readonly DateTimeAxis _customAxis;
+
+        private double[] GetSeparators()
+        {
+            var now = DateTime.Now;
+
+            double[] tmp = new double[20];
+
+            for (int i = 0; i < 20; i++)
+            {
+                tmp[i] = now.AddSeconds(-i*5).Ticks;
+            }
+
+            return tmp;
+        }
+
+        private static string Formatter(DateTime date)
+        {
+            var secsAgo = (-(date - DateTime.Now)).TotalSeconds;
+
+            return $"{secsAgo:N0}";
+        }
     }
 }
