@@ -92,6 +92,7 @@ namespace MCU_CAN_AV.ViewModels
 
         public Control2ViewModel()
         {
+
             DP_InSpeed = new BaseParameter();
             DP_InTorque = new BaseParameter();
 

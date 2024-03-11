@@ -118,7 +118,7 @@ namespace MCU_CAN_AV.ViewModels
         private void ClickItem()
         {
             if (_isCombo) return;
-            if (_logger!=null)
+            if (_logger!=null) if( _logger.IsAlive == true)
             {
                 _logger.WindowState = WindowState.Minimized;
                 _logger.WindowState = WindowState.Normal;

@@ -6,18 +6,38 @@
         xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 		x:Class="MCU_CAN_AV.Views.LoggerWindow"
 		xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+		xmlns:lvcore="using:LiveChartsCore"
         Title="LoggerWindow"
 		Height="300"
 		Width="300"
 		>
 
-	<Grid ShowGridLines="False">
+	<Grid ShowGridLines="False" >
 		<Grid.RowDefinitions>
 			<RowDefinition Height="0"/>
 			<RowDefinition Height="1*"/>
 		</Grid.RowDefinitions>
-		<lvc:CartesianChart Grid.Row="1" Name="MainChart" ZoomMode="ZoomY"/>
+
+		<lvc:CartesianChart  Grid.Row="1"
+		Name="MainChart"
+		ZoomMode="None"
+		TooltipPosition="Hidden"
+		UpdaterThrottler="00:00:00.300"
+		AnimationsSpeed="00:00:00.900"			
+		>
+			<lvc:CartesianChart.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Pan" Name="MenuItemPan"/>
+					<CheckBox Content="Lock High" Name ="CheckBoxLockHi"/>
+					<CheckBox Content="Lock Low"  Name ="CheckBoxLockLo"/>
+				</ContextMenu>
+			</lvc:CartesianChart.ContextMenu>
+			
+		</lvc:CartesianChart>
+			
 
 	</Grid>
 
 </Window>
+
+<!--	EasingFunction="{Binding Source={x:Static lvcore:EasingFunctions.BuildCubicBezier}}" -->
