@@ -22,8 +22,8 @@
 		Name="MainChart"
 		ZoomMode="None"
 		TooltipPosition="Hidden"
-		UpdaterThrottler="00:00:00.300"
-		AnimationsSpeed="00:00:00.900"			
+	    UpdaterThrottler="00:00:00.300"
+		EasingFunction="{x:Null}"
 		>
 			<lvc:CartesianChart.ContextMenu>
 				<ContextMenu>
