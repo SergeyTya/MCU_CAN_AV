@@ -97,9 +97,10 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 }).ToObservable().Take(1).Subscribe(
                     (_) =>
                     {
+                        EncodeDeviceDescription(_);
                         Dispatcher.UIThread.Post(() =>
                         {
-                            EncodeDeviceDescription(_);
+                            
                             // Need tobe in kRPM!
                             ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Min = -9;
                             ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Max =  9;
@@ -336,8 +337,9 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                         double_to_can(value, tmp._Type, tmp._ids);
                     }
                 });
+
+                this.Log().Info($"<- ID [{tmp.ID}] Info [ {tmp.Name}]");
                 base.DeviceDescription.Add(tmp);
-                this.Log().Info($"<- ID [{tmp.ID}] Info [ {tmp.Name}]" );
             }
         }
 

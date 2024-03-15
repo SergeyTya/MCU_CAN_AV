@@ -1,4 +1,5 @@
 ﻿
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -31,7 +32,7 @@ namespace MCU_CAN_AV.ViewModels
         }
     };
 
-    internal partial class ConnectionViewModel : ObservableRecipient, IEnableLogger
+    internal partial class ConnectionViewModel : ObservableRecipient, IEnableLogger, IRecipient<ConnectionState>
     {
         
      
@@ -232,11 +233,9 @@ namespace MCU_CAN_AV.ViewModels
             disposable_log?.Dispose();
 
             var logProvider = Locator.Current.GetService<ILogProvider>();
-            disposable_log = logProvider?.GetObservable.Subscribe(
-
-            (_) =>
+            disposable_log = logProvider?.GetObservable.Subscribe((_) =>
             {
-               LogText +=_;
+               LogText += _ ;
             });
 
             // Print current setups
@@ -262,11 +261,6 @@ namespace MCU_CAN_AV.ViewModels
                    
                });
 
-            while (isConnectionDone == true)
-            {
-                await Task.Delay(100);
-            }
-            IsMsgVisible = false;
         }
 
         private bool CanConnect()
@@ -279,6 +273,13 @@ namespace MCU_CAN_AV.ViewModels
             return res;
         }
 
+        public void Receive(ConnectionState message)
+        {
+            if (message.state == ConnectionState.State.Connected)
+            {
+                IsMsgVisible = false;
+            }
+        }
     }
 
 

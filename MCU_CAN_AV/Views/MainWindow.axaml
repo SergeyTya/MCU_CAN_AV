@@ -8,7 +8,6 @@
 		xmlns:dd ="clr-namespace:MCU_CAN_AV.Devices"
         mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="700"
         x:Class="MCU_CAN_AV.Views.MainWindow"
-	
         Icon="/Assets/avalonia-logo.ico"
 		MinWidth="500"
 		MinHeight="380"
@@ -17,6 +16,10 @@
 		Title="MCU CAN"
 		>
 
+	<Window.DataContext>
+		<vm:MainViewModel />
+	</Window.DataContext>
+	
 	<views:MainView/>
 	
 </Window>

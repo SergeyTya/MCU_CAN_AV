@@ -74,10 +74,13 @@ namespace MCU_CAN_AV.ViewModels
                 disposable_log?.Dispose();
                 var logProvider = Locator.Current.GetService<ILogProvider>();
                 disposable_log = logProvider?.GetObservable.Subscribe(
-                    (_) => {
-                        Dispatcher.UIThread.Post(() => {
+                    (_) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
                             var tmp = new LogItem { Text = _, TextColor = new SolidColorBrush(Colors.Gray) };
-                            if(_.Contains("Error")) tmp.TextColor.Color = Colors.Red;
+                            if (_.Contains("Error")) tmp.TextColor.Color = Colors.Red;
+                            if (_.Contains("Warning")) tmp.TextColor.Color = Colors.Yellow;
                             Logs.Add(tmp);
                         });
                     });

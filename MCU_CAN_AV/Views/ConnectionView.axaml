@@ -78,7 +78,7 @@
 				</Grid.ColumnDefinitions>
 			<ScrollViewer Name="Scroll" Grid.Row="0">
 				<TextBlock Name="Tb_cnct_msg"
-						   Text="{Binding LogText}"
+						   Text="{Binding LogText, Mode=TwoWay}"
 						   VerticalAlignment="Top"
 						   HorizontalAlignment="Stretch"
 						   TextAlignment="Left"
