@@ -21,6 +21,15 @@ namespace MCU_CAN_AV.utils
             return fileContents;
         }
 
+        public static long GetFileSize(string FilePath)
+        {
+            if (File.Exists(FilePath))
+            {
+                return new FileInfo(FilePath).Length;
+            }
+            return 0;
+        }
+
 
     }
 }

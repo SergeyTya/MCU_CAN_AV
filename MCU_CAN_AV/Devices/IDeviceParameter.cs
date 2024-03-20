@@ -29,5 +29,7 @@ namespace MCU_CAN_AV.Devices
 
         public bool IsReadWrite { get; }
 
+        public double ValueNow { get; }
+
     }
 }

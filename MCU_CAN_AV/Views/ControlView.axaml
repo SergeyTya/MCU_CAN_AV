@@ -62,12 +62,12 @@
 			<Border Grid.Row="1" Classes="h2" Margin="3"/>
 			<cc:CustomSlider
 				
-				Grid.Row="1"
-				Name="Slider1"/>
-			<Border Grid.Row="2" Classes="h2" Margin="3"/>
-			<cc:CustomSlider
 				Grid.Row="2"
 				Name="Slider2"/>
+			<Border Grid.Row="2" Classes="h2" Margin="3"/>
+			<cc:CustomSlider
+				Grid.Row="1"
+				Name="Slider1"/>
 
 			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>

@@ -78,7 +78,8 @@
 	</UserControl.Styles>
 
 	<Panel>		
-	<Grid>
+	<Border Name="Border_Main" BorderThickness="3"/>
+	<Grid Margin="3">
 		<!--Main grid-->
 		<Grid.RowDefinitions>
 			<RowDefinition Height="30"/>
@@ -100,8 +101,7 @@
 					Orientation="Horizontal"
 					Spacing="10" Height="15"
 					Grid.Row="0"
-					Margin="5"
-				>
+					Margin="5">
 
 					<StackPanel.DataContext>
 						<vm:MainView3Model/>
@@ -143,7 +143,8 @@
 			
 			<Menu DockPanel.Dock="Right" FontWeight="Light">
 				<MenuItem Header="Commands" HorizontalAlignment="Left">
-					<CheckBox Name="ControlLocker" Content="UnlockedControl" IsChecked="false"/>
+					<CheckBox Name="ControlLocker"  Content="UnlockedControl" IsChecked="false"/>
+					<CheckBox Name="Checkbox_saver" Content="Log data"        IsChecked="{Binding DeviceLogerState, Mode=OneWayToSource}"/>
 					<Separator/>
 					<MenuItem Header="Load from file"/>
 					<MenuItem Header="Save to file "/>
@@ -215,12 +216,12 @@
 						<RowDefinition Height="*"/>
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="150"/>
+						<ColumnDefinition Width="170"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
 
 					<ScrollViewer Grid.Column="0">
-						<v:IndicatorView />
+						<v:IndicatorView Margin="2"/>
 					</ScrollViewer>
 
 				<TabControl Margin="5" TabStripPlacement="Top" Grid.Column="1">
@@ -261,7 +262,7 @@
 						</Panel>
 					</ScrollViewer>
 					<Panel Grid.Row="1" Classes="Black11">
-						<v:ButtonsControlView />
+						<v:ButtonsControlView IsEnabled="{Binding #ControlLocker.IsChecked}" />
 						<Border Classes="h4"/>
 					</Panel>
 				</Grid>

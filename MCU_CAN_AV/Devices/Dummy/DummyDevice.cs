@@ -2,6 +2,7 @@
 using MCU_CAN_AV.Devices.Shanghai;
 using MCU_CAN_AV.Properties;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Splat;
 using System;
 using System.Collections.Generic;
@@ -192,9 +193,12 @@ namespace MCU_CAN_AV.Devices.Dummy
 
         public DummyDeviceParameter(ShanghaiDeviceParameter prm) {
             _prm = prm;
+            Val.Subscribe(_ => _ValueNow = _);
         }
 
         internal BehaviorSubject<double> Val = new BehaviorSubject<double>(0);
+
+        internal double _ValueNow = 0;
 
         public IObservable<double> Value => Val;
 
@@ -214,13 +218,17 @@ namespace MCU_CAN_AV.Devices.Dummy
 
         public bool IsReadWrite => _prm.IsReadWrite;
 
+        public double ValueNow => _ValueNow;
+
         public void writeValue(double value)
         {
             Task.Run(async () =>
             {
+               
                 await Task.Delay(2000);
                 this.Log().Info($"{ID} <- {value.ToString()} ");
                 Val.OnNext(value);
+               
             });
         }
 

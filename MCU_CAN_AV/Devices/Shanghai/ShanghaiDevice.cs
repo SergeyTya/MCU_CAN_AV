@@ -248,6 +248,8 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             [JsonProperty("max")]
             internal double max { get; set; }
+
+            public double ValueNow => throw new NotImplementedException();
         }
     }
 }

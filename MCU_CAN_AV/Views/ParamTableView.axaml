@@ -15,7 +15,9 @@
 	<DataGrid Grid.Row="0" Margin="0" Name="DataGrid" ItemsSource="{Binding Rows}" 
 		 GridLinesVisibility="All"
 		 BorderThickness="1" BorderBrush="Gray"
-			  CanUserResizeColumns="True">
+		 CanUserResizeColumns="True"
+		 CanUserSortColumns="False"
+			  >
 		<DataGrid.ContextMenu>
 			<ContextMenu>
 				<MenuItem Header="Save to file" Command="{Binding SaveFileCommand}"/>

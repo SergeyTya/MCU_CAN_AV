@@ -21,6 +21,22 @@ namespace MCU_CAN_AV.ViewModels
 {
     public partial class MainView3Model : ObservableRecipient, IRecipient<ConnectionState>, IEnableLogger
     {
+
+        [ObservableProperty]
+        public bool _deviceLogerState = false;
+
+        partial void OnDeviceLogerStateChanged(bool value)
+        {
+            var dataLogger = Locator.Current.GetService<IDataLogger>();
+            if (value)
+            {
+                dataLogger?.start(IDevice.Current);
+            }
+            else {
+                dataLogger?.close();
+            }
+        }
+
         [ObservableProperty]
         public ObservableCollection<LogItem> _logs = new();
 
@@ -67,6 +83,7 @@ namespace MCU_CAN_AV.ViewModels
                 disposable_errcnt = IDevice.Current.Connection_errors_cnt.Subscribe((_) => Error_cnt = _);
 
                 connected();
+
             }
 
             if (message.state == ConnectionState.State.Init)
@@ -84,6 +101,11 @@ namespace MCU_CAN_AV.ViewModels
                             Logs.Add(tmp);
                         });
                     });
+            }
+            
+            if (message.state == ConnectionState.State.Disconnected) {
+                var dataLogger = Locator.Current.GetService<IDataLogger>();
+                dataLogger?.close();
             }
         }
 

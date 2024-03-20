@@ -45,6 +45,7 @@ public partial class App : Application
             // https://habr.com/ru/articles/457164/
 
             Locator.CurrentMutable.RegisterConstant(new LogProvider(), typeof(ILogProvider));
+            Locator.CurrentMutable.RegisterConstant(new DataLogger(), typeof(IDataLogger));
 
             Log.Logger = new LoggerConfiguration()
                  .WriteTo.Observers(events => events.Do(evt =>{

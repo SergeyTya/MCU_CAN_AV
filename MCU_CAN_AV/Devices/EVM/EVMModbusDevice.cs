@@ -101,7 +101,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                         Dispatcher.UIThread.Post(() =>
                         {
                             
-                            // Need tobe in kRPM!
+                            // Need to be in kRPM!
                             ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Min = -9;
                             ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Max =  9;
                             _outSpeed = base.DeviceDescription[5];
@@ -119,13 +119,13 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                             ((EVMModbusTCPDeviceParametr)DeviceDescription[3])._Max = 1.0;
                             _outVoltage = base.DeviceDescription[3];
 
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[23])._Min = -9000;
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[23])._Max = 9000;
-                            _inSpeed     = base.DeviceDescription[23];
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[24])._Min = -9000;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[24])._Max = 9000;
+                            _inSpeed     = base.DeviceDescription[24];
 
-                            ((EVMModbusTCPDeviceParametr)DeviceDescription[24])._Min = -1.0;
-                            ((EVMModbusTCPDeviceParametr)DeviceDescription[24])._Max = 1.0;
-                            _inTorque = base.DeviceDescription[24];
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[25])._Min = -1.0;
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[25])._Max = 1.0;
+                            _inTorque = base.DeviceDescription[25];
 
                         });
 
@@ -374,6 +374,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
             internal uint[] _ids;
             internal double _val;
 
+            internal double _ValueNow = 0;
+
             public EVMModbusTCPDeviceParametr(
                 string _ID, 
                 string _Name, 
@@ -391,6 +393,8 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 this._Max = _Max;
                 this._IsReadWrite = _IsReadWrite;
                 this._Type = _Type;
+
+                Value.Subscribe(_ => _ValueNow = _);
             }
 
             // need to tranfer from CAN to register
@@ -417,7 +421,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
             public List<List<string>>? Options => null;
 
-         
+            public double ValueNow => _ValueNow;
 
             void IDeviceParameter.writeValue(double value)
             {

@@ -14,6 +14,11 @@ using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Net.Sockets;
 using static MCU_CAN_AV.Can.ICAN;
+using MCU_CAN_AV.utils;
+using System.IO;
+using System.Formats.Asn1;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace MCU_CAN_AV.Devices
 {
@@ -68,13 +73,18 @@ namespace MCU_CAN_AV.Devices
 
         public BaseDevice(ICAN CAN)
         {
+           
+
             CANInitStruct = CAN.InitStructure;
             _CAN = CAN;
+
             Rxlistener = CAN.RxObservable.Subscribe((_) =>
             {
                 _RxData.OnNext(_);
-                Encode(_);
+                 Encode(_);
             });
+
+            
         }
 
         internal void TransmitToHardware(ICAN.RxTxCanData _)
@@ -143,9 +153,16 @@ namespace MCU_CAN_AV.Devices
 
         public bool IsReadWrite => false;
 
+        public double ValueNow => throw new NotImplementedException();
+
         public void writeValue(double value)
         {
             throw new NotImplementedException();
         }
+    }
+
+    internal class Log_record { 
+    
+        
     }
 }
