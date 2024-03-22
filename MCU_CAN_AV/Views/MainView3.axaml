@@ -89,7 +89,6 @@
 		</Grid.RowDefinitions>
 		<!--Menu Items-->
 		<DockPanel Grid.Row="0" Margin="5">
-			
 			<Panel Background="Black" Opacity="0.7"  HorizontalAlignment="Stretch" DockPanel.Dock="Left" Margin="5,0,0,0">
 				<!--Info line-->
 				<Border Background="{Binding IndicatorColor}" CornerRadius="5,5,5,5"/>

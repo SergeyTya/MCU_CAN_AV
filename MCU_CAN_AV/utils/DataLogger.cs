@@ -57,9 +57,7 @@ namespace MCU_CAN_AV.utils
         public void start(IDevice Device)
         {
             close();
-            string dateNow = DateTime.Today.ToShortDateString();
-            string timeNow = DateTime.Now.ToShortTimeString().Replace(":","");
-            timestamp = $"{dateNow}_{timeNow}";
+            timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             path = @$".\DataLogger\{timestamp}\";
             if (!Directory.Exists(path))
             {
