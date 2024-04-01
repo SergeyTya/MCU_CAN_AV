@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Security.Cryptography;
 using Avalonia.Logging;
 using Avalonia.Media;
@@ -32,7 +33,8 @@ namespace MCU_CAN_AV.ViewModels
             {
                 dataLogger?.start(IDevice.Current);
             }
-            else {
+            else
+            {
                 dataLogger?.close();
             }
         }

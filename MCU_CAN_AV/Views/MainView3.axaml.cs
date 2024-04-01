@@ -18,20 +18,20 @@ namespace MCU_CAN_AV.Views
         {
             InitializeComponent();
             Log.PropertyChanged += Log_PropertyChanged;
-            Checkbox_saver.Click += Checkbox_saver_Click;
+          //  Checkbox_saver.Click += Checkbox_saver_Click;
         }
 
-        private void Checkbox_saver_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            if (Checkbox_saver.IsChecked == true)
-            {
-                Border_Main.BorderBrush = new SolidColorBrush(Colors.Red);
-            }
-            else
-            {
-                Border_Main.BorderBrush = new SolidColorBrush(Colors.Black);
-            }
-        }
+        //private void Checkbox_saver_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        //{
+        //    if (Checkbox_saver.IsChecked == true)
+        //    {
+        //        Border_Main.BorderBrush = new SolidColorBrush(Colors.Red);
+        //    }
+        //    else
+        //    {
+        //        Border_Main.BorderBrush = new SolidColorBrush(Colors.Black);
+        //    }
+        //}
 
         private void Log_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
         {

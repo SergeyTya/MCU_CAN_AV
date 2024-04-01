@@ -58,6 +58,12 @@ namespace MCU_CAN_AV.Devices
         public IObservable<ICAN.RxTxCanData>                 TxData                { get; }
 
 
+        /// <summary>
+        ///     Control enabled flag, can be used to enable/disable Tx flow
+        /// </summary>
+        public bool                                  ControlEnabled                { set; }
+
+
         //******************************* Controls ***********************************
 
         IDeviceParameter OutVoltage { get; }
@@ -67,6 +73,8 @@ namespace MCU_CAN_AV.Devices
 
         IDeviceParameter InTorque   { get; }
         IDeviceParameter InSpeed    { get; }
+
+       
 
         //****************************************************************************
 

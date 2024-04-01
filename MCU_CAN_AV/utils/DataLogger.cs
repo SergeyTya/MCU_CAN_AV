@@ -37,11 +37,16 @@ namespace MCU_CAN_AV.utils
 
         public void close()
         {
+            if(writer != null)
+            {
+                this.Log().Warn($"DataLogger closed");
+            }
             Disposable?.Dispose();
             counter = 0;
             _IsPaused = true;
             writer?.Close();
             path = @".\DataLogger\";
+            
         }
 
         public void pause()
@@ -103,8 +108,15 @@ namespace MCU_CAN_AV.utils
 
         private void NewFile()
         {
-            writer?.Flush();
-            writer?.Close();
+            try {
+                writer?.Flush();
+                writer?.Close();
+            }
+            catch (System.ObjectDisposedException ex) { 
+                
+            }
+            
+
             if (File.Exists(path + fileName))
             {
                 string new_name = fileName.Substring(0, fileName.Length - 1);

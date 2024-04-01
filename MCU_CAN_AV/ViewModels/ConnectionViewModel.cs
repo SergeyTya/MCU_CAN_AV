@@ -256,7 +256,8 @@ namespace MCU_CAN_AV.ViewModels
                    if (!_) {
                        Messenger.Send(new ConnectionState(ConnectionState.State.Connected));
                        disposable_init?.Dispose();
-                       disposable_log?.Dispose();  
+                       disposable_log?.Dispose();
+                       IsMsgVisible = false;
                    }
                    
                });

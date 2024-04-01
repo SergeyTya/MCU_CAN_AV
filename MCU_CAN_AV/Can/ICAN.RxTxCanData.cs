@@ -7,6 +7,9 @@
             bool _timeout;
             public bool Timeout { get { return _timeout; } set { _timeout = value; } }
 
+            bool _needUpdate = false;
+            public bool NeedUpdate { get { return _needUpdate; } set { _needUpdate = value; } }
+
             uint _id;
             public uint id { get { return _id; } }
 

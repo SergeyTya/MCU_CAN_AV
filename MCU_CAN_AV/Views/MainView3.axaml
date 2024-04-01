@@ -109,7 +109,7 @@
 					<TextBlock
 						Text="Connected:"
 						VerticalAlignment="Center"
-						TextAlignment="Left"
+						TextAlignment="Left" 
 						FontWeight="Light"
 						Margin="5,0,0,0"/>
 
@@ -139,26 +139,7 @@
 
 				</StackPanel>
 			</Panel>
-			
-			<Menu DockPanel.Dock="Right" FontWeight="Light">
-				<MenuItem Header="Commands" HorizontalAlignment="Left">
-					<CheckBox Name="ControlLocker"  Content="UnlockedControl" IsChecked="false"/>
-					<CheckBox Name="Checkbox_saver" Content="Log data"        IsChecked="{Binding DeviceLogerState, Mode=OneWayToSource}"/>
-					<Separator/>
-					<MenuItem Header="Load from file"/>
-					<MenuItem Header="Save to file "/>
-					<Separator/>
-					<MenuItem Header="Scope"/>
-					<Separator/>
-					<MenuItem Header="Disconnect" Command="{Binding ClickDisconnectCommand}" >
-						<MenuItem.DataContext>
-							<vm:ConnectionViewModel/>
-						</MenuItem.DataContext>
-					</MenuItem>
-				</MenuItem>
-
-			</Menu>
-			<TextBlock/>
+	
 		</DockPanel>
 		<!--Low side status bar-->
 
@@ -203,10 +184,16 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="1*"/>
 				<ColumnDefinition Width="200"/>
+				<ColumnDefinition Width="30"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
+
+			<v:ControlPanelView 
+				Name="ControlPanel" 
+				Grid.Column="2" 
+			/>
 			<!--Tabcontrol panel-->
 			<Panel Grid.Column="0" Classes="Black1">
 
@@ -228,7 +215,7 @@
 						<v:ParamTableView/>
 					</TabItem>
 					<TabItem   Header="Controls">
-						<v:Control2View IsEnabled="{Binding #ControlLocker.IsChecked}"/>
+						<v:Control2View  IsEnabled="{Binding #ControlPanel.IsControlEnabled}"/>
 					</TabItem>
 					<TabItem Header="RxTxDiag">
 						<v:RXTXDiagView />
@@ -260,9 +247,11 @@
 							<Border Classes="h4"/>
 						</Panel>
 					</ScrollViewer>
-					<Panel Grid.Row="1" Classes="Black11">
-						<v:ButtonsControlView IsEnabled="{Binding #ControlLocker.IsChecked}" />
+					<Panel Grid.Row="1" Classes="Black11" IsEnabled="{Binding #ControlPanel.IsControlEnabled}">
+						
+						<v:ButtonsControlView />
 						<Border Classes="h4"/>
+						
 					</Panel>
 				</Grid>
 				<!--Fault view panel-->

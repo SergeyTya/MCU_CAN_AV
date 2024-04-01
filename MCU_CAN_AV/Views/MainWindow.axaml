@@ -19,7 +19,13 @@
 	<Window.DataContext>
 		<vm:MainViewModel />
 	</Window.DataContext>
+
+
+	<Grid ColumnDefinitions="*, 0">
+
+		<views:MainView Grid.Column="0" />
+
+	</Grid>
 	
-	<views:MainView/>
 	
 </Window>

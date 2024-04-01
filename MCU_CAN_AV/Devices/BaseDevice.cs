@@ -35,6 +35,7 @@ namespace MCU_CAN_AV.Devices
         IObservable<ICAN.RxTxCanData> IDevice.TxData => _TxData;
         public virtual string Name => throw new NotImplementedException();
 
+      
         // ***************************************************************************
 
         internal readonly ICAN.CANInitStruct CANInitStruct;
@@ -43,6 +44,8 @@ namespace MCU_CAN_AV.Devices
         internal string _state { set { _State.OnNext(value); } }
         internal bool _Init_stage { set { _init_stage.OnNext(value); } }
         internal IDeviceFault _DeviceFault { set { _DeviceFaults.OnNext(value); } }
+
+        bool IDevice.ControlEnabled { set { _ControlEnabled = value; } }
 
         // ***************************************************************************
 
@@ -59,8 +62,9 @@ namespace MCU_CAN_AV.Devices
         internal IDeviceParameter _inSpeed ;
         public IDeviceParameter InSpeed    => _inSpeed;
 
-        // ***************************************************************************
 
+        // ***************************************************************************
+        internal bool _ControlEnabled = false;
         private ObservableCollection<IDeviceParameter> _DeviceDescription = new();
         private BehaviorSubject<string> _State = new("no state");
         private BehaviorSubject<bool> _init_stage = new(true);

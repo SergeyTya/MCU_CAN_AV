@@ -212,13 +212,10 @@ namespace MCU_CAN_AV.Can
 
             if(res == 0) {
                 TimeOut_counter++;
-                if (TimeOut_counter > 100) {
-                    this.Log().Error("USBCAN_B Recieve Timeout");
-                    post(new ICAN.RxTxCanData() { Timeout = true });
-                    TimeOut_counter = 0;
-                    return;
-                }
-                
+                this.Log().Error("USBCAN_B Recieve Timeout");
+                post(new ICAN.RxTxCanData() { Timeout = true });
+                TimeOut_counter = 0;
+                return;
             }
 
             for (UInt32 i = 0; i < res; i++)
@@ -248,9 +245,25 @@ namespace MCU_CAN_AV.Can
         public override bool isOpen { get => _isOpen; }
 
 
-        public override void Transmit(ICAN.RxTxCanData data)
+        unsafe public override void Transmit(ICAN.RxTxCanData data)
         {
-            throw new NotImplementedException();
+            VCI_CAN_OBJ sendobj = new VCI_CAN_OBJ();
+
+            sendobj.RemoteFlag = 0;
+            sendobj.ExternFlag = 1;
+            sendobj.ID = data.id;
+            sendobj.DataLen = 8;
+
+            for (int i = 0; i < 8; i++)
+            {
+                sendobj.Data[i] = data.data[i];
+            }
+
+            if (VCI_Transmit(m_devtype, InitStructure._devind, InitStructure._canind, ref sendobj, 1) == 0)
+            {
+                this.Log().Error("CAN transmit ERROR");
+            }
+
         }
     }
 }
