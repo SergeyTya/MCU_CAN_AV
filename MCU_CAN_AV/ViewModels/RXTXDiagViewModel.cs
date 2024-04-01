@@ -1,5 +1,6 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices;
@@ -9,13 +10,20 @@ using System.Collections.ObjectModel;
 
 namespace MCU_CAN_AV.ViewModels
 {
-    internal partial class RXTXDiagViewModel: ObservableRecipient, IRecipient<ConnectionState>
+    internal partial class RXTXDiagViewModel : ObservableRecipient, IRecipient<ConnectionState>
     {
         [ObservableProperty]
         public ObservableCollection<RxTxRowTemplate>? _rxData;
 
         [ObservableProperty]
         public ObservableCollection<RxTxRowTemplate>? _txData;
+
+        [RelayCommand]
+        void Clear()
+        {
+            RxData?.Clear();    
+            TxData?.Clear();    
+        }
 
         IDisposable RxDis;
         IDisposable TxDis;

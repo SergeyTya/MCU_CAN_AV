@@ -46,7 +46,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             ID_MC3 = 0xCF12AD0
         }
 
-        internal static ICAN.RxTxCanData Tx_MC1 = new(0xCF10AD0, new byte[] { 0x30, 0x75, 0x20, 0x4E, 0x61, 0x04, 0x00, 0x00 }) { NeedUpdate = true }; // 10  ms
+        internal static ICAN.RxTxCanData Tx_MC1 = new(0xCF10AD0, new byte[] { 0x30, 0x75, 0x84, 0x4E, 0x43, 0x10, 0x00, 0x00 }) { NeedUpdate = true }; // 10  ms
         internal static ICAN.RxTxCanData Tx_MC2 = new(0xC50A4D0, new byte[] { 0xAA, 0xb8, 0x0b, 0xAA, 0x64, 0x00, 0x00, 0x00 }) { NeedUpdate = true }; // 100 ms
         internal static ICAN.RxTxCanData Tx_MC3 = new(0xCF12AD0, new byte[] { 0x60, 0xEA, 0x00, 0x00, 0xB4, 0x5F, 0x00, 0x00 }) { NeedUpdate = true }; // 100 ms
 
@@ -216,11 +216,12 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
         public override void Reset()
         {
-            //Tx_MC1.data[5] = 0x3c;
-            //Tx_MC1.NeedUpdate = true;
-            //while (Tx_MC1.NeedUpdate) ;
 
-            Tx_MC1.data[4] = 0b01000001; // MC1_Batterystation = 01, MC1_MotorModeReq = 0,   MC1_VehicleMode = 00001: Torque mode
+            Tx_MC1.data[4] &= 0b00011111; // reset flags
+            Tx_MC1.data[4] |= 0b01000000; // restore MC1_Batterystation = 01
+
+            //  Tx_MC1.data[4] = 0b01000001; // Tx_MC1.data[4] = 0b01000001; // MC1_Batterystation = 01, MC1_MotorModeReq = 0,   MC1_VehicleMode = 00001: Torque mode
+
             Tx_MC1.data[5] = 0b01100000; // MC1_HandbrakeStatus = 1,  MC1_Reg_ChaContactor = MC1_VehiclePRND = 1000 P gear/invalid
             Tx_MC1.NeedUpdate = true;
             while (Tx_MC1.NeedUpdate) ;
@@ -228,22 +229,23 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
         public override void Start()
         {
-            //Tx_MC1.data[5] = 0x3c;
-            //Tx_MC1.NeedUpdate = true;
-            //while (Tx_MC1.NeedUpdate) ;
 
-            Tx_MC1.data[4] = 0b01100001; // MC1_Batterystation = 01, MC1_MotorModeReq = 1,   MC1_VehicleMode = 00001: Torque mode
+            Tx_MC1.data[4] &= 0b00011111; // reset flags
+            Tx_MC1.data[4] |= 0b01100000; // restore MC1_Batterystation = 01 MC1_MotorModeReq = 1
+
+            //  Tx_MC1.data[4] = 0b01100001; // MC1_Batterystation = 01, MC1_MotorModeReq = 1,   MC1_VehicleMode = 00001: Torque mode
+
             Tx_MC1.data[5] = 0b00000100; // MC1_HandbrakeStatus = 0,  MC1_Reg_ChaContactor = 0001 forward gear
             Tx_MC1.NeedUpdate = true;
         }
 
         public override void Stop()
         {
-            //Tx_MC1.data[5] = 0x3c;
-            //Tx_MC1.NeedUpdate = true;
-            //while (Tx_MC1.NeedUpdate) ;
+            Tx_MC1.data[4] &= 0b00011111; // reset flags
+            Tx_MC1.data[4] |= 0b01000000; // restore MC1_Batterystation = 01
 
-            Tx_MC1.data[4] = 0b01000001; // MC1_Batterystation = 01, MC1_MotorModeReq = 0,   MC1_VehicleMode = 00001: Torque mode
+            //     Tx_MC1.data[4] = 0b01000001; // MC1_Batterystation = 01, MC1_MotorModeReq = 0,   MC1_VehicleMode = 00001: Torque mode
+
             Tx_MC1.data[5] = 0b00010000; // MC1_HandbrakeStatus = 0,  MC1_Reg_ChaContactor = 0100 neutral gear
             Tx_MC1.NeedUpdate = true;
         }
@@ -308,8 +310,8 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 };
 
                 base.DeviceDescription[2].Value.Subscribe((_) => {
-
-                    ((ShanghaiDeviceParameter)_outSpeed).Val.OnNext(_/1000);
+                    
+                    ((ShanghaiDeviceParameter)_outSpeed).Val.OnNext(_);
                 });
 
                 // current monitor 
@@ -323,7 +325,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
                 base.DeviceDescription[6].Value.Subscribe((_) => {
 
-                    ((ShanghaiDeviceParameter)_outCurrent).Val.OnNext(_ / 1000);
+                    ((ShanghaiDeviceParameter)_outCurrent).Val.OnNext(_);
                 });
 
                 // Torque monitor 

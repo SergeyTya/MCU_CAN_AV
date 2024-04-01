@@ -225,7 +225,7 @@ namespace MCU_CAN_AV.ViewModels
 
                     disp1 = DP_Speed.Value.Subscribe((_) =>
                     {
-                        Needle1.Value = double.Parse((_/1000).ToString("0.0#"));
+                        Needle1.Value = double.Parse((_/1000.0).ToString("0.0#"));
                     });
                 }
 

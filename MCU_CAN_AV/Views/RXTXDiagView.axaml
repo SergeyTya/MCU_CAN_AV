@@ -16,6 +16,12 @@
 		<GridSplitter Grid.Row="1" Background="Gray" ResizeDirection="Rows" />
 		
 		<Panel Grid.Row="0" >
+			<Panel.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Clear" Command="{Binding ClearCommand}"/>
+				</ContextMenu>
+			</Panel.ContextMenu>
+			
 			<Border Classes ="h2" Margin="2" />
 			<Grid  RowDefinitions =" 20 , * " Margin="10" >
 				<TextBlock Grid.Row="0"> Input data </TextBlock>
