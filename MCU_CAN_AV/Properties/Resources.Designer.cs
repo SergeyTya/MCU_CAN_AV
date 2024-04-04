@@ -73,6 +73,26 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
+        public static byte[] KTZ34X_description {
+            get {
+                object obj = ResourceManager.GetObject("KTZ34X_description", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        public static byte[] KTZ34X_faults {
+            get {
+                object obj = ResourceManager.GetObject("KTZ34X_faults", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
         public static byte[] shanghai_description {
             get {
                 object obj = ResourceManager.GetObject("shanghai_description", resourceCulture);

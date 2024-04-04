@@ -32,7 +32,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
     internal class ShanghaiDevice : BaseDevice, IEnableLogger
     {
         private string _name = "";
-        static List<ShanghaiDeviceFault> FaultsList = new();
+        internal List<ShanghaiDeviceFault> FaultsList = new();
 
         System.Timers.Timer RxTimer;
 
@@ -46,9 +46,9 @@ namespace MCU_CAN_AV.Devices.Shanghai
             ID_MC3 = 0xCF12AD0
         }
 
-        internal static ICAN.RxTxCanData Tx_MC1 = new(0xCF10AD0, new byte[] { 0x30, 0x75, 0x84, 0x4E, 0x43, 0x10, 0x00, 0x00 }) { NeedUpdate = true }; // 10  ms
-        internal static ICAN.RxTxCanData Tx_MC2 = new(0xC50A4D0, new byte[] { 0xAA, 0xb8, 0x0b, 0xAA, 0x64, 0x00, 0x00, 0x00 }) { NeedUpdate = true }; // 100 ms
-        internal static ICAN.RxTxCanData Tx_MC3 = new(0xCF12AD0, new byte[] { 0x60, 0xEA, 0x00, 0x00, 0xB4, 0x5F, 0x00, 0x00 }) { NeedUpdate = true }; // 100 ms
+        internal  ICAN.RxTxCanData Tx_MC1 = new(0xCF10AD0, new byte[] { 0x30, 0x75, 0x84, 0x4E, 0x43, 0x10, 0x00, 0x00 }) { NeedUpdate = true }; // 10  ms
+        internal  ICAN.RxTxCanData Tx_MC2 = new(0xC50A4D0, new byte[] { 0xAA, 0xb8, 0x0b, 0xAA, 0x64, 0x00, 0x00, 0x00 }) { NeedUpdate = true }; // 100 ms
+        internal  ICAN.RxTxCanData Tx_MC3 = new(0xCF12AD0, new byte[] { 0x60, 0xEA, 0x00, 0x00, 0xB4, 0x5F, 0x00, 0x00 }) { NeedUpdate = true }; // 100 ms
 
         Subject<ICAN.RxTxCanData> TxSubject = new Subject<ICAN.RxTxCanData>();
      
@@ -133,7 +133,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 if (id == mes.id)
                 {
 
-                    var res = CopySlice(bits, item.offset, item.len);
+                    var res = utils.utils.CopySlice(bits, item.offset, item.len);
                     int[] val = new int[1];
                     res.CopyTo(val, 0);
 
@@ -182,27 +182,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             }
         }
 
-        private static BitArray CopySlice(BitArray source, int offset, int length)
-        {
-            // Urgh: no CopyTo which only copies part of the BitArray
-            BitArray ret = new BitArray(length);
-            for (int i = 0; i < length; i++)
-            {
-                ret[i] = source[offset + i];
-            }
-            return ret;
-        }
-
-        private static bool CopySliceTo(BitArray dst, int dst_offset, BitArray src, int src_offset, int length)
-        {
-            
-            for (int i = 0; i < length; i++)
-            {
-                dst[dst_offset + i] = src[src_offset + i];
-            }
-
-            return true;
-        }
+     
 
         public override void Close_instance()
         {
@@ -297,12 +277,13 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 base.DeviceDescription.Clear();
                 foreach (var item in tmp)
                 {
+                    item.device = this;
                     base.DeviceDescription.Add(item);
                 }
 
 
                 // speed monitor Need to be in kRPM!
-                _outSpeed = new ShanghaiDeviceParameter() {
+                _outSpeed = new ShanghaiDeviceParameter(this) {
                     max = 12,
                     min = -12,
                     sname = ((ShanghaiDeviceParameter)base.DeviceDescription[2]).Name,
@@ -315,7 +296,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 });
 
                 // current monitor 
-                _outCurrent = new ShanghaiDeviceParameter()
+                _outCurrent = new ShanghaiDeviceParameter(this)
                 {
                     max = 500,
                     min =   0,
@@ -329,7 +310,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 });
 
                 // Torque monitor 
-                _outTorque = new ShanghaiDeviceParameter()
+                _outTorque = new ShanghaiDeviceParameter(this)
                 {
                     max = 2,
                     min = -2.0,
@@ -373,10 +354,11 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
         internal class ShanghaiDeviceParameter : IDeviceParameter, IEnableLogger
         {
-
-            public ShanghaiDeviceParameter()
+            internal ShanghaiDevice device;
+            public ShanghaiDeviceParameter(ShanghaiDevice device)
             {
                 Val.Subscribe(x => _value = x);
+                this.device = device;
             }
 
             public void writeValue(double value)
@@ -384,19 +366,19 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
                 if (ID == "0xCF10AD0")
                 {
-                    Tx_MC1 = Convert(Tx_MC1, value);
+                    device.Tx_MC1 = Convert(device.Tx_MC1, value);
                     this.Log().Info($"0xCF10AD0 offset {offset} len {len} <- {value}");
 
                 }
                 else if (ID == "0xC50A4D0")
                 {
-                    Tx_MC2 = Convert(Tx_MC2, value);
+                    device.Tx_MC2 = Convert(device.Tx_MC2, value);
                     this.Log().Info($"0xCF10AD0 offset {offset} len {len} <- {value}");
 
                 }
                 else if (ID == "0xCF12AD0")
                 {
-                    Tx_MC3 = Convert(Tx_MC3, value);
+                    device.Tx_MC3 = Convert(device.Tx_MC3, value);
                     this.Log().Info($"0xCF10AD0 offset  {offset}  len  {len}  <-  {value}");
 
                 }
@@ -421,7 +403,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
                 BitArray dst = new BitArray(data.data);
                 BitArray src = new BitArray(val_int);
-                CopySliceTo(dst, offset, src, 0, len);
+                utils.utils.CopySliceTo(dst, offset, src, 0, len);
                 dst.CopyTo(ret_val.data, 0);
                 ret_val.NeedUpdate = true;
                 return ret_val;    

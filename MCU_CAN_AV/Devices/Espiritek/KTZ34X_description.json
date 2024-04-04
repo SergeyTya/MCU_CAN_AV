@@ -1,0 +1,224 @@
+[
+    {
+        "CANID": "0x0C09A6A7",
+        "RW": 0,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 0,
+        "scale": 0.1,
+        "sname": "Motor current",
+        "options": []
+    },
+    {
+        "CANID": "0x0C09A6A7",
+        "RW": 0,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 0,
+        "scale": 0.1,
+        "sname": "Motor voltage",
+        "options": []
+    },
+    {
+        "CANID": "0x0C09A6A7",
+        "RW": 0,
+        "len": 16,
+        "offset": 32,
+        "valoffset": 40,
+        "scale": 0.1,
+        "sname": "Dc voltage",
+        "options": []
+    },
+    {
+        "CANID": "0x0C09A6A7",
+        "RW": 0,
+        "len": 8,
+        "offset": 48,
+        "valoffset": 40,
+        "sname": "Motor temp",
+        "options": [],
+        "scale": 1
+    },
+    {
+        "CANID": "0x0C09A6A7",
+        "RW": 0,
+        "len": 8,
+        "offset": 56,
+        "valoffset": 40,
+        "sname": "MCU temp",
+        "options": [],
+        "scale": 1
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 16,
+        "offset": 0,
+        "valoffset": 15000,
+        "sname": "Motor torque limit value",
+        "options": [],
+        "scale": 1
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 16,
+        "offset": 16,
+        "valoffset": 15000,
+        "sname": "Motor torque",
+        "options": [],
+        "scale": 1,
+        "min": -3000,
+        "max": 3000
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 16,
+        "offset": 32,
+        "valoffset": 15000,
+        "sname": "Motor speed",
+        "options": [],
+        "scale": 1
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 2,
+        "offset": 48,
+        "valoffset": 0,
+        "sname": "Motor rotation direction",
+        "options": [
+            [ "stop", "0" ],
+            [ "ccw",  "1" ],
+            [ "cw",   "2" ]
+        ]
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 2,
+        "offset": 50,
+        "valoffset": 0,
+        "sname": "Motor operation mode",
+        "options": [
+            [ "stop",   "0" ],
+            [ "tourqe", "1" ],
+            [ "speed",  "2" ],
+            [ "slip",   "3" ]
+        ]
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 2,
+        "offset": 52,
+        "valoffset": 0,
+        "sname": "Total motor fault status",
+        "options": [
+            [ "warning",     "0" ],
+            [ "power limit", "1" ],
+            [ "fault",       "2" ]
+        ]
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 1,
+        "offset": 54,
+        "valoffset": 0,
+        "sname": "MCU enable state",
+        "options": [
+            [ "disable", "0" ],
+            [ "enable" , "1" ]
+        ]
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 1,
+        "offset": 56,
+        "valoffset": 0,
+        "sname": "Motor drive license"
+    },
+    {
+        "CANID": "0x0C08A6A7",
+        "RW": 0,
+        "len": 1,
+        "offset": 57,
+        "valoffset": 0,
+        "sname": "MCU power-off license"
+    },
+
+    {
+        "CANID": "0x0800A7A6",
+        "RW": 1,
+        "len": 2,
+        "offset": 0,
+        "sname": "Motor state",
+        "options": [
+            [ "traction", "1" ],
+            [ "break", "2" ]
+        ]
+    },
+    {
+        "CANID": "0x0800A7A6",
+        "RW": 1,
+        "len": 2,
+        "offset": 2,
+        "sname": "Control mode",
+        "options": [
+            [ "torque", "1" ],
+            [ "speed", "2" ]
+        ]
+    },
+    {
+        "CANID": "0x0800A7A6",
+        "RW": 1,
+        "len": 2,
+        "offset": 4,
+        "sname": "Control state",
+        "options": [
+            [ "Run ", "1" ],
+            [ "Stop", "2" ]
+        ]
+    },
+    {
+        "CANID": "0x0800A7A6",
+        "RW": 1,
+        "len": 2,
+        "offset": 6,
+        "sname": "Direction",
+        "options": [
+            [ "0-N or P shift ", "0" ],
+            [ "CCW", "1" ],
+            [ "CW", "2" ]
+        ]
+    },
+    {
+        "CANID": "0x0800A7A6",
+        "RW": 1,
+        "len": 16,
+        "offset": 16,
+        "sname": "Torque ref",
+        "def": 0,
+        "valoffset": 15000,
+        "min": -15000,
+        "max": 15000,
+        "scale": 1
+    },
+    {
+        "CANID": "0x0800A7A6",
+        "RW": 1,
+        "len": 16,
+        "offset": 32,
+        "sname": "Speed ref",
+        "def": 0,
+        "valoffset": 15000,
+        "min": -15000,
+        "max": 15000,
+        "scale": 1
+    }
+
+
+]

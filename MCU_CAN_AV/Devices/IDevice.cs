@@ -1,6 +1,7 @@
 ﻿using Avalonia.Threading;
 using MCU_CAN_AV.Can;
 using MCU_CAN_AV.Devices.Dummy;
+using MCU_CAN_AV.Devices.Espiritek;
 using MCU_CAN_AV.Devices.EVM_DIAG;
 using MCU_CAN_AV.Devices.Shanghai;
 using System;
@@ -139,6 +140,10 @@ namespace MCU_CAN_AV.Devices
                     CAN = ICAN.Create(InitStruct, ICAN.CANType.Dummy);
                     if (CAN != null)  ret_obj = new DummyDevice(CAN);
                     break;
+                case DeviceType.EspiritekCAN:
+                    CAN = ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
+                    if (CAN != null) ret_obj = new EspiritekKTZ34XDevice(CAN);
+                break;
             }
 
            IDevice._Device = ret_obj;

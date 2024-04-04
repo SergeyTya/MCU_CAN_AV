@@ -111,7 +111,7 @@ namespace MCU_CAN_AV.Devices
 
         public virtual void Reset()
         {
-            throw new NotImplementedException();
+           /// throw new NotImplementedException();
         }
 
         public virtual void Start()
@@ -128,6 +128,7 @@ namespace MCU_CAN_AV.Devices
         {
             throw new NotImplementedException();
         }
+
     }
 
     internal class BaseParameter : IDeviceParameter
