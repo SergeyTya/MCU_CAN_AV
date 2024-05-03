@@ -11,16 +11,12 @@
 		<vm:LimitsViewModel/>
 	</UserControl.DataContext>
 	
- <StackPanel Orientation="Vertical" Margin="0,10,0,0">
+ <StackPanel Orientation="Vertical" Margin="0,10,0,0" Spacing="10">
+
 	 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-		 <TextBlock Text="Voltage limit" Width="150" TextAlignment="Center" />
-		 <TextBox  Width="150" Text="{Binding VoltageLim}"  />
-		 <CheckBox IsChecked="{Binding VoltageLim_enable}"  VerticalAlignment="Center"/>
-	 </StackPanel>
-	 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-		 <TextBlock Text="Speed limit" Width="150" TextAlignment="Center" />
-		 <TextBox  Width="150" Text="{Binding SpeedLim}"  />
-		 <CheckBox IsChecked="{Binding SpeedLim_enable}"  VerticalAlignment="Center"/>
+		 <TextBlock Text="EVM device State" Width="150" TextAlignment="Center" />
+		 <TextBlock  Width="150" Text="{Binding EVM_State}"  />
+		 <CheckBox IsChecked="{Binding EVMblk_enable}"  VerticalAlignment="Center"/>
 	 </StackPanel>
 	 
 	 
