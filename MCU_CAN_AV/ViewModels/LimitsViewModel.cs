@@ -46,8 +46,11 @@ namespace MCU_CAN_AV.ViewModels
 
                     if (EVMblk_enable == false) {
                         EVM_State = "Disabled";
+                        timer.Interval = 5000;
                         return;
                     } 
+
+
                     try {
                         if (RxConnection == null) {
                             RxConnection = new ServerModbusTCP("localhost", 8888);
@@ -65,21 +68,21 @@ namespace MCU_CAN_AV.ViewModels
                         BitArray bits = new BitArray(BitConverter.GetBytes(res[0]));
                         
                         if (bits[0] == true) {
-                            timer.Interval = 100;
+                            timer.Interval = 50;
                             EVM_State = "Run";
                         }
 
                         if (bits[1] == true)
                         {
                             EVM_State = "Rdy";
-                            timer.Interval = 1000;
+                            timer.Interval = 2000;
                             IDevice.Current.Stop();
                         }
 
                         if (bits[2] == true)
                         {
                             EVM_State = "Fault";
-                            timer.Interval = 1000;
+                            timer.Interval = 2000;
                             IDevice.Current.Stop();
                         }
 
@@ -90,6 +93,7 @@ namespace MCU_CAN_AV.ViewModels
                       //  this.Log().Warn(ex.Message.ToString());
                         EVM_State = "not connected";
                         timer.Interval = 1000;
+                        IDevice.Current.Stop();
                     }
                    
                 };
