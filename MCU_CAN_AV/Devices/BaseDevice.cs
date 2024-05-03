@@ -19,6 +19,7 @@ using System.IO;
 using System.Formats.Asn1;
 using System.Globalization;
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace MCU_CAN_AV.Devices
 {
@@ -166,8 +167,22 @@ namespace MCU_CAN_AV.Devices
         }
     }
 
-    internal class Log_record { 
-    
-        
+    internal class BaseDeviceFault : IDeviceFault, IEnableLogger
+    {
+        public BaseDeviceFault(string msg) { 
+            this.name = msg;
+        }
+
+        public string ID => code.ToString();
+
+        public string Name => name;
+
+       
+        internal uint code = 0;
+
+        internal string name;
     }
+
+
+
 }

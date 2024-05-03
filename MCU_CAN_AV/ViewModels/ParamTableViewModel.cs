@@ -327,7 +327,7 @@ namespace MCU_CAN_AV.ViewModels
                 Dispatcher.UIThread.Post(() =>
                 {
 
-                    string new_val = _.ToString("#0.##");
+                    string new_val = _.ToString("#0.#######");
 
                     if (IsComboCell)
                     {

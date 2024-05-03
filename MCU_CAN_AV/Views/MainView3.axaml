@@ -220,8 +220,8 @@
 					<TabItem Header="RxTxDiag">
 						<v:RXTXDiagView />
 					</TabItem>
-					<TabItem Header="Calibration">
-						<TextBlock Margin="5">This is tab 3 content</TextBlock>
+					<TabItem Header="Limits">
+						<v:LimitsView  IsEnabled="{Binding #ControlPanel.IsControlEnabled}"/>
 					</TabItem>
 				</TabControl>
 

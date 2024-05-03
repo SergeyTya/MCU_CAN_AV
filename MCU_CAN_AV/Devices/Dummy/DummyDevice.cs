@@ -65,7 +65,7 @@ namespace MCU_CAN_AV.Devices.Dummy
 
             DeviceDescription[0].Value.Subscribe((_) =>
             {
-                ((BaseParameter)base._outSpeed)._val.OnNext(_/1000.0);
+                ((BaseParameter)base._outSpeed)._val.OnNext(_);
             });
           
 

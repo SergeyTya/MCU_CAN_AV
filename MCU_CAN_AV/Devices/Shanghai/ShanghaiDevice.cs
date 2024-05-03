@@ -147,6 +147,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
                         item.Val.OnNext(vald);
                     }
                 }
+
             }
         }
 
@@ -172,7 +173,14 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
                 if (mes.data[0] == 0)
                 {
-                    base._state = DeviceState.Ready;
+                    if (base.DeviceDescription[11].ValueNow != 0)
+                    {
+                        base._state = DeviceState.Run;
+                    }
+                    else {
+                        base._state = DeviceState.Ready;
+                    }
+                   
                 }
                 else 
                 {
@@ -470,7 +478,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             [JsonProperty("max")]
             internal double max { get; set; }
 
-            public double ValueNow => throw new NotImplementedException();
+            public double ValueNow => _value;
         }
     }
 }
