@@ -68,7 +68,7 @@ namespace MCU_CAN_AV.ViewModels
                         BitArray bits = new BitArray(BitConverter.GetBytes(res[0]));
                         
                         if (bits[0] == true) {
-                            timer.Interval = 50;
+                            timer.Interval = 300;
                             EVM_State = "Run";
                         }
 

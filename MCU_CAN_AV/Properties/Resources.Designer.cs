@@ -22,7 +22,7 @@ namespace MCU_CAN_AV.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace MCU_CAN_AV.Properties {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MCU_CAN_AV.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace MCU_CAN_AV.Properties {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        public static byte[] EVM_faults {
+        internal static byte[] EVM_faults {
             get {
                 object obj = ResourceManager.GetObject("EVM_faults", resourceCulture);
                 return ((byte[])(obj));
@@ -73,7 +73,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        public static byte[] KTZ34X_description {
+        internal static byte[] KTZ34X_description {
             get {
                 object obj = ResourceManager.GetObject("KTZ34X_description", resourceCulture);
                 return ((byte[])(obj));
@@ -83,7 +83,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        public static byte[] KTZ34X_faults {
+        internal static byte[] KTZ34X_faults {
             get {
                 object obj = ResourceManager.GetObject("KTZ34X_faults", resourceCulture);
                 return ((byte[])(obj));
@@ -93,7 +93,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        public static byte[] shanghai_description {
+        internal static byte[] shanghai_description {
             get {
                 object obj = ResourceManager.GetObject("shanghai_description", resourceCulture);
                 return ((byte[])(obj));
@@ -103,7 +103,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        public static byte[] shanghai_faults {
+        internal static byte[] shanghai_faults {
             get {
                 object obj = ResourceManager.GetObject("shanghai_faults", resourceCulture);
                 return ((byte[])(obj));

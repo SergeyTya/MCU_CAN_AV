@@ -175,7 +175,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 return;
             }
 
-            if (data.id == 1 || data.id == 2)
+            if (data.id == 1 || data.id == 2 || data.id == 3 || data.id == 4)
             {
 
                 BitArray bits = new BitArray(data.data);
