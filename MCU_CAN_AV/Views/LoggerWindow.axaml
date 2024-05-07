@@ -19,6 +19,8 @@
 			<RowDefinition Height="1*"/>
 		</Grid.RowDefinitions>
 
+		<TextBlock Grid.Row="1" HorizontalAlignment="Right" Name="Indi"> </TextBlock>
+
 		<lvc:CartesianChart  Grid.Row="1"
 		Name="MainChart"
 		ZoomMode="None"

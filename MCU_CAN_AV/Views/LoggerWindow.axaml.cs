@@ -36,6 +36,8 @@ namespace MCU_CAN_AV.Views
         bool _IsAlive = true;
         public bool IsAlive { get => _IsAlive; }
 
+        internal double value_fltr =0;
+
         public LoggerWindow(string name)
         {
             InitializeComponent();
@@ -161,6 +163,8 @@ namespace MCU_CAN_AV.Views
                     if (_values.Count > 250) _values.RemoveAt(0);
 
                     _XAxis.CustomSeparators = GetSeparators();
+
+                    this.Indi.Text = InputValue;
                 });
             });
 
