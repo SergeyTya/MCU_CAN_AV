@@ -61,11 +61,15 @@ namespace MCU_CAN_AV.Devices.Shanghai
         private IDisposable? Disposable_MS2;
         private IDisposable? Disposable_MS3;
 
-       
+        public override string Name { get { return _name; } }
+
+
 
         ///
         public ShanghaiDevice(ICAN CAN) : base(CAN)
         {
+            _name = "Shanghai 3in1";
+
             this.Log().Info($"New {nameof(ShanghaiDevice)} connection ");
             InitDeviceDescription();
             base._Init_stage = false;
@@ -86,6 +90,8 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 {
                     _semaphore.Release();
                 }
+
+               
 
             });
 
@@ -244,15 +250,17 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             if (data.id == (uint)CAN_IDs.SW_ID)
             {
-                if (data.data[1] == 'E')
-                {
-                    data.data[0] = (byte)' ';
-                    _name = $"EVM inverter [ {Encoding.UTF8.GetString(data.data)} ]";
-                }
-                else
-                {
-                    _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
-                }
+                //if (data.data[1] == 'E')
+                //{
+                //    data.data[0] = (byte)' ';
+                //    _name = $"EVM inverter [ {Encoding.UTF8.GetString(data.data)} ]";
+                //}
+                //else
+                //{
+                //    _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
+                //}
+
+               // _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
             }
 
             if (data.Timeout) 
@@ -266,9 +274,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
             EncodeFaults(data);
         }
 
-        public override string Name => _name;
-
-        
+  
 
         void InitDeviceDescription()
         {
@@ -320,15 +326,15 @@ namespace MCU_CAN_AV.Devices.Shanghai
                 // Torque monitor 
                 _outTorque = new ShanghaiDeviceParameter(this)
                 {
-                    max = 2,
-                    min = -2.0,
+                    max = 300,
+                    min = -300.0,
                     sname = ((ShanghaiDeviceParameter)base.DeviceDescription[0]).Name,
                     CANID = ((ShanghaiDeviceParameter)base.DeviceDescription[0]).ID
                 };
 
                 base.DeviceDescription[0].Value.Subscribe((_) => {
 
-                    ((ShanghaiDeviceParameter)_outCurrent).Val.OnNext(_ / base.DeviceDescription[0].Max);
+                    ((ShanghaiDeviceParameter)_outTorque).Val.OnNext(_);
                 });
 
                 // Voltage monitor 
@@ -336,7 +342,10 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
                 // Speed control
                 _inSpeed = base.DeviceDescription[16];
-               
+
+
+                ((ShanghaiDeviceParameter) base.DeviceDescription[15]).max =  300.0;
+                ((ShanghaiDeviceParameter) base.DeviceDescription[15]).min = -300.0;
                 // Torque control
                 _inTorque = base.DeviceDescription[15];
 

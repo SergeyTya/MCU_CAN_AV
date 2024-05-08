@@ -86,7 +86,7 @@
 				<cc:CustomSlider
 					Grid.Row="2"
 					Name="Slider2"
-					LabelText="Torque, %"
+					LabelText="Torque, Hm"
 					Value="{Binding Slider2_value, Mode=TwoWay}"
 					Max  ="{Binding  DP_InTorque.Max }"
 					Min  ="{Binding  DP_InTorque.Min }"
@@ -135,7 +135,7 @@
 							VerticalAlignment="Top"
 							Name="LabelNamePieChart2"
 							TextAlignment="Center"
-							Text="Torque, %" />
+							Text="Torque, Hm" />
 
 					</Panel>
 

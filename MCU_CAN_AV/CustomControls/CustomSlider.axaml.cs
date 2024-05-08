@@ -70,6 +70,8 @@ namespace MCU_CAN_AV.CustomControls
             textbox.TextChanged += Textbox_TextChanged;
             textbox.KeyUp += Textbox_KeyUp;
 
+            textbox.KeyDown += Textbox_KeyDown; ;
+
             slider.ValueChanged += (_,__) => {
 
                 if (SliderMoveFinished == null || SliderMoveFinished.IsCompleted)
@@ -85,6 +87,24 @@ namespace MCU_CAN_AV.CustomControls
             };
         }
 
+        private void Textbox_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+        {
+            if (e.Key == Avalonia.Input.Key.Up)
+            {
+                Value += Max * 0.01;
+                if (Value > Max) Value = Max;
+                slider.Value = Value;
+            };
+
+
+            if (e.Key == Avalonia.Input.Key.Down)
+            {
+                Value -= Max * 0.01;
+                if (Value < Min) Value = Min;
+                slider.Value = Value;
+            };
+        }
+
         private void Textbox_KeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
         {
             if (sender == null) return;
@@ -97,8 +117,8 @@ namespace MCU_CAN_AV.CustomControls
                 }
 
             }
-            if (e.Key != Avalonia.Input.Key.Enter) return;
 
+            if (e.Key != Avalonia.Input.Key.Enter) return;
 
             var str = ((TextBox)sender).Text;
             var val = check_value(str);

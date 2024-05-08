@@ -102,30 +102,38 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                         {
                             
                             // Need to be in kRPM!
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Min = -9;
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[5])._Max =  9;
-                            _outSpeed = base.DeviceDescription[5];
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[6])._Min = -9;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[6])._Max =  9;
+                            _outSpeed = base.DeviceDescription[6];
 
 
-                            ((EVMModbusTCPDeviceParametr) base.DeviceDescription[1])._Min = 0;
-                            ((EVMModbusTCPDeviceParametr) base.DeviceDescription[1])._Max = 300;
-                            _outCurrent  = base.DeviceDescription[1];
+                            ((EVMModbusTCPDeviceParametr) base.DeviceDescription[2])._Min = 0;
+                            ((EVMModbusTCPDeviceParametr) base.DeviceDescription[2])._Max = 300;
+                            _outCurrent  = base.DeviceDescription[2];
 
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[6])._Min = -1.99;
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[6])._Max = 1.99;
-                            _outTorque   = base.DeviceDescription[6];
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[24])._Min = -300.0;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[24])._Max = 300.0;
+                            _outTorque   = base.DeviceDescription[24];
 
-                            ((EVMModbusTCPDeviceParametr)DeviceDescription[3])._Min = 0;
-                            ((EVMModbusTCPDeviceParametr)DeviceDescription[3])._Max = 1.0;
-                            _outVoltage = base.DeviceDescription[3];
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[4])._Min = 0;
+                            ((EVMModbusTCPDeviceParametr)DeviceDescription[4])._Max = 1.0;
+                            _outVoltage = base.DeviceDescription[4];
 
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[24])._Min = -9000;
-                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[24])._Max = 9000;
-                            _inSpeed     = base.DeviceDescription[24];
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[25])._Min = -9000;
+                            ((EVMModbusTCPDeviceParametr)base.DeviceDescription[25])._Max = 9000;
+                            _inSpeed     = base.DeviceDescription[25];
 
-                            ((EVMModbusTCPDeviceParametr)DeviceDescription[25])._Min = -1.0;
-                            ((EVMModbusTCPDeviceParametr)DeviceDescription[25])._Max = 1.0;
-                            _inTorque = base.DeviceDescription[25];
+                            _inTorque = new EVMModbusTCPDeviceParametr(DeviceDescription[26].ID, DeviceDescription[26].Name, true, HoldingType.HTYPE_FLOAT)
+                            {
+                                _Max = 300.0,
+                                _Min = -300.0
+                            };
+                            ((EVMModbusTCPDeviceParametr)_inTorque).TxVal.Subscribe((_) => {
+
+                                double ref_val = _ / ((EVMModbusTCPDeviceParametr)DeviceDescription[36]).ValueNow;
+                                ((EVMModbusTCPDeviceParametr)DeviceDescription[26]).TxVal.OnNext(ref_val);
+
+                            });
 
                         });
 
