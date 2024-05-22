@@ -32,12 +32,15 @@ namespace MCU_CAN_AV.Views
 
         private static int s_current;
         private readonly List<DateTimePoint> _values = new();
+        private readonly List<DateTimePoint> _values2 = new();
 
         bool _IsAlive = true;
         public bool IsAlive { get => _IsAlive; }
 
         internal double value_fltr =0;
 
+        double filtered = 0;
+        double time = 0;
         public LoggerWindow(string name)
         {
             InitializeComponent();
@@ -51,6 +54,8 @@ namespace MCU_CAN_AV.Views
                 _IsAlive = false;
                 this.Close();
             };
+
+    
 
 
             // Char series object
@@ -66,14 +71,29 @@ namespace MCU_CAN_AV.Views
                 GeometrySize = 5
             };
 
+            LineSeries<DateTimePoint> series2 = new LineSeries<DateTimePoint>
+            {
+                Values = _values2,
+                LineSmoothness = 0,
+                Fill = null,
+                GeometryStroke = null,
+                Stroke = new SolidColorPaint(SKColors.Red, 1),
+               // GeometryFill = new SolidColorPaint(SKColors.LightBlue),
+                GeometrySize = 0,
+                IsVisible = false
+            };
+
             MainChart.Series = new ISeries[]
             {
-                series
+                series , series2
             };
 
 
-            //Title object
-            MainChart.Title = new LabelVisual
+  
+
+
+                //Title object
+                MainChart.Title = new LabelVisual
             {
                 Text = name,
                 TextSize = 25,
@@ -157,14 +177,30 @@ namespace MCU_CAN_AV.Views
                 Dispatcher.UIThread.Post(() =>
                 {
                     if (InputValue == null) return;
-
                     var tmp = Double.Parse(InputValue);
+  
+
+                    if (time == 0) {
+                        filtered = tmp;
+                    } else {
+                        filtered += (tmp - filtered) * timeStep * 1.5;
+                    }
+                   
                     _values.Add(new DateTimePoint(DateTime.Now, tmp));
-                    if (_values.Count > 250) _values.RemoveAt(0);
+                    _values2.Add(new DateTimePoint(DateTime.Now, filtered));
 
-                    _XAxis.CustomSeparators = GetSeparators();
+                    if (_values.Count > 250)
+                    {
+                        _values.RemoveAt(0);
+                        _values2.RemoveAt(0);
+                    }
 
-                    this.Indi.Text = InputValue;
+                    this.Indi.Text = $"Avr {filtered.ToString("#.00")} ";
+
+                   if( ! (bool )Btn_pause.IsChecked)  _XAxis.CustomSeparators = GetSeparators();
+
+                    time += timeStep;
+
                 });
             });
 
@@ -174,30 +210,7 @@ namespace MCU_CAN_AV.Views
 
             // Y axis zoom event
 
-            //_YAxis.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
-            //{
-            //    if (e.PropertyName is (nameof(_XAxis.MaxLimit)) or (nameof(_XAxis.MinLimit)))
-            //    {
-            //        // at this point the axis limits changed 
-            //        // the user is using the zooming or panning features 
-            //        // or the range was set explicitly in 
-            //        if (_maxXVisible != null)
-            //        {
-            //            if (_maxXVisible == _YAxis.MaxLimit)
-            //            {
-            //            }
-            //            else
-            //            {
-            //                _minXVisible = _YAxis.MinLimit;
-            //                _maxXVisible = _YAxis.MaxLimit;
-            //            }
-            //        }
-            //        else
-            //        {
-            //        }
-            //    }
-            //};
-
+    
 
             MainChart.PointerWheelChanged += (s, e) =>
             {
@@ -270,11 +283,22 @@ namespace MCU_CAN_AV.Views
                 }
             };
 
-            // Chart pan buttion
-            MenuItemPan.Click += (_, __) => ChatrPan();
+            // Chart pan button
+            Btn_pan.Click += (_, __) => ChatrPan();
+
+            Btn_pause.Click += (_, __) =>
+            {
+                bool state = (bool)Btn_pause.IsChecked;
+                pause = state;
+            };
+
+            Btn_fltr.Click += (_, __) =>
+            {
+                series2.IsVisible = (bool)Btn_fltr.IsChecked;
+            };
         }
 
-
+        private bool pause = false;
         private double? _zoomDelta = null;
         private double? _zoomStep = null;
         private double? _minXVisible = null;
