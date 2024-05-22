@@ -58,9 +58,9 @@ namespace MCU_CAN_AV.Devices.Dummy
                 throw new NotImplementedException();
             }
 
-            _outSpeed = new BaseParameter   { _Min = -12.0f, _Max = 12.0f };
-            _outTorque = new BaseParameter  { _Min = -1.0f , _Max = 1.0f  };
-            _outCurrent = new BaseParameter { _Min = 0.0f  , _Max = 300.0 };
+            _outSpeed = new BaseParameter   { _Min = -12.0f  , _Max = 12.0f   };
+            _outTorque = new BaseParameter  { _Min = -300.0f , _Max = 300.0f  };
+            _outCurrent = new BaseParameter { _Min = 0.0f    , _Max = 300.0   };
             _outVoltage = new BaseParameter { _Min = 0 };
 
             DeviceDescription[0].Value.Subscribe((_) =>
