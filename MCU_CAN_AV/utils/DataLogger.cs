@@ -41,12 +41,6 @@ namespace MCU_CAN_AV.utils
         public void close()
         {
 
-            if (File.Exists(path + fileName))
-            {
-                string new_name = fileName.Substring(0, fileName.Length - 1);
-                File.Move(path + fileName, path + new_name);
-                this.Log().Warn($"DataLogger file created {new_name}");
-            }
 
             if (writer != null)
             {
@@ -56,16 +50,18 @@ namespace MCU_CAN_AV.utils
             counter = 0;
             _IsPaused = true;
             writer?.Close();
+
+
+            if (File.Exists(path + fileName))
+            {
+                string new_name = fileName.Substring(0, fileName.Length - 1);
+                File.Move(path + fileName, path + new_name);
+                this.Log().Warn($"DataLogger file created {new_name}");
+            }
+
             path = @".\DataLogger\";
             _Log_header = null;
 
-          
-
-
-       
-        
-        
-        
         }
 
         public void pause()
