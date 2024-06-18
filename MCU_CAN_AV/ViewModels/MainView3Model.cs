@@ -71,6 +71,13 @@ namespace MCU_CAN_AV.ViewModels
             //TODO
         }
 
+        [RelayCommand]
+        void LogOpenPath()
+        {
+            var dataLogger = Locator.Current.GetService<IDataLogger>();
+            dataLogger?.openPath();
+        }
+
         IDisposable disposable_errcnt;
 
 

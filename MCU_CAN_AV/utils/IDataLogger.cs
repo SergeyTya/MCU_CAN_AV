@@ -13,6 +13,7 @@ namespace MCU_CAN_AV.utils
         void pause();
         void resume();
         void close();
+        void openPath();
 
     }
 }

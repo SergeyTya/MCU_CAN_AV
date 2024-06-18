@@ -156,8 +156,9 @@
 					<ScrollViewer Name="ScrollLog" Margin="2">
 						<ScrollViewer.ContextMenu>
 						<ContextMenu>
-							<MenuItem Header="Clear"        Command="{Binding LogClearCommand}"/>
-							<MenuItem Header="Save to file" Command="{Binding LogSaveCommand}"/>
+							<MenuItem Header="Clear"			Command="{Binding LogClearCommand}"/>
+							<MenuItem Header="Save to file"		Command="{Binding LogSaveCommand}"/>
+							<MenuItem Header="Open logger path" Command="{Binding LogOpenPathCommand}"/>
 						</ContextMenu>
 						</ScrollViewer.ContextMenu>
 						

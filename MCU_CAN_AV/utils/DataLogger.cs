@@ -1,4 +1,5 @@
 ﻿using MCU_CAN_AV.Devices;
+using ReactiveUI;
 using Splat;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,8 @@ using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -37,7 +40,15 @@ namespace MCU_CAN_AV.utils
 
         public void close()
         {
-            if(writer != null)
+
+            if (File.Exists(path + fileName))
+            {
+                string new_name = fileName.Substring(0, fileName.Length - 1);
+                File.Move(path + fileName, path + new_name);
+                this.Log().Warn($"DataLogger file created {new_name}");
+            }
+
+            if (writer != null)
             {
                 this.Log().Warn($"DataLogger closed");
             }
@@ -46,7 +57,15 @@ namespace MCU_CAN_AV.utils
             _IsPaused = true;
             writer?.Close();
             path = @".\DataLogger\";
-            
+            _Log_header = null;
+
+          
+
+
+       
+        
+        
+        
         }
 
         public void pause()
@@ -58,6 +77,8 @@ namespace MCU_CAN_AV.utils
         {
             _IsPaused = false;
         }
+
+        DateTime start_point;
 
         public void start(IDevice Device)
         {
@@ -79,6 +100,7 @@ namespace MCU_CAN_AV.utils
                  {
                      if (_Log_header == null)
                      {
+                         _Log_header = "Time, ms";
                          foreach (var item in Device.DeviceDescription)
                          {
                              if (_Log_header != null) _Log_header += "; ";
@@ -86,9 +108,11 @@ namespace MCU_CAN_AV.utils
                          }
 
                          writer?.WriteLine(_Log_header);
+
+                         start_point = DateTime.Now;
                      }
 
-                     string? line = null;
+                     string? line = Formatter(start_point);
                      foreach (var item in Device.DeviceDescription)
                      {
                          if (line != null) line += "; ";
@@ -100,10 +124,21 @@ namespace MCU_CAN_AV.utils
                      long fileSizeibBytes = utils.GetFileSize(path + fileName);
                      if (fileSizeibBytes > 5242880)
                      {
+                         _Log_header = null;
                          NewFile();
                      }
                  }
              });
+        }
+
+        private static string Formatter(DateTime date)
+        {
+            var secsAgo = (-(date - DateTime.Now)).TotalMilliseconds;
+
+            var res = $"{ (int)secsAgo}";
+
+            return res;
+           
         }
 
         private void NewFile()
@@ -121,12 +156,64 @@ namespace MCU_CAN_AV.utils
             {
                 string new_name = fileName.Substring(0, fileName.Length - 1);
                 File.Move(path + fileName, path + new_name);
-                this.Log().Warn($"DataLogger new file created {new_name}");
+                this.Log().Warn($"DataLogger file created {new_name}");
             }
             fileName = $"{timestamp}_DataLogger_{counter}.csv_";
             writer = new(path+fileName);
             counter++;
             
+        }
+
+        public async void  openPath() {
+
+            var pathx = path;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                using Process fileOpener = new Process();
+                fileOpener.StartInfo.FileName = "explorer";
+                fileOpener.StartInfo.Arguments = "/select," + pathx + "\"";
+                fileOpener.Start();
+                await fileOpener.WaitForExitAsync();
+                return;
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                using Process fileOpener = new Process();
+                fileOpener.StartInfo.FileName = "explorer";
+                fileOpener.StartInfo.Arguments = "-R " + pathx;
+                fileOpener.Start();
+                await fileOpener.WaitForExitAsync();
+                return;
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                using Process dbusShowItemsProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "dbus-send",
+                        Arguments = "--print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"file://" + path + "\" string:\"\"",
+                        UseShellExecute = true
+                    }
+                };
+                dbusShowItemsProcess.Start();
+                await dbusShowItemsProcess.WaitForExitAsync();
+
+                if (dbusShowItemsProcess.ExitCode == 0)
+                {
+                    // The dbus invocation can fail for a variety of reasons:
+                    // - dbus is not available
+                    // - no programs implement the service,
+                    // - ...
+                    return;
+                }
+            }
+
+            using Process folderOpener = new Process();
+            folderOpener.StartInfo.FileName = Path.GetDirectoryName(path);
+            folderOpener.StartInfo.UseShellExecute = true;
+            folderOpener.Start();
+            await folderOpener.WaitForExitAsync();
         }
     }
 }
