@@ -16,10 +16,21 @@
             byte[] _data;
             public byte[] data { get { return _data; } }
 
-            public RxTxCanData(uint id, byte[] data)
+            int _transaction_id;
+            public int transaction_id { get { return _transaction_id; } }
+
+            public RxTxCanData(uint id, byte[] data, int? transaction_id=0)
             {
                 _id = id;
                 _data = data;
+                if (transaction_id != null)
+                {
+                    _transaction_id = (int)transaction_id;
+                }
+                else {
+                    transaction_id = -1;
+                }
+                
             }
 
             public RxTxCanData()

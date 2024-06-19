@@ -74,8 +74,8 @@ namespace MCU_CAN_AV.utils
             _IsPaused = false;
         }
 
-        DateTime start_point;
-
+        private DateTime start_point;
+        private int tras_id = -1;
         public void start(IDevice Device)
         {
             close();
@@ -88,15 +88,21 @@ namespace MCU_CAN_AV.utils
             NewFile();
             _IsPaused = false;
             this.Log().Warn($"New DataLogger started");
+           
             Disposable = Device.RxData.Subscribe(
 
              (_) =>
              {
                  if (!_IsPaused)
                  {
+                     if (_.transaction_id > 0) { // check if it is the same transaktion
+                         if (_.transaction_id == tras_id) return;
+                         tras_id = _.transaction_id;
+                     }
+
                      if (_Log_header == null)
                      {
-                         _Log_header = "Time, ms";
+                         _Log_header = "Time, s";
                          foreach (var item in Device.DeviceDescription)
                          {
                              if (_Log_header != null) _Log_header += "; ";
@@ -104,11 +110,15 @@ namespace MCU_CAN_AV.utils
                          }
 
                          writer?.WriteLine(_Log_header);
-
                          start_point = DateTime.Now;
+  
                      }
 
+
+
                      string? line = Formatter(start_point);
+
+                     //Debug.WriteLine("Logger tiks -> "+line);
                      foreach (var item in Device.DeviceDescription)
                      {
                          if (line != null) line += "; ";
@@ -129,9 +139,9 @@ namespace MCU_CAN_AV.utils
 
         private static string Formatter(DateTime date)
         {
-            var secsAgo = (-(date - DateTime.Now)).TotalMilliseconds;
+            var secsAgo = (-(date - DateTime.Now)).TotalSeconds;
 
-            var res = $"{ (int)secsAgo}";
+            var res = $"{secsAgo}";
 
             return res;
            

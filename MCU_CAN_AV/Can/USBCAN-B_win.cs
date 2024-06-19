@@ -7,7 +7,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using System.Threading.Tasks;
 
 namespace MCU_CAN_AV.Can
 {
@@ -229,7 +229,7 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr));
+                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr, transaction_id: Task.CurrentId));
                 }
             }
         }

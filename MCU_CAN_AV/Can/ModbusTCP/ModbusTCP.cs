@@ -237,10 +237,9 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                     {
                         byte[] data = new byte[2];
 
-
                         Buffer.BlockCopy(_, i*2, data, 0, 2);
+                        post(new ICAN.RxTxCanData((uint)i, data, transaction_id: Task.CurrentId));
 
-                        post(new ICAN.RxTxCanData((uint)i, data));
                     }
                 },
                 exception => { 
