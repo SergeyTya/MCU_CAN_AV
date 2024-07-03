@@ -218,6 +218,7 @@ namespace MCU_CAN_AV.Can
                 return;
             }
 
+            transaction_id++;
             for (UInt32 i = 0; i < res; i++)
             {
                 fixed (VCI_CAN_OBJ* m_recobj1 = &m_recobj[i])
@@ -229,7 +230,7 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr, transaction_id: transaction_id++));
+                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr, transaction_id: transaction_id));
                 }
             }
         }
