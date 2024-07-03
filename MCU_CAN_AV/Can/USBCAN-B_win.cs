@@ -197,7 +197,7 @@ namespace MCU_CAN_AV.Can
         }
         int TimeOut_counter = 0;
 
-    
+        int transaction_id = 0;
         public unsafe override void Receive()
         {
           
@@ -229,7 +229,7 @@ namespace MCU_CAN_AV.Can
                         dtr[j] = m_recobj[i].Data[j];
                     }
 
-                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr, transaction_id: Task.CurrentId));
+                   post(new ICAN.RxTxCanData(m_recobj[i].ID, dtr, transaction_id: transaction_id++));
                 }
             }
         }
