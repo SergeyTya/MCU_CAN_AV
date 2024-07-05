@@ -68,7 +68,7 @@ namespace MCU_CAN_AV.Devices.Shanghai
         ///
         public ShanghaiDevice(ICAN CAN) : base(CAN)
         {
-            _name = "Shanghai 3in1";
+           //_name = "Shanghai 3in1";
 
             this.Log().Info($"New {nameof(ShanghaiDevice)} connection ");
             InitDeviceDescription();
@@ -250,17 +250,17 @@ namespace MCU_CAN_AV.Devices.Shanghai
 
             if (data.id == (uint)CAN_IDs.SW_ID)
             {
-                //if (data.data[1] == 'E')
-                //{
-                //    data.data[0] = (byte)' ';
-                //    _name = $"EVM inverter [ {Encoding.UTF8.GetString(data.data)} ]";
-                //}
-                //else
-                //{
-                //    _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
-                //}
+                if (data.data[1] == 'E')
+                {
+                    data.data[0] = (byte)' ';
+                    _name = $"EVM inverter [ {Encoding.UTF8.GetString(data.data)} ]";
+                }
+                else
+                {
+                    _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
+                }
 
-               // _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
+                _name = $"3in1 inverter [ {(0.1 * data.data[0])} ]";
             }
 
             if (data.Timeout) 

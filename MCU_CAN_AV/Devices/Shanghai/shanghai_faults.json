@@ -13,7 +13,7 @@
     },
     {
         "code": 4,
-        "name": "U-phase overcurrent"
+        "name": "U short current"
     },
     {
         "code": 5,
@@ -25,7 +25,7 @@
     },
     {
         "code": 7,
-        "name": "Phase current is too large"
+        "name": "V short current"
     },
     {
         "code": 8,
@@ -37,7 +37,7 @@
     },
     {
         "code": 10,
-        "name": "W phase current is too large"
+        "name": "W short current"
     },
     {
         "code": 11,
@@ -142,5 +142,9 @@
     {
         "code": 36,
         "name": "EEPROM storage exception"
+    },
+    {
+        "code": 37,
+        "name": "Common fault"
     }
 ]
