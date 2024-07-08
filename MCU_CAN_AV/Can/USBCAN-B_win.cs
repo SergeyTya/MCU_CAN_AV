@@ -152,6 +152,8 @@ namespace MCU_CAN_AV.Can
         public void InitCAN(ICAN.CANInitStruct init)
         {
           
+            
+            
             UInt32 m_devind = InitStructure._devind;
             UInt32 m_canind = InitStructure._canind;
             
@@ -162,12 +164,7 @@ namespace MCU_CAN_AV.Can
                 _isOpen = false;
             }
 
-            if (VCI_OpenDevice(m_devtype, m_devind, 0) == 0)
-            {
-
-                this.Log().Error(String.Format("Unable connect to USBCAN-B adapter DevType={0}, DevInd={1}", m_devtype, m_devind));
-                return;
-            }
+        
 
          
             VCI_INIT_CONFIG config = new VCI_INIT_CONFIG();
@@ -181,7 +178,7 @@ namespace MCU_CAN_AV.Can
             byte Timing1 = 0x00;
             byte Timing2 = 0x1c;
 
-            if (InitStructure._Baudrate == 250) {
+            if (InitStructure._Baudrate == 250000) {
                 Timing1 = 1;
             }
 
@@ -193,7 +190,16 @@ namespace MCU_CAN_AV.Can
             VCI_InitCAN(m_devtype, m_devind, m_canind, ref config);
             VCI_StartCAN(m_devtype, InitStructure._devind, InitStructure._canind);
             _isOpen = true;
-            this.Log().Info($"{nameof(USBCAN_B_win)} connection open");
+
+            if (VCI_OpenDevice(m_devtype, m_devind, 0) == 0)
+            {
+
+                this.Log().Error(String.Format("Unable connect to USBCAN-B adapter DevType={0}, DevInd={1}", m_devtype, m_devind));
+            }
+            else {
+                this.Log().Info($"{nameof(USBCAN_B_win)} connection open");
+            }
+            
         }
         int TimeOut_counter = 0;
 

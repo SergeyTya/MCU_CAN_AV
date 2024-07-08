@@ -1,0 +1,66 @@
+[
+    {
+        "code": 8,
+        "name": "U Phase Protection"
+    },
+    {
+        "code": 9,
+        "name": "V Phase Protection"
+    },
+    {
+        "code": 10,
+        "name": "W Phase Protection"
+    },
+    {
+        "code": 11,
+        "name": "Pwm  Protection"
+    },
+    {
+        "code": 12,
+        "name": "Hardware Protection"
+    },
+    {
+        "code": 13,
+        "name": "Over speed Protection"
+    },
+    {
+        "code": 14,
+        "name": "Over Voltage Protection"
+    },
+    {
+        "code": 15,
+        "name": "Low Voltage Protection"
+    },
+    {
+        "code": 16,
+        "name": "Phase Current Protection"
+    },
+    {
+        "code": 17,
+        "name": "Encoder Protection"
+    },
+    {
+        "code": 18,
+        "name": "IGBT overheat L4"
+    },
+    {
+        "code": 19,
+        "name": "Motor overheat L4"
+    },
+    {
+        "code": 20,
+        "name": "IGBT overheat L2"
+    },
+    {
+        "code": 21,
+        "name": "Motor overheat L2"
+    },
+    {
+        "code": 22,
+        "name": "Motor overheat L1"
+    },
+    {
+        "code": 23,
+        "name": "MotorBlock"
+    }
+]

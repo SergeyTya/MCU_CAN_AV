@@ -11,6 +11,7 @@ namespace MCU_CAN_AV.Devices
         EVMModbus,
         ShanghaiCAN,
         EspiritekCAN,
+        Dongfen_DGL1200_900,
         Dummy
     }
 }

@@ -63,6 +63,26 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
+        internal static byte[] Dongfen_DGL1200_900_description {
+            get {
+                object obj = ResourceManager.GetObject("Dongfen_DGL1200_900_description", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] Dongfen_DGL1200_900_faults {
+            get {
+                object obj = ResourceManager.GetObject("Dongfen_DGL1200_900_faults", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
         internal static byte[] EVM_faults {
             get {
                 object obj = ResourceManager.GetObject("EVM_faults", resourceCulture);

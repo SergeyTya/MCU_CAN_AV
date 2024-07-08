@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using MCU_CAN_AV.Devices;
+using MCU_CAN_AV.Devices.Shanghai;
 using MCU_CAN_AV.utils;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
@@ -123,7 +124,7 @@ namespace MCU_CAN_AV.ViewModels
         int LogRowCount = 0;
 
         [ObservableProperty]
-        public List<String> _deviceAvalible = new List<String>() {nameof(DeviceType.EVMModbus), nameof(DeviceType.ShanghaiCAN), nameof(DeviceType.EspiritekCAN), nameof(DeviceType.Dummy) };
+        public List<String> _deviceAvalible = new List<String>() {nameof(DeviceType.EVMModbus), nameof(DeviceType.ShanghaiCAN), nameof(DeviceType.EspiritekCAN), nameof(DeviceType.Dongfen_DGL1200_900), nameof(DeviceType.Dummy)  };
 
         [ObservableProperty]
         private string _logText = " ";
@@ -158,7 +159,7 @@ namespace MCU_CAN_AV.ViewModels
                 // Grabli
                 if (item.Name is nameof(InitStruct._Baudrate))
                 {
-                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy;
+                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy || value == DeviceType.Dongfen_DGL1200_900;
                 }
                 if (item.Name is nameof(InitStruct.com_name))
                 {
@@ -173,7 +174,7 @@ namespace MCU_CAN_AV.ViewModels
                 }
                 if (item.Name is nameof(InitStruct._canind))
                 {
-                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy;
+                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy || value == DeviceType.Dongfen_DGL1200_900;
                 }
                 if (item.Name is nameof(InitStruct._Mask))
                 {
@@ -242,7 +243,7 @@ namespace MCU_CAN_AV.ViewModels
             foreach (var item in ParameterItems)
             {
                 //  item.disposable?.Dispose();
-               this.Log().Info( $"  {item.Name}= {item.TextInput}" );
+                this.Log().Info($"  {item.Name}= {item.TextInput}");
             }
 
             // Create user requested device

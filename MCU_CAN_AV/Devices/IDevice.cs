@@ -144,6 +144,14 @@ namespace MCU_CAN_AV.Devices
                     CAN = ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
                     if (CAN != null) ret_obj = new EspiritekKTZ34XDevice(CAN);
                 break;
+
+                case DeviceType.Dongfen_DGL1200_900:
+                    InitStruct._Baudrate = 250000;
+                    InitStruct._PollInterval_ms = 200;
+                    CAN = ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
+                    if (CAN != null) ret_obj = new Dongfen_DGL1200_900(CAN);
+                break;
+
             }
 
            IDevice._Device = ret_obj;
