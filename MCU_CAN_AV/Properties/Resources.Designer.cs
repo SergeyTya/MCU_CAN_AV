@@ -22,7 +22,7 @@ namespace MCU_CAN_AV.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace MCU_CAN_AV.Properties {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MCU_CAN_AV.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace MCU_CAN_AV.Properties {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] Dongfen_DGL1200_900_description {
+        public static byte[] Dongfen_DGL1200_900_description {
             get {
                 object obj = ResourceManager.GetObject("Dongfen_DGL1200_900_description", resourceCulture);
                 return ((byte[])(obj));
@@ -73,7 +73,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] Dongfen_DGL1200_900_faults {
+        public static byte[] Dongfen_DGL1200_900_faults {
             get {
                 object obj = ResourceManager.GetObject("Dongfen_DGL1200_900_faults", resourceCulture);
                 return ((byte[])(obj));
@@ -83,7 +83,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] EVM_faults {
+        public static byte[] EVM_faults {
             get {
                 object obj = ResourceManager.GetObject("EVM_faults", resourceCulture);
                 return ((byte[])(obj));
@@ -93,7 +93,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] KTZ34X_description {
+        public static byte[] KTZ34X_description {
             get {
                 object obj = ResourceManager.GetObject("KTZ34X_description", resourceCulture);
                 return ((byte[])(obj));
@@ -103,7 +103,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] KTZ34X_faults {
+        public static byte[] KTZ34X_faults {
             get {
                 object obj = ResourceManager.GetObject("KTZ34X_faults", resourceCulture);
                 return ((byte[])(obj));
@@ -113,7 +113,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] shanghai_description {
+        public static byte[] shanghai_description {
             get {
                 object obj = ResourceManager.GetObject("shanghai_description", resourceCulture);
                 return ((byte[])(obj));
@@ -123,7 +123,7 @@ namespace MCU_CAN_AV.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] shanghai_faults {
+        public static byte[] shanghai_faults {
             get {
                 object obj = ResourceManager.GetObject("shanghai_faults", resourceCulture);
                 return ((byte[])(obj));

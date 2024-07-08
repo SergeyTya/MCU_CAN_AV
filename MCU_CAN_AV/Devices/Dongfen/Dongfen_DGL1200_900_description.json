@@ -54,7 +54,7 @@
         "CANID": "0x18FF0C70",
         "RW": 0,
         "len": 12,
-        "offset": 28,
+        "offset": 36,
         "sname": "SF1[Actual torque]",
         "valoffset": 2000,
         "scale": 1.0,
@@ -67,8 +67,8 @@
         "CANID": "0x18FF0C70",
         "RW": 0,
         "len": 16,
-        "offset": 40,
-        "sname": "SF1[Actual torque]",
+        "offset": 48,
+        "sname": "SF1[Actual speed]",
         "valoffset": 20000,
         "scale": 1.0,
         "unit": "rpm",
@@ -107,9 +107,10 @@
         "RW": 1,
         "len": 9,
         "offset": 14,
-        "sname": "CF1[Drive current]",
+        "sname": "CF1[Drive current pos]",
         "min": 0,
-        "max": 200
+        "max": 200,
+        "scale": 1.0
 
     },
 
@@ -118,9 +119,10 @@
         "RW": 1,
         "len": 9,
         "offset": 23,
-        "sname": "CF1[Absor current]",
+        "sname": "CF1[Absor current neg]",
         "min": 0,
-        "max": 200
+        "max": 200,
+        "scale": 1.0
 
     },
 
@@ -128,10 +130,11 @@
         "CANID": "0x0C877010",
         "RW": 1,
         "len": 16,
-        "offset": 31,
+        "offset": 32,
         "sname": "CF1[Target torque]",
         "min": 0,
-        "max": 200
-
+        "max": 200,
+        "valoffset": 20000,
+        "scale": 1.0
     }
 ]
