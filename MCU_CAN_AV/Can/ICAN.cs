@@ -87,6 +87,10 @@ namespace MCU_CAN_AV.Can
                 case CANType.Dummy:
                     ret_val = new DummyCAN(InitStructure);
                     break;
+
+                case CANType.PCAN_USB:
+                    ret_val = new PCAN_USB(InitStructure);
+                    break;
             }
 
             return ret_val; 

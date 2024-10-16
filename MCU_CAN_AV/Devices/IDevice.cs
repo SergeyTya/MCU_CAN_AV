@@ -152,6 +152,11 @@ namespace MCU_CAN_AV.Devices
                     if (CAN != null) ret_obj = new Dongfen_DGL1200_900(CAN);
                 break;
 
+                case DeviceType.CAN_GPS_Logger:
+                    CAN = ICAN.Create(InitStruct, ICAN.CANType.PCAN_USB);
+                    if (CAN != null) ret_obj = new CanGpsLogger.CanGpsLogger(CAN);
+                break;
+
             }
 
            IDevice._Device = ret_obj;

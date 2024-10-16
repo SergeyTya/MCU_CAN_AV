@@ -124,7 +124,14 @@ namespace MCU_CAN_AV.ViewModels
         int LogRowCount = 0;
 
         [ObservableProperty]
-        public List<String> _deviceAvalible = new List<String>() {nameof(DeviceType.EVMModbus), nameof(DeviceType.ShanghaiCAN), nameof(DeviceType.EspiritekCAN), nameof(DeviceType.Dongfen_DGL1200_900), nameof(DeviceType.Dummy)  };
+        public List<String> _deviceAvalible = new List<String>() {
+            nameof(DeviceType.EVMModbus), 
+            nameof(DeviceType.ShanghaiCAN), 
+            nameof(DeviceType.EspiritekCAN), 
+            nameof(DeviceType.Dongfen_DGL1200_900), 
+            nameof(DeviceType.Dummy),
+            nameof(DeviceType.CAN_GPS_Logger),
+        };
 
         [ObservableProperty]
         private string _logText = " ";

@@ -12,6 +12,7 @@ namespace MCU_CAN_AV.Devices
         ShanghaiCAN,
         EspiritekCAN,
         Dongfen_DGL1200_900,
-        Dummy
+        Dummy,
+        CAN_GPS_Logger
     }
 }
