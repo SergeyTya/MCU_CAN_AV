@@ -15,7 +15,7 @@ using SerialToSocket;
 
 namespace MCU_CAN_AV.Can.ModbusTCP
 {
-    internal class ModbusTCP : BaseCAN, IEnableLogger
+    internal class ModbusTCP : BaseCAN, IEnableLogger, IModbusTransport
     {
         uint reg_count = 0;
         string server_name = "localhost";
@@ -55,7 +55,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
                 await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);
                 try {
-                    var res = await ReadRegisterCount(server_name, server_port, modbus_id).ConfigureAwait(false);
+                    var res = await ReadRegisterCount().ConfigureAwait(false);
                     return res;
                 } finally { semaphoreSlim.Release(); }
 
@@ -90,10 +90,10 @@ namespace MCU_CAN_AV.Can.ModbusTCP
         }
 
 
-        public async Task<uint> ReadRegisterCount(string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
+        public async Task<uint> ReadRegisterCount()
         {
             if (RxConnection == null) throw new Exception("Connection error");
-            var RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 2, (byte)modbus_id, 26 }); // get device holding count
+            var RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 2, (byte)InitStructure._devind, 26 }); // get device holding count
             
             if (RXbuf[7] != 26)
             {
@@ -109,7 +109,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             //TODO
         //}
 
-        public async Task<List<byte[]>> ReadRegistersInfoAsync(string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
+        public async Task<List<byte[]>> ReadRegistersInfoAsync()
         {
             await Task.Delay(300);
             /**
@@ -138,7 +138,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             try
             {
 
-                uint hreg_count = await ReadRegisterCount(server_name, server_port, modbus_id);
+                uint hreg_count = await ReadRegisterCount();
 
                 //ushort[] buff = await tmp.ReadHoldingsAsync((byte)modbus_id, 0, hreg_count);
 
@@ -148,7 +148,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 {
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
-                    byte[] RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 4, (byte)modbus_id, 27, 0, (byte)i });
+                    byte[] RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 4, (byte)InitStructure._devind, 27, 0, (byte)i });
                     deviceParameters.Add(RXbuf);
                     stopwatch.Stop();
                     //this.Log().Info($"   Register {i} info readed  - {stopwatch.ElapsedMilliseconds} ms");
@@ -169,7 +169,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             //TODO
         //}
 
-         public async Task<string> getDevId(string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
+         public async Task<string> getDevId()
          {
             /**
             *   0x2B function - Report device info
@@ -185,15 +185,15 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             */
 
             if (RxConnection == null) throw new Exception("Connection error");
-            var RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 2, (byte)modbus_id, 0x2B }); // get device holding count
+            var RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 2, (byte)InitStructure._devind, 0x2B }); // get device holding count
             string res = Encoding.UTF8.GetString(RXbuf.ToList().GetRange(7, RXbuf.Length - (4 + 7)).ToArray());
             return res;
          }
 
-        public async Task<ushort[]> ReadHRsAsync(uint count, string server_name = "localhost", uint server_port = 8888, uint modbus_id = 1)
+        public async Task<ushort[]> ReadHRsAsync(uint count)
         {
 
-            ushort[] buff = await RxConnection.ReadHoldingsAsync((byte)modbus_id, 0, (int)count);
+            ushort[] buff = await RxConnection.ReadHoldingsAsync((byte)InitStructure._devind, 0, (int)count);
 
             return buff;
 
@@ -223,7 +223,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
                 await semaphoreSlim.WaitAsync(/*TimeSpan.FromSeconds(0.3)*/);
                 try {
-                    var res = await ReadHRsAsync(reg_count, server_name, server_port, modbus_id).ConfigureAwait(false);
+                    var res = await ReadHRsAsync(reg_count).ConfigureAwait(false);
                     return res;
                 }
                 finally { 

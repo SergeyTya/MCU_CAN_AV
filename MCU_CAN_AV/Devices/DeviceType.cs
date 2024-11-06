@@ -8,11 +8,12 @@ namespace MCU_CAN_AV.Devices
 {
     public enum DeviceType
     {
-        EVMModbus,
-        ShanghaiCAN,
+        EVMModbus_TCP,
+        EVMModbus_RTU,
+        Shanghai_3in1_USBCAN,
+        Shanghai_3in1_PCAN,
         EspiritekCAN,
         Dongfen_DGL1200_900,
-        Dummy,
-        CAN_GPS_Logger
+        Dummy
     }
 }

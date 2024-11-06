@@ -125,12 +125,13 @@ namespace MCU_CAN_AV.ViewModels
 
         [ObservableProperty]
         public List<String> _deviceAvalible = new List<String>() {
-            nameof(DeviceType.EVMModbus), 
-            nameof(DeviceType.ShanghaiCAN), 
+            nameof(DeviceType.EVMModbus_RTU),
+            nameof(DeviceType.EVMModbus_TCP),
+            nameof(DeviceType.Shanghai_3in1_PCAN),
+            nameof(DeviceType.Shanghai_3in1_USBCAN), 
             nameof(DeviceType.EspiritekCAN), 
             nameof(DeviceType.Dongfen_DGL1200_900), 
-            nameof(DeviceType.Dummy),
-            nameof(DeviceType.CAN_GPS_Logger),
+            nameof(DeviceType.Dummy)
         };
 
         [ObservableProperty]
@@ -149,7 +150,7 @@ namespace MCU_CAN_AV.ViewModels
             }
 
             DeviceSelected = DeviceType.Dummy;
-            DeviceSelected = DeviceType.EVMModbus;
+            DeviceSelected = DeviceType.EVMModbus_TCP;
         }
 
         partial void OnLogTextChanged(string? oldValue, string newValue)
@@ -166,13 +167,19 @@ namespace MCU_CAN_AV.ViewModels
                 // Grabli
                 if (item.Name is nameof(InitStruct._Baudrate))
                 {
-                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy || value == DeviceType.Dongfen_DGL1200_900;
+                    item.IsVisible = 
+                           value == DeviceType.EVMModbus_RTU || value == DeviceType.EVMModbus_TCP 
+                        || value == DeviceType.Shanghai_3in1_USBCAN  || value == DeviceType.Shanghai_3in1_PCAN || value == DeviceType.EspiritekCAN 
+                        || value == DeviceType.Dummy         || value == DeviceType.Dongfen_DGL1200_900;
                 }
                 if (item.Name is nameof(InitStruct.com_name))
                 {
-                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
+                    item.IsVisible = 
+                        value == DeviceType.EVMModbus_RTU 
+                        || value == DeviceType.EVMModbus_TCP 
+                        || value == DeviceType.Dummy;
 
-                    if (value == DeviceType.EVMModbus)
+                    if (value == DeviceType.EVMModbus_RTU || value == DeviceType.EVMModbus_TCP)
                     {
                        
                         item.Options = SerialPort.GetPortNames(); 
@@ -181,19 +188,25 @@ namespace MCU_CAN_AV.ViewModels
                 }
                 if (item.Name is nameof(InitStruct._canind))
                 {
-                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy || value == DeviceType.Dongfen_DGL1200_900;
+                    item.IsVisible = 
+                        value == DeviceType.Shanghai_3in1_USBCAN || value == DeviceType.EspiritekCAN 
+                     || value == DeviceType.Dummy || value == DeviceType.Dongfen_DGL1200_900;
                 }
                 if (item.Name is nameof(InitStruct._Mask))
                 {
-                    item.IsVisible = value == DeviceType.ShanghaiCAN || value == DeviceType.EspiritekCAN || value == DeviceType.Dummy; 
+                    item.IsVisible =
+                        value == DeviceType.Shanghai_3in1_USBCAN || value == DeviceType.EspiritekCAN 
+                     || value == DeviceType.Dummy; 
                 }
                 if (item.Name is nameof(InitStruct.server_name))
                 {
-                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
+                    item.IsVisible = 
+                        value == DeviceType.EVMModbus_TCP || value == DeviceType.Dummy;
                 }
                 if (item.Name is nameof(InitStruct.server_port))
                 {
-                    item.IsVisible = value == DeviceType.EVMModbus || value == DeviceType.Dummy;
+                    item.IsVisible = 
+                        value == DeviceType.EVMModbus_TCP || value == DeviceType.Dummy;
                 }
             }
 

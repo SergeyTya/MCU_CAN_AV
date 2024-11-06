@@ -1,4 +1,5 @@
-﻿using MCU_CAN_AV.Devices.Dummy;
+﻿using MCU_CAN_AV.Can.ModbusTCP;
+using MCU_CAN_AV.Devices.Dummy;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -78,6 +79,10 @@ namespace MCU_CAN_AV.Can
                 case CANType.ModbusTCP:
 
                     ret_val = new ModbusTCP.ModbusTCP(InitStructure);
+                    break;
+
+                case CANType.ModbusRTU:
+                    ret_val = new SerialRTU(InitStructure);
                     break;
 
                 case CANType.CAN_USBCAN_B:
