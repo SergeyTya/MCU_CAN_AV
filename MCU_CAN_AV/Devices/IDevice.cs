@@ -127,13 +127,21 @@ namespace MCU_CAN_AV.Devices
 
             switch (device)
             {
-                case DeviceType.EVMModbus:
+                case DeviceType.EVMModbus_TCP:
 
                     CAN = ICAN.Create(InitStruct, ICAN.CANType.ModbusTCP);
                     if(CAN!=null) ret_obj = new EVMModbusDevice(CAN);
                     break;
-                case DeviceType.ShanghaiCAN:
+                case DeviceType.EVMModbus_RTU:
+                    CAN = ICAN.Create(InitStruct, ICAN.CANType.ModbusRTU);
+                    if (CAN != null) ret_obj = new EVMModbusDevice(CAN);
+                    break;
+                case DeviceType.Shanghai_3in1_USBCAN:
                     CAN = ICAN.Create(InitStruct, ICAN.CANType.CAN_USBCAN_B);
+                    if (CAN != null) ret_obj = new ShanghaiDevice(CAN);
+                    break;
+                case DeviceType.Shanghai_3in1_PCAN:
+                    CAN = ICAN.Create(InitStruct, ICAN.CANType.PCAN_USB);
                     if (CAN != null) ret_obj = new ShanghaiDevice(CAN);
                     break;
                 case DeviceType.Dummy:

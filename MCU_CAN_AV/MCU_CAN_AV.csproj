@@ -28,9 +28,11 @@
     <PackageReference Include="CsvHelper" Version="31.0.2" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Peak.PCANBasic.NET" Version="4.9.0.942" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.0.21" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageReference Include="Serilog.Sinks.Observable" Version="2.0.3-dev-00712" />
+    <PackageReference Include="SharpGIS.NmeaParser" Version="2.2.2" />
     <PackageReference Include="Splat.Serilog" Version="14.8.12" />
     <PackageReference Include="System.Reactive" Version="6.0.1-preview.1" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />

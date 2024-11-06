@@ -7,7 +7,8 @@
             CAN_USBCAN_B = 0,
             ModbusTCP = 1,
             ModbusRTU = 2,
-            Dummy = 3
+            Dummy = 3,
+            PCAN_USB
         }
     }
 }

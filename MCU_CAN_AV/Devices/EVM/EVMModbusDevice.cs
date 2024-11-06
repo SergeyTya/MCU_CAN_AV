@@ -73,11 +73,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
 
 
-                var ret_val = await ((ModbusTCP)CAN_Instance).getDevId(
-                               server_name: InitStruct.server_name,
-                               server_port: InitStruct.server_port,
-                               modbus_id: InitStruct._devind
-                    ).ConfigureAwait(false);
+                var ret_val = await ((IModbusTransport)CAN_Instance).getDevId().ConfigureAwait(false);
 
                 if (ret_val.IndexOf("Time out") != -1) {
                     throw new Exception("Timeout");
@@ -88,11 +84,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                 Task.Run(async () =>
                 {
 
-                    var res = await ((ModbusTCP)CAN_Instance).ReadRegistersInfoAsync(
-                                       server_name: InitStruct.server_name,
-                                       server_port: InitStruct.server_port,
-                                       modbus_id: InitStruct._devind
-                                       ).ConfigureAwait(false);
+                    var res = await ((IModbusTransport)CAN_Instance).ReadRegistersInfoAsync().ConfigureAwait(false);
                     return res;
                 }).ToObservable().Take(1).Subscribe(
                     (_) =>
