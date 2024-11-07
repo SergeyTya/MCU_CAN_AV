@@ -83,6 +83,8 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         public void Connect()
         {
+            this.Log().Info($"Connecting {InitStructure.com_name} : {InitStructure._Baudrate} : {InitStructure._devind} ");
+
             if (port == null) {
                 return;
             }
@@ -290,7 +292,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
                     deviceParameters.Add(RXbuf.ToArray());
                     stopwatch.Stop();
-                    //this.Log().Info($"   Register {i} info readed  - {stopwatch.ElapsedMilliseconds} ms");
+                   // this.Log().Info($"   Register {i} info readed  - {stopwatch.ElapsedMilliseconds} ms");
                 }
 
 

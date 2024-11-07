@@ -64,14 +64,25 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
 
         void Init(ICAN.CANInitStruct InitStruct)
         {
-            this.Log().Info($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
-
 
             Task.Run(async () => {
 
-                await Task.Delay(4000);
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
 
 
+                while ((IModbusTransport)CAN_Instance == null) {
+                    await Task.Delay(1);
+                }
+
+                while (CAN_Instance.isOpen == false)
+                {
+                    await Task.Delay(1);
+                }
+
+                this.Log().Info($"elapsed { stopwatch.ElapsedMilliseconds} ms");
+
+                stopwatch.Restart();
 
                 var ret_val = await ((IModbusTransport)CAN_Instance).getDevId().ConfigureAwait(false);
 
@@ -79,11 +90,9 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                     throw new Exception("Timeout");
                 }
 
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
+
                 Task.Run(async () =>
                 {
-
                     var res = await ((IModbusTransport)CAN_Instance).ReadRegistersInfoAsync().ConfigureAwait(false);
                     return res;
                 }).ToObservable().Take(1).Subscribe(

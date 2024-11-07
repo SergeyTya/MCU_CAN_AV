@@ -24,6 +24,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         bool _isOpen = false;
         bool _connected = false;
+        bool _init_done = false;
 
         static SemaphoreSlim semaphoreSlim  = new SemaphoreSlim(1);
         static SemaphoreSlim semaphoreSlim2 = new SemaphoreSlim(1);
@@ -34,7 +35,11 @@ namespace MCU_CAN_AV.Can.ModbusTCP
 
         public ModbusTCP(ICAN.CANInitStruct InitStruct): base(InitStruct)
         {
-            try{
+
+            this.Log().Info($"Connecting {InitStruct.server_name} : {InitStruct.server_port} : {InitStruct._devind} ");
+
+            try
+            {
 
                 server.Start(InitStructure.com_name, (int) InitStruct._Baudrate, InitStruct.server_name, (int) InitStruct.server_port);
 
@@ -60,12 +65,12 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 } finally { semaphoreSlim.Release(); }
 
             }).ToObservable().Take(1).Subscribe(
-                (_) => { reg_count = _; this.Log().Info($"Found  {_} registers"); _connected = true; },
+                (_) => { reg_count = _; this.Log().Info($"Found  {_} registers"); _connected = true; _isOpen = true; },
                 exeption => {
                     this.Log().Error(exeption.Message);
                 }
             );
-            _isOpen = true;
+           
           
         }
 
@@ -187,6 +192,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             if (RxConnection == null) throw new Exception("Connection error");
             var RXbuf = await RxConnection.SendRawDataAsync(new byte[] { 0, 0, 0, 0, 0, 2, (byte)InitStructure._devind, 0x2B }); // get device holding count
             string res = Encoding.UTF8.GetString(RXbuf.ToList().GetRange(7, RXbuf.Length - (4 + 7)).ToArray());
+            _init_done = true;
             return res;
          }
 
@@ -213,8 +219,9 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             if (!_isOpen) return;
             if (semaphoreSlim.CurrentCount == 0) return;
             if (RxConnection == null) return;
+            if (!_init_done) return;
 
-                Task.Run(async () =>
+            Task.Run(async () =>
                 {
                 //if (RxConnection == null) {
                 //    await Task.Delay(10000);

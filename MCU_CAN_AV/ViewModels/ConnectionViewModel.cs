@@ -125,8 +125,8 @@ namespace MCU_CAN_AV.ViewModels
 
         [ObservableProperty]
         public List<String> _deviceAvalible = new List<String>() {
-            nameof(DeviceType.EVMModbus_RTU),
             nameof(DeviceType.EVMModbus_TCP),
+            nameof(DeviceType.EVMModbus_RTU),
             nameof(DeviceType.Shanghai_3in1_PCAN),
             nameof(DeviceType.Shanghai_3in1_USBCAN), 
             nameof(DeviceType.EspiritekCAN), 
@@ -240,10 +240,9 @@ namespace MCU_CAN_AV.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanConnect))]
-        private async Task ClickConnect()
+        private Task ClickConnect()
         {
-
-            Messenger.Send(new ConnectionState(ConnectionState.State.Init));
+            Messenger.Send(new ConnectionState(State.Init));
 
             LogText = "";
            
@@ -275,14 +274,14 @@ namespace MCU_CAN_AV.ViewModels
                {
                    isConnectionDone = _;
                    if (!_) {
-                       Messenger.Send(new ConnectionState(ConnectionState.State.Connected));
+                       Messenger.Send(new ConnectionState(State.Connected));
                        disposable_init?.Dispose();
                        disposable_log?.Dispose();
                        IsMsgVisible = false;
                    }
                    
                });
-
+            return Task.CompletedTask;
         }
 
         private bool CanConnect()
