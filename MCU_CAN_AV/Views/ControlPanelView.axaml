@@ -44,7 +44,7 @@
 				</Panel>				
 			</ToggleButton>
 			
-			<Button ToolTip.Tip="Scope">
+			<Button ToolTip.Tip="Scope" Command="{Binding ClickScopeItemCommand}">
 				<Panel>
 					<PathIcon  Data="{StaticResource tv_regular}"/>
 				</Panel>

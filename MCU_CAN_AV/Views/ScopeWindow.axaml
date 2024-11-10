@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
+		xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MCU_CAN_AV.Views.ScopeWindow"
+        Title="ScopeWindow">
+
+	<Window.DataContext>
+		<vm:ScopeWindowModel/>
+	</Window.DataContext>
+
+	<Grid Margin="3" ShowGridLines="True">
+		<!--Main grid-->
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="1*"/>
+		</Grid.ColumnDefinitions>
+
+
+		<ItemsControl Grid.Column="0" ItemsSource="{Binding ChannelList}">
+			<ItemsControl.ItemTemplate >
+				<DataTemplate>
+
+					<Panel>
+						<Grid ShowGridLines="false">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="40"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+
+							<CheckBox Grid.Column="0" IsChecked="{Binding IsChannelSelected}" Command="{Binding onChekboxClickCommand}"></CheckBox>
+							<TextBlock Grid.Column="1" Text="{Binding ChannelName}" VerticalAlignment="Center"></TextBlock>
+						</Grid>
+					</Panel>
+					
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<lvc:CartesianChart
+			Grid.Column="1"
+			Series="{Binding Series}"
+			YAxes="{Binding YAxes}"
+			XAxes="{Binding XAxes}"
+			>
+		</lvc:CartesianChart>
+		
+	</Grid>
+	
+</Window>

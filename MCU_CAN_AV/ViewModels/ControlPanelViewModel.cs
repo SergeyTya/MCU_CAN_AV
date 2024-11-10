@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using MCU_CAN_AV.Devices;
 using MCU_CAN_AV.utils;
+using MCU_CAN_AV.Views;
 using Splat;
 using System;
 using System.Collections.Generic;
@@ -14,9 +16,13 @@ namespace MCU_CAN_AV.ViewModels
 
     internal partial class ControlPanelViewModel : ObservableRecipient, IRecipient<ConnectionState>, IEnableLogger
     {
-        public ControlPanelViewModel() {
+        ScopeWindow? scopeWindow;
+
+        public ControlPanelViewModel()
+        {
             Messenger.RegisterAll(this);
-        }  
+            scopeWindow = new();
+        }
 
         [ObservableProperty]
         public bool _deviceLogerState = false;
@@ -69,6 +75,12 @@ namespace MCU_CAN_AV.ViewModels
             }
         }
 
-
+        [RelayCommand]
+        private void ClickScopeItem()
+        {
+            scopeWindow?.Close();
+            scopeWindow = new();
+            scopeWindow.Show();
+        }
     }
 }
