@@ -130,7 +130,7 @@ namespace MCU_CAN_AV.Devices.Dummy
 
                     _time += 0.1;
 
-                    double val = 10 * Math.Sin(0.1*_time) + _random.Next(-1, 1);
+                    double val = 10 * Math.Sin(0.2*_time) + _random.Next(-1, 1);
                     
                     
                     ((DummyDeviceParameter)DeviceDescription[0]).Val?.OnNext( _random.Next(50, 60) );

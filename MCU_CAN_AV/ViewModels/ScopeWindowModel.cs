@@ -27,6 +27,8 @@ using ReactiveUI;
 using Avalonia.Media;
 using Newtonsoft.Json.Linq;
 using ScottPlot;
+using Avalonia.Controls.Shapes;
+using LiveChartsCore.Kernel;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -44,6 +46,24 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         ObservableCollection<DateTimeAxis>? _xAxes;
 
+        [ObservableProperty]
+        public SolidColorPaint _tooltipTextPaint  = new SolidColorPaint{
+         Color = new SKColor(242, 244, 195),
+         SKTypeface = SKTypeface.FromFamilyName("Courier New"),
+        };
+
+        [ObservableProperty]
+        public SolidColorPaint _tooltipBackgroundPaint = new SolidColorPaint(new SKColor(72, 0, 50));
+
+        [ObservableProperty]
+        public bool _paused;
+
+
+        [RelayCommand]
+        void PauseClick() { 
+        
+        }
+
         internal static readonly byte[][] chColors = {
            new byte[] { 0xff,0xff,0x11 },
            new byte[]  { 0x13,0x9f,0xff },
@@ -58,10 +78,11 @@ namespace MCU_CAN_AV.ViewModels
 
             
 
-            var _XAxis = new DateTimeAxis(TimeSpan.FromSeconds(5), Formatter)
+            var _XAxis = new DateTimeAxis(TimeSpan.FromSeconds(1), Formatter)
             {
                 Name = "Time, s",
-                NameTextSize = 12,
+                NameTextSize = 16,
+                CustomSeparators = GetSeparators(),
                 AnimationsSpeed = TimeSpan.FromMilliseconds(0),
                 NamePaint = new SolidColorPaint(SKColors.Gray),
                 TextSize = 14,
@@ -134,13 +155,27 @@ namespace MCU_CAN_AV.ViewModels
 
                             foreach (var item in res1)
                             {
-                                item.color = i++;
+                                item.position = i++;
                             }
 
-                            XAxes[0].IsVisible = res1.Count() != 0;
+                            XAxes[0].IsVisible = i!= 0;
 
                         } 
                     };
+
+                    tmp_ch._disposable = item.Value.Subscribe((_) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            if (tmp_ch.IsChannelSelected == false) return;
+                            tmp_ch.dateTimePoints.Add(new DateTimePoint(DateTime.Now, _));
+                            if (tmp_ch.dateTimePoints.Count > 250)
+                            {
+                                tmp_ch.dateTimePoints.RemoveAt(0);
+                            };
+                            if (!Paused) XAxes[0].CustomSeparators = GetSeparators();
+                        });
+                    });
                 }
             }
         }
@@ -177,11 +212,27 @@ namespace MCU_CAN_AV.ViewModels
 
         private static string Formatter(DateTime date)
         {
-            var secsAgo = (-(date - DateTime.Now)).TotalSeconds;
+            var secsAgo = (DateTime.Now - date).TotalSeconds;
 
-            return $"{secsAgo:N0}";
+            return secsAgo < 1
+                ? "0"
+                : $"{secsAgo:N0}";
         }
 
+        private double[] GetSeparators()
+        {
+            var now = DateTime.Now;
+
+            return new double[]
+            {
+                now.AddSeconds(-25).Ticks,
+                now.AddSeconds(-20).Ticks,
+                now.AddSeconds(-15).Ticks,
+                now.AddSeconds(-10).Ticks,
+                now.AddSeconds(-5).Ticks,
+                now.Ticks
+            };
+        }
     }
 
     public partial class ChannelTemplate : ObservableObject, IDisposable
@@ -230,14 +281,16 @@ namespace MCU_CAN_AV.ViewModels
             GeometryStroke = null,
             GeometrySize = 5,
             AnimationsSpeed = TimeSpan.FromMilliseconds(0),
+            XToolTipLabelFormatter = (chartPoint) => $"",
+            YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.Coordinate.PrimaryValue:0.####}"
         };
 
 
         IDeviceParameter _item;
-        int _axeNumber = 0;
-        List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
+        internal int _axeNumber = 0;
+        internal List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
         private readonly List<DateTimePoint> _values = new();
-        private readonly IDisposable? _disposable;
+        internal IDisposable? _disposable;
         private bool _disposed = false;
 
         bool _isVisible;
@@ -255,7 +308,7 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         private SolidColorBrush? _textColor;
 
-        public int color {
+        public int position {
             set {
 
                 var paint = new SKColor(ScopeWindowModel.chColors[value][0], ScopeWindowModel.chColors[value][1], ScopeWindowModel.chColors[value][2]);
@@ -272,6 +325,10 @@ namespace MCU_CAN_AV.ViewModels
                     ScopeWindowModel.chColors[value][1], 
                     ScopeWindowModel.chColors[value][2]),
                 1));
+
+                if (value > 1) {
+                   // YAxis.Position = LiveChartsCore.Measure.AxisPosition.End;
+                }
             }
         }
 
@@ -284,26 +341,10 @@ namespace MCU_CAN_AV.ViewModels
             YAxis.Name = ChannelName;
             YAxis.IsVisible = false;
             line.IsVisible = false;
+            line.ScalesYAt = _axeNumber;
+            line.ScalesXAt = 0;
 
-            Dispatcher.UIThread.Post(() => TextColor = new(Avalonia.Media.Colors.Black, 0.0));
-
-
-            _disposable = item.Value.Subscribe((_) =>
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    if (IsChannelSelected == false) return;
-                    dateTimePoints.Add(new DateTimePoint(DateTime.Now, _));
-                    if (dateTimePoints.Count > 250)
-                    {
-                        dateTimePoints.RemoveAt(0);
-
-                    };
-
-                    line.ScalesYAt = _axeNumber;
-                    line.ScalesXAt = 0;
-                });
-            });
+            Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
         }
 
         [ObservableProperty]
@@ -318,7 +359,7 @@ namespace MCU_CAN_AV.ViewModels
             if (!IsChannelSelected)
             {
                 dateTimePoints.Clear();
-                Dispatcher.UIThread.Post(() => TextColor = new(Avalonia.Media.Colors.Black, 0.0));
+                Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
             }
         }
 
