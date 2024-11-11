@@ -21,13 +21,19 @@ using LiveChartsCore.Drawing;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using System.Reactive.Linq;
 using Avalonia.Threading;
+using LiveChartsCore.Geo;
+using System.Reactive.Subjects;
+using ReactiveUI;
+using Avalonia.Media;
+using Newtonsoft.Json.Linq;
+using ScottPlot;
 
 namespace MCU_CAN_AV.ViewModels
 {
     internal partial class ScopeWindowModel : ObservableRecipient, IRecipient<ConnectionState>
     {
         [ObservableProperty]
-        ObservableCollection<ChannelTemplate>? _channelList;
+        ObservableCollection<ChannelTemplate> _channelList;
 
         [ObservableProperty]
         ObservableCollection<ISeries>? _series;
@@ -38,30 +44,31 @@ namespace MCU_CAN_AV.ViewModels
         [ObservableProperty]
         ObservableCollection<DateTimeAxis>? _xAxes;
 
-        private static readonly SKColor s_blue = new(25, 118, 210);
-        private static readonly SKColor s_red = new(229, 57, 53);
-        private static readonly SKColor s_yellow = new(198, 167, 0);
-
+        internal static readonly byte[][] chColors = {
+           new byte[] { 0xff,0xff,0x11 },
+           new byte[]  { 0x13,0x9f,0xff },
+           new byte[]   { 0xff,0x69,0x29 },
+           new byte[]    { 0xbf,0x46,0xff },
+        };
 
         public ScopeWindowModel()
         {
             Messenger.RegisterAll(this);
             ChannelList = new();
 
-            Series = new() { };
-            YAxes = new() { new Axis() { IsVisible =false} };
-           
+            
 
-
-            var _XAxis = new DateTimeAxis(TimeSpan.FromSeconds(1), Formatter)
+            var _XAxis = new DateTimeAxis(TimeSpan.FromSeconds(5), Formatter)
             {
                 Name = "Time, s",
-                CustomSeparators = GetSeparators(),
+                NameTextSize = 12,
                 AnimationsSpeed = TimeSpan.FromMilliseconds(0),
                 NamePaint = new SolidColorPaint(SKColors.Gray),
-                TextSize = 12,
+                TextSize = 14,
                 Padding = new Padding(0),
                 LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                ShowSeparatorLines = true,
+                IsVisible = false,
                 SeparatorsPaint = new SolidColorPaint
                 {
                     Color = SKColors.Gray,
@@ -81,6 +88,12 @@ namespace MCU_CAN_AV.ViewModels
             };
 
             XAxes = new() { _XAxis };
+            YAxes = new() { new Axis() { IsVisible = false } };
+
+            Series = new() { new LineSeries<DateTimePoint>() {
+                IsVisible = false,    
+            }};
+
             init();
         }
 
@@ -98,6 +111,36 @@ namespace MCU_CAN_AV.ViewModels
                     YAxes?.Add(tmp_ch.YAxis);
                     Series?.Add(tmp_ch.line);
 
+
+                    tmp_ch.PropertyChanged += (_,__) => {
+                        if (__.PropertyName == "IsChannelSelected") {
+
+                            if (tmp_ch.IsChannelSelected) {
+
+                                var res = ChannelList.Where(x => x.IsVisible == true).Select(x => x);
+                                if (res.Count() < 4)
+                                {
+                                    tmp_ch.IsVisible = true;
+                                }
+                                else {
+                                    tmp_ch.IsChannelSelected = false;
+                                }
+                            } else {
+                                tmp_ch.IsVisible = false;
+                            }
+
+                            var res1 = ChannelList.Where(x => x.IsVisible == true).Select(x => x);
+                            int i = 0;
+
+                            foreach (var item in res1)
+                            {
+                                item.color = i++;
+                            }
+
+                            XAxes[0].IsVisible = res1.Count() != 0;
+
+                        } 
+                    };
                 }
             }
         }
@@ -110,26 +153,27 @@ namespace MCU_CAN_AV.ViewModels
                 init();
             }
 
-            //var disposable = Observable.Interval(TimeSpan.FromSeconds(0.3)).Subscribe(x =>
-            //{
-            //    foreach (var l in Series) {
-            //        ((LineSeries<DateTimePoint>)l).ScalesXAt = 0;
-            //    }
-            //});
+            var disposable = Observable.Interval(TimeSpan.FromSeconds(0.3)).Subscribe(x =>
+            {
+                foreach (var l in Series)
+                {
+                    ((LineSeries<DateTimePoint>)l).ScalesXAt = 0;
+                }
+            });
 
-                //if (message.state == ConnectionState.State.Disconnected)
-                //{
-                //    if (ChannelList != null)
-                //    {
+            if (message.state == ConnectionState.State.Disconnected)
+            {
+                if (ChannelList != null)
+                {
 
-                //        foreach (var item in ChannelList)
-                //        {
-                //            item.Dispose();
-                //        }
-                //        ChannelList?.Clear();
-                //    }
-                //}
+                    foreach (var item in ChannelList)
+                    {
+                        item.Dispose();
+                    }
+                    ChannelList?.Clear();
+                }
             }
+        }
 
         private static string Formatter(DateTime date)
         {
@@ -138,27 +182,13 @@ namespace MCU_CAN_AV.ViewModels
             return $"{secsAgo:N0}";
         }
 
-        private double[] GetSeparators()
-        {
-            var now = DateTime.Now;
-
-            double[] tmp = new double[20];
-
-            for (int i = 0; i < 20; i++)
-            {
-                tmp[i] = now.AddSeconds(-i * 5).Ticks;
-            }
-
-            return tmp;
-        }
     }
 
-    public partial class ChannelTemplate : ObservableObject
+    public partial class ChannelTemplate : ObservableObject, IDisposable
     {
-        IDeviceParameter _item;
-        int _axeNumber = 0;
 
         public Axis YAxis = new Axis() {
+            NamePadding = new(0,0),
             SeparatorsPaint = new SolidColorPaint
             {
                 Color = SKColors.Gray,
@@ -185,21 +215,65 @@ namespace MCU_CAN_AV.ViewModels
             {
                 Color = SKColors.Gray,
                 StrokeThickness = 0
-            }
+            },
+            TextSize = 12,
+            Padding = new Padding(0, 0, 10, 0),
+            LabelsPaint = new SolidColorPaint(SKColors.White),
+            ShowSeparatorLines = false,
+          //  AnimationsSpeed = TimeSpan.FromMilliseconds(0),
         };
 
-        List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
+
         public LineSeries<DateTimePoint> line = new LineSeries<DateTimePoint>() {
             LineSmoothness = 0,
             Fill = null,
             GeometryStroke = null,
-          //  Stroke = new SolidColorPaint(SKColors.Yellow, 2),
-          //  GeometryFill = new SolidColorPaint(SKColors.Yellow),
-            GeometrySize = 5
+            GeometrySize = 5,
+            AnimationsSpeed = TimeSpan.FromMilliseconds(0),
         };
 
+
+        IDeviceParameter _item;
+        int _axeNumber = 0;
+        List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
         private readonly List<DateTimePoint> _values = new();
         private readonly IDisposable? _disposable;
+        private bool _disposed = false;
+
+        bool _isVisible;
+        public bool IsVisible{ 
+            get { 
+                return _isVisible; 
+            }
+            set {
+                _isVisible = value;
+                YAxis.IsVisible = _isVisible;
+                line.IsVisible = _isVisible;
+            }
+        }
+
+        [ObservableProperty]
+        private SolidColorBrush? _textColor;
+
+        public int color {
+            set {
+
+                var paint = new SKColor(ScopeWindowModel.chColors[value][0], ScopeWindowModel.chColors[value][1], ScopeWindowModel.chColors[value][2]);
+                line.Stroke = new SolidColorPaint(paint);
+                line.GeometryFill = new SolidColorPaint(paint);
+                YAxis.NamePaint = new SolidColorPaint(paint);
+                YAxis.LabelsPaint  = new SolidColorPaint(paint);
+                YAxis.TicksPaint = new SolidColorPaint(paint);
+                YAxis.SubticksPaint = new SolidColorPaint(paint);
+                YAxis.ZeroPaint = new SolidColorPaint(paint);
+
+                Dispatcher.UIThread.Post(() => TextColor = new(new(100,
+                    ScopeWindowModel.chColors[value][0], 
+                    ScopeWindowModel.chColors[value][1], 
+                    ScopeWindowModel.chColors[value][2]),
+                1));
+            }
+        }
 
         public ChannelTemplate(IDeviceParameter item, int axeNumber)
         {
@@ -210,7 +284,9 @@ namespace MCU_CAN_AV.ViewModels
             YAxis.Name = ChannelName;
             YAxis.IsVisible = false;
             line.IsVisible = false;
-            YAxis.ShowSeparatorLines = true;
+
+            Dispatcher.UIThread.Post(() => TextColor = new(Avalonia.Media.Colors.Black, 0.0));
+
 
             _disposable = item.Value.Subscribe((_) =>
             {
@@ -225,6 +301,7 @@ namespace MCU_CAN_AV.ViewModels
                     };
 
                     line.ScalesYAt = _axeNumber;
+                    line.ScalesXAt = 0;
                 });
             });
         }
@@ -237,14 +314,39 @@ namespace MCU_CAN_AV.ViewModels
 
         [RelayCommand]
         void onChekboxClick() {
-            YAxis.IsVisible = IsChannelSelected;
-            line.IsVisible = IsChannelSelected;
 
-            if (!IsChannelSelected) {
+            if (!IsChannelSelected)
+            {
                 dateTimePoints.Clear();
+                Dispatcher.UIThread.Post(() => TextColor = new(Avalonia.Media.Colors.Black, 0.0));
             }
         }
 
-      
+        public void Dispose()
+        {
+
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            if (disposing)
+            {
+                _disposable?.Dispose();
+                // Освобождаем управляемые ресурсы
+            }
+            // освобождаем неуправляемые объекты
+            _disposed = true;
+        }
+
+        ~ChannelTemplate()
+        {
+            Dispose(false);
+        }
+
+
     }
 }
