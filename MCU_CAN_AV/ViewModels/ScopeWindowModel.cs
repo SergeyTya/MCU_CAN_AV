@@ -156,12 +156,13 @@ namespace MCU_CAN_AV.ViewModels
                     YAxes?.Add(tmp_ch.YAxis);
                     Series?.Add(tmp_ch.line);
 
-
+                    // Set checked state acording channels limit 
                     tmp_ch.PropertyChanged += (_,__) => {
                         if (__.PropertyName == "IsChannelSelected") {
 
                             if (tmp_ch.IsChannelSelected) {
 
+                                // Check how many is visible
                                 var res = ChannelList.Where(x => x.IsVisible == true).Select(x => x);
                                 if (res.Count() < 4)
                                 {
@@ -174,34 +175,43 @@ namespace MCU_CAN_AV.ViewModels
                                 tmp_ch.IsVisible = false;
                             }
 
+                            // Apply Yaxis color
                             var res1 = ChannelList.Where(x => x.IsVisible == true).Select(x => x);
                             int i = 0;
-
-                            foreach (var item in res1)
+                            foreach (var el in res1)
                             {
-                                item.position = i++;
+                                if ( !(IsFixed && i == 0) ) el.color = i;
+                                i++;
                             }
-
+                            // Disable time axis
                             XAxes[0].IsVisible = i!= 0;
-
                         } 
                     };
 
-                    tmp_ch._disposable = item.Value.Subscribe((_) =>
+                    // Refreshing scope
+                    var disposable = Observable.Interval(TimeSpan.FromSeconds(0.125)).Subscribe(x =>
                     {
                         Dispatcher.UIThread.Post(() =>
                         {
-                            if (tmp_ch.IsChannelSelected == false) return;
-                            tmp_ch.dateTimePoints.Add(new DateTimePoint(DateTime.Now, _));
-                            if (tmp_ch.dateTimePoints.Count > 250)
-                            {
-                                tmp_ch.dateTimePoints.RemoveAt(0);
-                            };
-                            if (!Paused) XAxes[0].CustomSeparators = GetSeparators();
+                            RefreshScope();
+                        });
+                    });
+
+                    // Apply new value to channel
+                    tmp_ch.disposable = item.Value.Subscribe((_) =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            tmp_ch.addTimedPoint(_);
+
                         });
                     });
                 }
             }
+        }
+
+        public void RefreshScope() {
+            if (!Paused) XAxes[0].CustomSeparators = GetSeparators();
         }
 
         public void Receive(ConnectionState message)
