@@ -29,13 +29,14 @@ using Newtonsoft.Json.Linq;
 using ScottPlot;
 using Avalonia.Controls.Shapes;
 using LiveChartsCore.Kernel;
+using System.Runtime.CompilerServices;
 
 namespace MCU_CAN_AV.ViewModels
 {
     internal partial class ScopeWindowModel : ObservableRecipient, IRecipient<ConnectionState>
     {
         [ObservableProperty]
-        ObservableCollection<ChannelTemplate> _channelList;
+        ObservableCollection<ScopeWindowChannelTemplate> _channelList;
 
         [ObservableProperty]
         ObservableCollection<ISeries>? _series;
@@ -63,6 +64,29 @@ namespace MCU_CAN_AV.ViewModels
         void PauseClick() { 
         
         }
+
+        [ObservableProperty]
+        public bool _isFixed;
+
+        [RelayCommand]
+        void fixedAxis()
+        {
+            Dispatcher.UIThread.Post(
+                     () => {
+                         foreach (var l in ChannelList)
+                         {
+                            l.fix(IsFixed);
+                         }
+                     });
+        }
+
+        [RelayCommand]
+        public void ChartPan()
+        {
+            YAxes[1].MinLimit = null; YAxes[1].MaxLimit = null;
+            YAxes[1].MinLimit = null; YAxes[1].MaxLimit = null;
+        }
+
 
         internal static readonly byte[][] chColors = {
            new byte[] { 0xff,0xff,0x11 },
@@ -127,7 +151,7 @@ namespace MCU_CAN_AV.ViewModels
             {
                 if (!item.IsReadWrite)
                 {
-                    var tmp_ch = new ChannelTemplate(item, i++);
+                    var tmp_ch = new ScopeWindowChannelTemplate(item, i++);
                     ChannelList?.Add(tmp_ch);
                     YAxes?.Add(tmp_ch.YAxis);
                     Series?.Add(tmp_ch.line);
@@ -188,14 +212,6 @@ namespace MCU_CAN_AV.ViewModels
                 init();
             }
 
-            var disposable = Observable.Interval(TimeSpan.FromSeconds(0.3)).Subscribe(x =>
-            {
-                foreach (var l in Series)
-                {
-                    ((LineSeries<DateTimePoint>)l).ScalesXAt = 0;
-                }
-            });
-
             if (message.state == ConnectionState.State.Disconnected)
             {
                 if (ChannelList != null)
@@ -235,159 +251,5 @@ namespace MCU_CAN_AV.ViewModels
         }
     }
 
-    public partial class ChannelTemplate : ObservableObject, IDisposable
-    {
-
-        public Axis YAxis = new Axis() {
-            NamePadding = new(0,0),
-            SeparatorsPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0,
-                PathEffect = new DashEffect(new float[] { 3, 3 })
-            },
-            SubseparatorsPaint = new SolidColorPaint
-            {
-                Color = SKColors.Black,
-                StrokeThickness = 0,
-            },
-            SubseparatorsCount = 9,
-            ZeroPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0
-            },
-            TicksPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0
-            },
-            SubticksPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0
-            },
-            TextSize = 12,
-            Padding = new Padding(0, 0, 10, 0),
-            LabelsPaint = new SolidColorPaint(SKColors.White),
-            ShowSeparatorLines = false,
-          //  AnimationsSpeed = TimeSpan.FromMilliseconds(0),
-        };
-
-
-        public LineSeries<DateTimePoint> line = new LineSeries<DateTimePoint>() {
-            LineSmoothness = 0,
-            Fill = null,
-            GeometryStroke = null,
-            GeometrySize = 5,
-            AnimationsSpeed = TimeSpan.FromMilliseconds(0),
-            XToolTipLabelFormatter = (chartPoint) => $"",
-            YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.Coordinate.PrimaryValue:0.####}"
-        };
-
-
-        IDeviceParameter _item;
-        internal int _axeNumber = 0;
-        internal List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
-        private readonly List<DateTimePoint> _values = new();
-        internal IDisposable? _disposable;
-        private bool _disposed = false;
-
-        bool _isVisible;
-        public bool IsVisible{ 
-            get { 
-                return _isVisible; 
-            }
-            set {
-                _isVisible = value;
-                YAxis.IsVisible = _isVisible;
-                line.IsVisible = _isVisible;
-            }
-        }
-
-        [ObservableProperty]
-        private SolidColorBrush? _textColor;
-
-        public int position {
-            set {
-
-                var paint = new SKColor(ScopeWindowModel.chColors[value][0], ScopeWindowModel.chColors[value][1], ScopeWindowModel.chColors[value][2]);
-                line.Stroke = new SolidColorPaint(paint);
-                line.GeometryFill = new SolidColorPaint(paint);
-                YAxis.NamePaint = new SolidColorPaint(paint);
-                YAxis.LabelsPaint  = new SolidColorPaint(paint);
-                YAxis.TicksPaint = new SolidColorPaint(paint);
-                YAxis.SubticksPaint = new SolidColorPaint(paint);
-                YAxis.ZeroPaint = new SolidColorPaint(paint);
-
-                Dispatcher.UIThread.Post(() => TextColor = new(new(100,
-                    ScopeWindowModel.chColors[value][0], 
-                    ScopeWindowModel.chColors[value][1], 
-                    ScopeWindowModel.chColors[value][2]),
-                1));
-
-                if (value > 1) {
-                   // YAxis.Position = LiveChartsCore.Measure.AxisPosition.End;
-                }
-            }
-        }
-
-        public ChannelTemplate(IDeviceParameter item, int axeNumber)
-        {
-            line.Values = dateTimePoints;
-            _axeNumber = axeNumber;
-            _item = item;
-            ChannelName = item.Name;
-            YAxis.Name = ChannelName;
-            YAxis.IsVisible = false;
-            line.IsVisible = false;
-            line.ScalesYAt = _axeNumber;
-            line.ScalesXAt = 0;
-
-            Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
-        }
-
-        [ObservableProperty]
-        bool _isChannelSelected = false;
-
-        [ObservableProperty]
-        private string _channelName = "no name";
-
-        [RelayCommand]
-        void onChekboxClick() {
-
-            if (!IsChannelSelected)
-            {
-                dateTimePoints.Clear();
-                Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
-            }
-        }
-
-        public void Dispose()
-        {
-
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-            if (disposing)
-            {
-                _disposable?.Dispose();
-                // Освобождаем управляемые ресурсы
-            }
-            // освобождаем неуправляемые объекты
-            _disposed = true;
-        }
-
-        ~ChannelTemplate()
-        {
-            Dispose(false);
-        }
-
-
-    }
+   
 }
