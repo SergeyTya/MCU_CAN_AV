@@ -260,7 +260,7 @@ namespace MCU_CAN_AV.Devices.EVM_DIAG
                                     break;
                             }
 
-                            if (item._val != ret_val)
+                            if ( (item.IsReadWrite && (item._val == ret_val) ) == false )
                             {
                                 item.RxVal.OnNext(ret_val);
                                 item._val = ret_val;

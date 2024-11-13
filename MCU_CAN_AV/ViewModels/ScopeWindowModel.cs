@@ -73,18 +73,25 @@ namespace MCU_CAN_AV.ViewModels
         {
             Dispatcher.UIThread.Post(
                      () => {
+                         YAxes[0].IsVisible = IsFixed;
                          foreach (var l in ChannelList)
                          {
-                            l.fix(IsFixed);
+                            l.isFixedMode = IsFixed;
                          }
+                         ChartPan();
                      });
         }
 
         [RelayCommand]
         public void ChartPan()
         {
-            YAxes[1].MinLimit = null; YAxes[1].MaxLimit = null;
-            YAxes[1].MinLimit = null; YAxes[1].MaxLimit = null;
+            if (YAxes == null) return;
+            foreach (var l in YAxes) {
+                if (l.IsVisible) {
+                    l.MinLimit = null; l.MaxLimit = null;
+                    l.MinLimit = null; l.MaxLimit = null;
+                }
+            }
         }
 
 
@@ -133,7 +140,41 @@ namespace MCU_CAN_AV.ViewModels
             };
 
             XAxes = new() { _XAxis };
-            YAxes = new() { new Axis() { IsVisible = false } };
+            YAxes = new() { new Axis() { 
+                IsVisible = false,
+                Name = "Values",
+                SeparatorsPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 0,
+                PathEffect = new DashEffect(new float[] { 3, 3 })
+            },
+            SubseparatorsPaint = new SolidColorPaint
+            {
+                Color = SKColors.Black,
+                StrokeThickness = 0,
+            },
+            SubseparatorsCount = 9,
+            ZeroPaint = new SolidColorPaint
+            {
+                Color = SKColors.Gray,
+                StrokeThickness = 0
+            },
+            TicksPaint = new SolidColorPaint
+            {
+                Color = SKColors.Gray,
+                StrokeThickness = 0
+            },
+            SubticksPaint = new SolidColorPaint
+            {
+                Color = SKColors.Gray,
+                StrokeThickness = 0
+            },
+            TextSize = 12,
+            Padding = new Padding(0, 0, 10, 0),
+            LabelsPaint = new SolidColorPaint(SKColors.White),
+            ShowSeparatorLines = true,
+            }};
 
             Series = new() { new LineSeries<DateTimePoint>() {
                 IsVisible = false,    
@@ -178,6 +219,7 @@ namespace MCU_CAN_AV.ViewModels
                             // Apply Yaxis color
                             var res1 = ChannelList.Where(x => x.IsVisible == true).Select(x => x);
                             int i = 0;
+                            tmp_ch.isFixedMode = IsFixed;
                             foreach (var el in res1)
                             {
                                 if ( IsFixed && i == 0 ) { 

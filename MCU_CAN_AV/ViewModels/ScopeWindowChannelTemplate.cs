@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using static MCU_CAN_AV.ViewModels.ConnectionState;
 
 namespace MCU_CAN_AV.ViewModels
 {
@@ -23,37 +24,37 @@ namespace MCU_CAN_AV.ViewModels
         public Axis YAxis = new Axis()
         {
             NamePadding = new(0, 0),
-            SeparatorsPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0,
-                PathEffect = new DashEffect(new float[] { 3, 3 })
-            },
-            SubseparatorsPaint = new SolidColorPaint
-            {
-                Color = SKColors.Black,
-                StrokeThickness = 0,
-            },
-            SubseparatorsCount = 9,
-            ZeroPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0
-            },
-            TicksPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0
-            },
-            SubticksPaint = new SolidColorPaint
-            {
-                Color = SKColors.Gray,
-                StrokeThickness = 0
-            },
-            TextSize = 12,
-            Padding = new Padding(0, 0, 10, 0),
-            LabelsPaint = new SolidColorPaint(SKColors.White),
-            ShowSeparatorLines = false,
+                SeparatorsPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 0,
+                    PathEffect = new DashEffect(new float[] { 3, 3 })
+                },
+                SubseparatorsPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Black,
+                    StrokeThickness = 0,
+                },
+                SubseparatorsCount = 9,
+                ZeroPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 0
+                },
+                TicksPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 0
+                },
+                SubticksPaint = new SolidColorPaint
+                {
+                    Color = SKColors.Gray,
+                    StrokeThickness = 0
+                },
+                TextSize = 12,
+                Padding = new Padding(0, 0, 10, 0),
+                LabelsPaint = new SolidColorPaint(SKColors.White),
+                ShowSeparatorLines = false,
             //  AnimationsSpeed = TimeSpan.FromMilliseconds(0),
         };
 
@@ -154,37 +155,22 @@ namespace MCU_CAN_AV.ViewModels
                 line.IsVisible = _isVisible;
             }
         }
+        public bool isFixedMode {
+            set {
+                _isFixedMode = value    ;
+                if (IsVisible == false) return;
 
-        internal void fix(bool state) // fixing line to axis #1
-        {
-            _isFixedMode = state;   
-            if (IsVisible == false) return;
-
-            if (state)
-            {
-                line.ScalesYAt = 1;
-                if (scopePosition != 0)
+                if (_isFixedMode)
                 {
+                    line.ScalesYAt = 0;
                     YAxis.IsVisible = false;
                 }
                 else
                 {
-                    // Make YAxi nonamed and grey
-                    YAxis.Name = "Values";
-                    setAxiColor(SKColors.Gray);
-                    YAxis.ShowSeparatorLines = true;
                     YAxis.IsVisible = true;
+                    line.ScalesYAt = _collectionPosition; // scale 
                 }
-            }
-            else
-            {
-                YAxis.IsVisible = true;
-                // Return name and color
-                YAxis.Name = ChannelName;
-                if (scopePosition == 0) scopePosition = 0; // set scope color
-                YAxis.ShowSeparatorLines = false;
-                line.ScalesYAt = _collectionPosition; // scale 
-            }
+            } 
         }
 
         public void addTimedPoint(double Yvalue) {
