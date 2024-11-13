@@ -6,27 +6,43 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Splat;
 using Peak.Can.Basic;
+using System.Reactive.Linq;
+using static MCU_CAN_AV.ViewModels.ConnectionState;
 
 namespace MCU_CAN_AV.Can
 {
     internal class PCAN_USB : BaseCAN, IEnableLogger
     {
+        Worker myWorker;
         public PCAN_USB(ICAN.CANInitStruct InitStructure) : base(InitStructure)
         {
-            PcanStatus result;
-            result = Api.Initialize(PcanChannel.Usb01, Bitrate.Pcan500);
+            PcanChannel _channel = PcanChannel.Usb01;
+            Bitrate _bitrate = Bitrate.Pcan500;
 
-            var status = Api.GetStatus(PcanChannel.Usb01);
-           
-            if (status != PcanStatus.OK)
+            myWorker = new Worker(_channel, _bitrate);
+            myWorker.MessageAvailable += OnMessageAvailable;
+
+            try
             {
-                this.Log().Fatal($"PCAN connection status {0}", "ok");
-                _isOpen = true;
+                myWorker.AllowEchoFrames = false;
+                myWorker.Start();
+                this.Log().Info($"PCAN connection started at {_channel}:{_bitrate}");
+
+                //Observable.Interval(TimeSpan.FromMilliseconds(700)).Subscribe((_) => {
+                //    if (wdg == true)
+                //    {
+                //        this.Log().Fatal($"CAN timeout");
+                //    }
+                //    wdg = true;
+                //});
+
             }
-            else 
+            catch (Peak.Can.Basic.PcanBasicException ex)
             {
-                this.Log().Info($"PCAN connection status {0}", "fail");
+                this.Log().Fatal($"PCAN connection  not started ");
+                this.Log().Fatal(ex.Message);
             }
+
 
 
         }
@@ -35,14 +51,11 @@ namespace MCU_CAN_AV.Can
         public override bool isOpen { get => _isOpen; }
 
         int transaction_id = 0;
+        bool need_post = false;
         public unsafe override void Receive()
         {
 
-            PcanMessage message = new PcanMessage(0, MessageType.Extended, 3, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8}, false);
-            Api.Read(PcanChannel.Usb01, out message);
-
-            transaction_id++;
-            post(new ICAN.RxTxCanData(message.ID, message.Data, transaction_id: transaction_id));
+            need_post=true;
         }
 
         public override void Close_instance()
@@ -52,11 +65,26 @@ namespace MCU_CAN_AV.Can
 
         unsafe public override void Transmit(ICAN.RxTxCanData data)
         {
-            PcanMessage message = new PcanMessage(0, MessageType.Extended, 3, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, false);
-            message.ID = data.id;
-            message.Data = data.data;
-            Api.Write(PcanChannel.Usb01, message);
+            PcanMessage message = new PcanMessage(id:data.id, msgType:MessageType.Extended, dlc:8,  data:data.data);
+            try {
+                var state = myWorker.Transmit(message);
+            } catch(Exception e) {
+                this.Log().Fatal($"{e.Message}");
+            }
         }
 
+
+        List<PcanMessage> buf = new();
+        private void OnMessageAvailable(object? sender, MessageAvailableEventArgs e)
+        {
+            PcanMessage message = new PcanMessage(0x100, MessageType.Standard, 3, [], false);
+            ulong timestamp = 0;
+            myWorker.Dequeue(out message, out timestamp);
+            myWorker.ClearAllReceiveQueues();
+            post(new ICAN.RxTxCanData(message.ID, message.Data, transaction_id: transaction_id++));
+        }
     }
+
+
 }
+

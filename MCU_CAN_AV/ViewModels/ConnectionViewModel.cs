@@ -127,8 +127,8 @@ namespace MCU_CAN_AV.ViewModels
         public List<String> _deviceAvalible = new List<String>() {
             nameof(DeviceType.EVMModbus_TCP),
             nameof(DeviceType.EVMModbus_RTU),
+            nameof(DeviceType.Shanghai_3in1_USBCAN),
             nameof(DeviceType.Shanghai_3in1_PCAN),
-            nameof(DeviceType.Shanghai_3in1_USBCAN), 
             nameof(DeviceType.EspiritekCAN), 
             nameof(DeviceType.Dongfen_DGL1200_900), 
             nameof(DeviceType.Dummy)
