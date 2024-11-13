@@ -180,7 +180,12 @@ namespace MCU_CAN_AV.ViewModels
                             int i = 0;
                             foreach (var el in res1)
                             {
-                                if ( !(IsFixed && i == 0) ) el.color = i;
+                                if ( IsFixed && i == 0 ) { 
+
+                                } else {
+                                    el.scopePosition = i;
+                                }
+                                
                                 i++;
                             }
                             // Disable time axis

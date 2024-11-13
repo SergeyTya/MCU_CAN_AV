@@ -75,7 +75,8 @@ namespace MCU_CAN_AV.ViewModels
         public IDisposable? disposable;
 
         private IDeviceParameter _item;
-        private int _axeNumber = 0;
+        
+       
         private List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
         private readonly List<DateTimePoint> _values = new();    
         private bool _disposed = false;
@@ -99,11 +100,17 @@ namespace MCU_CAN_AV.ViewModels
             YAxis.ZeroPaint = new SolidColorPaint(paint);
         }
 
-        public int color 
+
+        private int _collectionPosition = 0;// position in channel list
+       
+        int _scopePosition = -1; // Position in scope, "-1" - out of scope
+        public int scopePosition 
         {
             set
             {
-
+                _scopePosition = value;
+                if (_scopePosition < 0) { return; }
+                if (_scopePosition > 3) { return; } //TODO!!
                 var paint = new SKColor(ScopeWindowModel.chColors[value][0], ScopeWindowModel.chColors[value][1], ScopeWindowModel.chColors[value][2]);
                 line.Stroke = new SolidColorPaint(paint);
                 line.GeometryFill = new SolidColorPaint(paint);
@@ -120,6 +127,8 @@ namespace MCU_CAN_AV.ViewModels
                     // YAxis.Position = LiveChartsCore.Measure.AxisPosition.End;
                 }
             }
+
+            get { return _scopePosition; }
         }
 
         bool _isVisible;
@@ -133,7 +142,7 @@ namespace MCU_CAN_AV.ViewModels
             {
                 _isVisible = value;
 
-                if (_isFixedMode && _axeNumber != 1) {
+                if (_isFixedMode && _scopePosition != 0) {
                     // Dont visible in fixide mode 
                     YAxis.IsVisible = false;
                     line.ScalesYAt = 1;
@@ -154,16 +163,17 @@ namespace MCU_CAN_AV.ViewModels
             if (state)
             {
                 line.ScalesYAt = 1;
-                if (_axeNumber != 1)
+                if (scopePosition != 0)
                 {
                     YAxis.IsVisible = false;
                 }
                 else
                 {
                     // Make YAxi nonamed and grey
-                    YAxis.Name = "  ";
+                    YAxis.Name = "Values";
                     setAxiColor(SKColors.Gray);
                     YAxis.ShowSeparatorLines = true;
+                    YAxis.IsVisible = true;
                 }
             }
             else
@@ -171,9 +181,9 @@ namespace MCU_CAN_AV.ViewModels
                 YAxis.IsVisible = true;
                 // Return name and color
                 YAxis.Name = ChannelName;
-                if (_axeNumber == 1) color = 0;
+                if (scopePosition == 0) scopePosition = 0; // set scope color
                 YAxis.ShowSeparatorLines = false;
-                line.ScalesYAt = _axeNumber;
+                line.ScalesYAt = _collectionPosition; // scale 
             }
         }
 
@@ -186,16 +196,16 @@ namespace MCU_CAN_AV.ViewModels
             }
         }
 
-        public ScopeWindowChannelTemplate(IDeviceParameter item, int axeNumber)
+        public ScopeWindowChannelTemplate(IDeviceParameter item, int collectionPosition)
         {
             line.Values = dateTimePoints;
-            _axeNumber = axeNumber;
+            _collectionPosition = collectionPosition;
             _item = item;
             ChannelName = item.Name;
             YAxis.Name = ChannelName;
             YAxis.IsVisible = false;
             line.IsVisible = false;
-            line.ScalesYAt = _axeNumber;
+            line.ScalesYAt = _collectionPosition;
             line.ScalesXAt = 0;
 
             Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
