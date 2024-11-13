@@ -225,7 +225,7 @@ namespace MCU_CAN_AV.ViewModels
             if (_disposed) return;
             if (disposing)
             {
-                _disposable?.Dispose();
+                disposable?.Dispose();
                 // Освобождаем управляемые ресурсы
             }
             // освобождаем неуправляемые объекты

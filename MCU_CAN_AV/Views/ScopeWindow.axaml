@@ -39,10 +39,10 @@
 		<Border Classes="h2">
 		<ScrollViewer BorderBrush="Gray">
 		<ItemsControl Grid.Column="0" ItemsSource="{Binding ChannelList}" Padding="2">
-			<ItemsControl.ItemTemplate >
+			<ItemsControl.ItemTemplate  >
 				<DataTemplate>
 
-					<Panel>
+					<Panel Margin="5,0">
 						<Border Classes="h1" CornerRadius="2">
 						<Grid ShowGridLines="false" Background="{Binding TextColor}">
 							<Grid.ColumnDefinitions>
@@ -50,7 +50,7 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 
-							<CheckBox Grid.Column="0" IsChecked="{Binding IsChannelSelected}" Command="{Binding onChekboxClickCommand}"></CheckBox>
+							<CheckBox Grid.Column="0" Margin="1,0" IsChecked="{Binding IsChannelSelected}" Command="{Binding onChekboxClickCommand}"></CheckBox>
 							<TextBlock 
 								Grid.Column="1" 
 								Text="{Binding ChannelName}" 
