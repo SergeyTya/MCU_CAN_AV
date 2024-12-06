@@ -26,7 +26,7 @@ namespace MCU_CAN_AV.utils
         string timestamp = String.Empty;
         int counter = 0;
         IDisposable? Disposable;
-        string path = @".\DataLogger\";
+        string path = @"./DataLogger/";
 
         bool _IsPaused = false;
 
