@@ -52,6 +52,7 @@ namespace MCU_CAN_AV.ViewModels
             else
             {
                 dataLogger?.close();
+                scopeWindow?.Close();
             }
         }
 

@@ -10,25 +10,23 @@ using MCU_CAN_AV.Devices;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Threading;
-using static MCU_CAN_AV.ViewModels.ConnectionState;
 
 namespace MCU_CAN_AV.ViewModels
 {
     public partial class ScopeWindowChannelTemplate : ObservableObject, IDisposable
     {
 
-        public Axis YAxis = new Axis()
+        public readonly Axis YAxis = new Axis()
         {
-            NamePadding = new(0, 0),
+            NamePadding = new Padding(0, 0),
                 SeparatorsPaint = new SolidColorPaint
                 {
                     Color = SKColors.Gray,
                     StrokeThickness = 0,
-                    PathEffect = new DashEffect(new float[] { 3, 3 })
+                    PathEffect = new DashEffect([3, 3])
                 },
                 SubseparatorsPaint = new SolidColorPaint
                 {
@@ -59,41 +57,35 @@ namespace MCU_CAN_AV.ViewModels
         };
 
 
-        public LineSeries<DateTimePoint> line = new LineSeries<DateTimePoint>()
+        public readonly LineSeries<DateTimePoint> Line = new LineSeries<DateTimePoint>()
         {
             LineSmoothness = 0,
             Fill = null,
             GeometryStroke = null,
             GeometrySize = 5,
             AnimationsSpeed = TimeSpan.FromMilliseconds(0),
-            XToolTipLabelFormatter = (chartPoint) => $"",
             YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.Coordinate.PrimaryValue:0.####}"
         };
 
         /***
          * Use it to control subscribe to item.value
          */
-        public IDisposable? disposable;
-
-        private IDeviceParameter _item;
-        
-       
-        private List<DateTimePoint> dateTimePoints = new List<DateTimePoint>();
-        private readonly List<DateTimePoint> _values = new();    
-        private bool _disposed = false;
-        private bool _isFixedMode = false;
+        public IDisposable? Disposable;
+        private readonly List<DateTimePoint> _dateTimePoints = [];
+        private bool _disposed ;
+        private bool _isFixedMode ;
 
 
         [ObservableProperty]
         private SolidColorBrush? _textColor;
 
         [ObservableProperty]
-        private bool _isChannelSelected = false;
+        private bool _isChannelSelected ;
 
         [ObservableProperty]
         private string _channelName = "no name";
 
-        private void setAxiColor(SKColor paint) {
+        private void SetAxiColor(SKColor paint) {
             YAxis.NamePaint = new SolidColorPaint(paint);
             YAxis.LabelsPaint = new SolidColorPaint(paint);
             YAxis.TicksPaint = new SolidColorPaint(paint);
@@ -102,26 +94,25 @@ namespace MCU_CAN_AV.ViewModels
         }
 
 
-        private int _collectionPosition = 0;// position in channel list
+        private readonly int _collectionPosition ;// position in channel list
        
         int _scopePosition = -1; // Position in scope, "-1" - out of scope
-        public int scopePosition 
+        public int ScopePosition 
         {
             set
             {
                 _scopePosition = value;
                 if (_scopePosition < 0) { return; }
                 if (_scopePosition > 3) { return; } //TODO!!
-                var paint = new SKColor(ScopeWindowModel.chColors[value][0], ScopeWindowModel.chColors[value][1], ScopeWindowModel.chColors[value][2]);
-                line.Stroke = new SolidColorPaint(paint);
-                line.GeometryFill = new SolidColorPaint(paint);
-                setAxiColor(paint);
+                var paint = new SKColor(ScopeWindowModel.ChColors[value][0], ScopeWindowModel.ChColors[value][1], ScopeWindowModel.ChColors[value][2]);
+                Line.Stroke = new SolidColorPaint(paint);
+                Line.GeometryFill = new SolidColorPaint(paint);
+                SetAxiColor(paint);
 
-                Dispatcher.UIThread.Post(() => TextColor = new(new(100,
-                    ScopeWindowModel.chColors[value][0],
-                    ScopeWindowModel.chColors[value][1],
-                    ScopeWindowModel.chColors[value][2]),
-                1));
+                Dispatcher.UIThread.Post(() => TextColor = new SolidColorBrush(new Color(100,
+                    ScopeWindowModel.ChColors[value][0],
+                    ScopeWindowModel.ChColors[value][1],
+                    ScopeWindowModel.ChColors[value][2])));
 
                 if (value > 1)
                 {
@@ -129,16 +120,13 @@ namespace MCU_CAN_AV.ViewModels
                 }
             }
 
-            get { return _scopePosition; }
+            get => _scopePosition;
         }
 
         bool _isVisible;
         public bool IsVisible
         {
-            get
-            {
-                return _isVisible;
-            }
+            get => _isVisible;
             set
             {
                 _isVisible = value;
@@ -146,67 +134,91 @@ namespace MCU_CAN_AV.ViewModels
                 if (_isFixedMode && _scopePosition != 0) {
                     // Dont visible in fixide mode 
                     YAxis.IsVisible = false;
-                    line.ScalesYAt = 1;
+                    Line.ScalesYAt = 1;
                 }
                 else {
                     YAxis.IsVisible = _isVisible;
                 }
                 
-                line.IsVisible = _isVisible;
+                Line.IsVisible = _isVisible;
             }
         }
-        public bool isFixedMode {
+        public bool IsFixedMode {
             set {
                 _isFixedMode = value    ;
                 if (IsVisible == false) return;
 
                 if (_isFixedMode)
                 {
-                    line.ScalesYAt = 0;
+                    Line.ScalesYAt = 0;
                     YAxis.IsVisible = false;
                 }
                 else
                 {
                     YAxis.IsVisible = true;
-                    line.ScalesYAt = _collectionPosition; // scale 
+                    Line.ScalesYAt = _collectionPosition; // scale 
                 }
             } 
         }
-
-        public void addTimedPoint(double Yvalue) {
-            if (IsChannelSelected == false) return;
-            dateTimePoints.Add(new DateTimePoint(DateTime.Now, Yvalue));
-            if (dateTimePoints.Count > 250)
+        
+        private double _periodMs = 5000;
+        private double _periodNow = 5000;
+        public double Period {
+            set
             {
-                dateTimePoints.RemoveAt(0);
+                if( (int) _periodMs == (int) (value * 1000) ) return;
+                _dateTimePoints.Clear();
+                _periodMs = value * 1000;
+                _periodNow = _periodMs;
             }
+        }
+
+        
+        public void AddTimedPoint(double yvalue) {
+            if (IsChannelSelected == false) return;
+            var timeNow = DateTime.Now;
+            var timeThen = timeNow; 
+            if (_dateTimePoints.Count > 0)
+            {
+                timeThen = _dateTimePoints.Last().DateTime;
+            }
+
+            
+            
+            if (_periodNow > 0 )
+            {
+                var ts = timeNow - timeThen;
+                _periodNow -= ts.TotalMilliseconds;
+            }
+            else
+            {
+                _dateTimePoints.RemoveAt(0);
+            }
+            
+            _dateTimePoints.Add(new DateTimePoint(timeNow, yvalue));
         }
 
         public ScopeWindowChannelTemplate(IDeviceParameter item, int collectionPosition)
         {
-            line.Values = dateTimePoints;
+            Line.Values = _dateTimePoints;
             _collectionPosition = collectionPosition;
-            _item = item;
             ChannelName = item.Name;
             YAxis.Name = ChannelName;
             YAxis.IsVisible = false;
-            line.IsVisible = false;
-            line.ScalesYAt = _collectionPosition;
-            line.ScalesXAt = 0;
+            Line.IsVisible = false;
+            Line.ScalesYAt = _collectionPosition;
+            Line.ScalesXAt = 0;
 
-            Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
+            Dispatcher.UIThread.Post(() => TextColor = new SolidColorBrush(new Color(100, 0x26, 0x27, 0x38)));
         }
 
 
         [RelayCommand]
         private void onChekboxClick()
         {
-
-            if (!IsChannelSelected)
-            {
-                dateTimePoints.Clear();
-                Dispatcher.UIThread.Post(() => TextColor = new(new(100, 0x26, 0x27, 0x38), 1));
-            }
+            if (IsChannelSelected) return;
+            _dateTimePoints.Clear();
+            Dispatcher.UIThread.Post(() => TextColor = new SolidColorBrush(new Color(100, 0x26, 0x27, 0x38)));
         }
 
         public void Dispose()
@@ -221,7 +233,7 @@ namespace MCU_CAN_AV.ViewModels
             if (_disposed) return;
             if (disposing)
             {
-                disposable?.Dispose();
+                Disposable?.Dispose();
                 // Освобождаем управляемые ресурсы
             }
             // освобождаем неуправляемые объекты

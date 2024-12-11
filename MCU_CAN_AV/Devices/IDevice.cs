@@ -104,7 +104,7 @@ namespace MCU_CAN_AV.Devices
         /// <returns>
         /// IDevice object
         /// </returns>
-        public static IDevice Current { get => IDevice._Device; }
+        public static IDevice? Current => IDevice._Device;
 
         /// <summary>
         /// Close connection and dispose IDevice instatnce

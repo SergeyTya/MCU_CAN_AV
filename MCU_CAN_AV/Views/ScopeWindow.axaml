@@ -4,6 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
 		xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+        xmlns:i="using:Avalonia.Xaml.Interactivity"
+        xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="200"
         x:Class="MCU_CAN_AV.Views.ScopeWindow"
 		Height="300"
@@ -87,7 +89,7 @@
 			ZoomMode="Y"
 			>
 		</lvc:CartesianChart>
-			<Grid Grid.Row="1">
+			<Grid Grid.Row="1" Name="Grid">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="1*"/>
 					<ColumnDefinition Width="100"/>
@@ -98,7 +100,7 @@
 						<PathIcon  Data="{StaticResource hdr_regular}"/>
 					</Panel>
 				</ToggleButton>
-
+				
 				<StackPanel VerticalAlignment="Bottom"  HorizontalAlignment="Left" Grid.Column="0" Spacing="1" Orientation="Horizontal">
 
 					<Button Command="{Binding ChartPanCommand}" Opacity="0.8">
@@ -112,15 +114,24 @@
 							<PathIcon  Data="{StaticResource pause}"/>
 						</Panel>
 					</ToggleButton>
+					
+					<TextBox
+						Text="{Binding Period}" 
+						Opacity="0.8" 
+					>
+					
+						<TextBox.KeyBindings>
+							<KeyBinding Gesture="Enter" Command="{Binding ScaleChangedCommand}" />
+						</TextBox.KeyBindings>
+					
+					</TextBox>
 
-					<ToggleButton Command="{Binding fixedAxisCommand}" IsChecked="{Binding IsFixed }" Opacity="0.8">
+					<ToggleButton Command="{Binding FixedAxisCommand}" IsChecked="{Binding IsFixed }" Opacity="0.8">
 						<Panel>
 							<PathIcon  Data="{StaticResource pin_regular}"/>
 						</Panel>
 					</ToggleButton>
-
 					
-
 				</StackPanel>
 			</Grid>
 			</Grid>
