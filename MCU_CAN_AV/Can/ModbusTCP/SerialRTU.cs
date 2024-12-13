@@ -55,7 +55,7 @@ namespace MCU_CAN_AV.Can.ModbusTCP
             {
                 if (timer_wdg.IsRunning)
                 {
-                    if (timer_wdg.ElapsedMilliseconds > 300)
+                    if (timer_wdg.ElapsedMilliseconds > 500)
                     {
                         this.Log().Fatal($"Serial timeout");
                         timer_wdg.Reset();
@@ -376,11 +376,12 @@ namespace MCU_CAN_AV.Can.ModbusTCP
                 switch (Rxbuf[1])
                 {
                     case 0x2b: // Report device info
+                    case 0x10: // Read write holdings
                     case 27:   // ReadRegistersInfoAsync
                     case 26:   // ReadRegisterCount
                     case 3:    // ReadHoldings
                     case 7:    // writeHoldings
-
+                    
                         RxSub.OnNext(Rxbuf.ToArray());
 
                         break;
