@@ -52,7 +52,7 @@ namespace MCU_CAN_AV.ViewModels
             else
             {
                 dataLogger?.close();
-                scopeWindow?.Close();
+                scopeWindow.Close();
             }
         }
 
@@ -73,6 +73,7 @@ namespace MCU_CAN_AV.ViewModels
             {
                 IsControlsDisabled = true;
                 IsVisible = false;
+                scopeWindow?.Close();
             }
         }
 
@@ -80,7 +81,7 @@ namespace MCU_CAN_AV.ViewModels
         private void ClickScopeItem()
         {
             scopeWindow?.Close();
-            scopeWindow = new();
+            scopeWindow = new ScopeWindow();
             scopeWindow.Show();
         }
     }
