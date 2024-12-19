@@ -5,7 +5,7 @@
              x:Class="MCU_CAN_AV.App"
 			 xmlns:local="using:MCU_CAN_AV"
 			 xmlns:vm="clr-namespace:MCU_CAN_AV.ViewModels"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark">
           
 
 	<Application.DataTemplates>
